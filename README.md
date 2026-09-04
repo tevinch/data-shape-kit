@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ git+https://github.com/tevinch/data-shape-kit.git@v0.2.0"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.2.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.2.0. This method requires Git and network access during installation; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.2.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
