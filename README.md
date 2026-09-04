@@ -64,6 +64,8 @@ The preflight checks the exact `Title` header, current `URL handle` or legacy `H
 
 The checks follow Shopify's current [product CSV format](https://help.shopify.com/en/manual/products/import-export/using-csv) and [import troubleshooting](https://help.shopify.com/en/manual/products/import-export/import-products) guidance. Shopify documents backward compatibility for older column names, so both current and legacy handle/header families are supported here.
 
+Use the [Shopify product CSV preflight checklist](docs/shopify-product-csv-preflight-checklist.md) for a backup-first review sequence, finding explanations, and official references.
+
 ## Test
 
 ```bash
