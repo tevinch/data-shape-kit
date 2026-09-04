@@ -40,6 +40,17 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input.
 
+## Fixed-price CSV cleanup
+
+Need this cleanup applied to a small dataset without setting up the tool yourself? A USD 25 fixed-price cleanup includes:
+
+- one UTF-8 CSV up to 10 MB;
+- header normalization, surrounding-whitespace trimming, and exact duplicate removal;
+- a cleaned CSV and a short input/output row-count report; and
+- one revision limited to the cleanup rules agreed before work starts.
+
+[Open a CSV cleanup request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-cleanup-request.yml) with a small synthetic or redacted sample, the expected output, a deadline, and acceptance criteria. Do not attach confidential, personal, or production data to a public issue. A request is a fit check, not an agreement to begin work; private file-transfer details and the delivery date are confirmed before any real data is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row.

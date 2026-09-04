@@ -1,0 +1,87 @@
+name: CSV cleanup request
+description: Request a fixed-price cleanup for one small CSV file.
+title: "[CSV cleanup] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The USD 25 fixed scope covers one UTF-8 CSV up to 10 MB, header normalization, surrounding-whitespace trimming, exact duplicate removal, a row-count report, and one in-scope revision.
+
+        This is a public issue. Share only synthetic or redacted examples. Do not upload confidential, personal, or production data.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Request summary
+      description: Briefly describe the dataset and the result you need.
+      placeholder: Clean a product export before importing it into a reporting tool.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: dropdown
+    id: cleanup
+    attributes:
+      label: Cleanup rules
+      description: Select every rule you want applied.
+      multiple: true
+      options:
+        - Normalize column headers
+        - Trim surrounding cell whitespace
+        - Remove exact duplicate rows
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected output and acceptance criteria
+      description: State how you will verify that the cleaned file is correct.
+      placeholder: Keep the first duplicate, preserve row order, and return the three reported row counts.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that USD 25 covers only the fixed scope described above and that no work begins until scope and delivery are confirmed.
+          required: true
