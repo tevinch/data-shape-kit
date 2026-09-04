@@ -6,10 +6,24 @@ build-backend = "setuptools.build_meta"
 name = "data-shape-kit"
 version = "0.1.0"
 description = "Local, deterministic CSV normalization and deduplication"
+readme = { file = "PYPI_README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "Tevinch" }]
 dependencies = []
+keywords = ["csv", "data-cleaning", "deduplication", "command-line"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/tevinch/data-shape-kit"
+Repository = "https://github.com/tevinch/data-shape-kit"
+Issues = "https://github.com/tevinch/data-shape-kit/issues"
 
 [project.scripts]
 data-shape-kit = "data_shape_kit.cli:main"
