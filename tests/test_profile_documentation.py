@@ -15,6 +15,16 @@ class ProfileDocumentationTests(unittest.TestCase):
                 self.assertIn("empty values", text)
                 self.assertIn("distinct non-empty values", text)
 
+    def test_github_install_command_is_pinned_to_the_package_version(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+        command = (
+            'python -m pip install "data-shape-kit @ '
+            'git+https://github.com/tevinch/data-shape-kit.git@v0.2.0"'
+        )
+
+        self.assertIn(command, readme)
+        self.assertNotIn("data-shape-kit.git@main", readme)
+
 
 if __name__ == "__main__":
     unittest.main()

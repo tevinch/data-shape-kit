@@ -14,6 +14,14 @@ python3 -m venv .venv
 python -m pip install --no-deps -e .
 ```
 
+Install the verified public version directly from its fixed Git tag:
+
+```bash
+python -m pip install "data-shape-kit @ git+https://github.com/tevinch/data-shape-kit.git@v0.2.0"
+```
+
+The tag keeps the installed source pinned to version 0.2.0. This method requires Git and network access during installation; the installed tool itself has no runtime dependencies or network requests.
+
 ## Use
 
 ```bash
