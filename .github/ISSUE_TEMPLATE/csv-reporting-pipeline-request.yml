@@ -1,0 +1,107 @@
+name: CSV reporting pipeline request
+description: Request one fixed-price command that produces review-ready CSV files.
+title: "[CSV reporting pipeline] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The USD 100 fixed scope covers one UTF-8 CSV up to 10 MB, up to five deterministic field rules, one grouping key, a standalone Python command and test suite, up to three CSV outputs, an output guide, and one in-scope revision.
+
+        This is a public issue. Share only synthetic or redacted examples with no confidential, personal, or production data. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Reporting goal
+      description: Describe the source export and the recurring review this command should support.
+      placeholder: Turn a weekly supplier export into normalized detail, a category summary, and exception rows.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: textarea
+    id: rules
+    attributes:
+      label: Deterministic field rules
+      description: Number up to five rules. Each rule must produce the same result for the same input.
+      placeholder: |
+        1. Trim whitespace from sku and category.
+        2. Convert quantity and unit_price to decimals.
+        3. Mark rows with a missing sku as exceptions.
+    validations:
+      required: true
+
+  - type: input
+    id: grouping
+    attributes:
+      label: Grouping key
+      description: Provide one source field for the grouped summary, or write none if no summary is needed.
+      placeholder: category
+    validations:
+      required: true
+
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Required CSV outputs
+      description: Choose up to three outputs and list their exact columns and calculations.
+      placeholder: |
+        detail.csv: sku, category, quantity, unit_price
+        summary.csv: category, row_count, quantity_total
+        exceptions.csv: source_row, reason
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected results and acceptance criteria
+      description: State the exact rows, values, calculations, and output order expected for the safe sample.
+      placeholder: The sample produces four detail rows, two category summary rows, and one exception row; quantity totals equal 7 and 11.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that USD 100 covers only the fixed scope described above and that no work begins until scope and delivery are confirmed.
+          required: true

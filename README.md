@@ -73,6 +73,18 @@ Need a repeatable pre-import check without changing the source file? A USD 75 fi
 
 [Open a CSV validation request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-validation-request.yml) with numbered rules, affected columns, a small synthetic or redacted sample, the expected report, a deadline, and acceptance criteria. The validator does not modify your input. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue.
 
+## Fixed-price CSV reporting pipeline
+
+Need one repeatable command that turns a source export into review-ready files? A USD 100 fixed-price reporting pipeline includes:
+
+- one UTF-8 CSV up to 10 MB;
+- up to five deterministic field rules and one grouping key agreed from a synthetic or redacted sample;
+- a standalone Python command and test suite that produces up to three CSV outputs: normalized detail, grouped summary, and exception rows;
+- an output-column and calculation guide; and
+- one revision limited to the rules and outputs agreed before work starts.
+
+[Open a CSV reporting pipeline request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-reporting-pipeline-request.yml) with numbered rules, the grouping key, required output columns, a small safe sample, a deadline, and exact acceptance criteria. Every result must be reproducible from the input; open-ended analysis and subjective classification are outside the fixed scope. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row.
