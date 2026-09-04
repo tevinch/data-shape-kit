@@ -43,7 +43,7 @@ class DistributionTests(unittest.TestCase):
                 entry_points = wheel.read(entry_points_path).decode("utf-8")
 
             self.assertEqual(metadata["Name"], "data-shape-kit")
-            self.assertEqual(metadata["Version"], "0.4.0")
+            self.assertEqual(metadata["Version"], "0.5.0")
             self.assertEqual(
                 metadata["Summary"],
                 "Local CSV cleanup and import-readiness reports",

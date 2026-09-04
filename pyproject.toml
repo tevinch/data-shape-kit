@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-shape-kit"
-version = "0.4.0"
+version = "0.5.0"
 description = "Local CSV cleanup and import-readiness reports"
 readme = { file = "PYPI_README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "Tevinch" }]
 dependencies = []
-keywords = ["csv", "data-cleaning", "data-dictionary", "shopify-csv", "deduplication", "command-line"]
+keywords = ["csv", "data-cleaning", "data-dictionary", "shopify-csv", "woocommerce-csv", "deduplication", "command-line"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",

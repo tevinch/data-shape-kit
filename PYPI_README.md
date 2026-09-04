@@ -52,9 +52,17 @@ data-shape-kit --shopify-preflight products.csv preflight.md
 
 The preflight checks the exact `Title` header, current `URL handle` or legacy `Handle`, non-empty handle characters, contiguous handle groups, and matching Option1 headers when variant fields contain data. It writes only aggregate issue codes, severity, counts, and source row numbers; it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee import acceptance.
 
+Run supported local checks on a WooCommerce product CSV before reviewing an import:
+
+```bash
+data-shape-kit --woocommerce-preflight products.csv preflight.md
+```
+
+The preflight checks the exact `Name` header, documented `Type` and `Published` values, repeated non-empty SKU values within the file, `Parent` on variation rows, and paired numbered attribute name/value columns. It writes only aggregate issue codes, severity, counts, and source row numbers; it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee import acceptance.
+
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight mode holds handles in process memory only while checking group order. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
 
 ## Limitations
 
@@ -62,6 +70,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - Every data row must contain the same number of columns as the header.
 - Duplicate detection is exact after trimming surrounding whitespace; it does not perform fuzzy matching.
 - Shopify preflight is not an exhaustive validator and does not access store state.
+- WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
 
 ## License
 

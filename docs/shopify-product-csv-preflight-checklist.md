@@ -64,7 +64,7 @@ Checklist:
 Install the fixed public version, then run the report locally:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.4.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.5.0.tar.gz"
 data-shape-kit --shopify-preflight products.csv preflight.md
 ```
 

@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.4.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.5.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.4.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.5.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -66,6 +66,18 @@ The checks follow Shopify's current [product CSV format](https://help.shopify.co
 
 Use the [Shopify product CSV preflight checklist](docs/shopify-product-csv-preflight-checklist.md) for a backup-first review sequence, finding explanations, and official references.
 
+Run supported local checks on a WooCommerce product CSV before reviewing an import:
+
+```bash
+data-shape-kit --woocommerce-preflight products.csv preflight.md
+```
+
+The preflight checks the exact `Name` header, documented `Type` and `Published` values, repeated non-empty SKU values within the file, `Parent` on variation rows, and paired numbered attribute name/value columns. It writes only aggregate issue codes, severity, counts, and source row numbers; it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee import acceptance.
+
+The checks follow WooCommerce's current [built-in product CSV schema](https://woocommerce.com/document/product-csv-importer-exporter/). Because the importer's mapping screen can map custom headers, a missing exact `Name` header is a warning rather than proof that an import will fail.
+
+Use the [WooCommerce product CSV preflight checklist](docs/woocommerce-product-csv-preflight-checklist.md) for a backup-first review sequence, finding explanations, and the official reference.
+
 ## Test
 
 ```bash
@@ -74,7 +86,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight mode holds handles in process memory only while checking group order. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
 
 ## Fixed-price CSV cleanup
 
@@ -145,12 +157,25 @@ Need a product file reviewed before you handle an import? Choose one fixed scope
 
 [Open a Shopify product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=shopify-product-csv-preflight-request.yml) with the tier, intended import action, header family, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review. Every tier covers only the supported checks and does not guarantee import acceptance because store state and platform behavior remain outside the file. No store login, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price WooCommerce product CSV preflight
+
+Need a built-in-importer product file reviewed before you handle an import? Choose one fixed scope:
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One UTF-8 WooCommerce product CSV, up to 500 rows and 10 MB | A local report covering the supported exact header, type, status, SKU, variation parent, and attribute-pair checks. The source file is not changed. |
+| **USD 75 Correct** | One UTF-8 WooCommerce product CSV, up to 5,000 rows and 10 MB | The report, one corrected product CSV with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One UTF-8 WooCommerce product CSV, up to 50,000 rows and 10 MB | The Correct delivery plus a review of supported findings and one revision limited to the agreed checks and corrections. |
+
+[Open a WooCommerce product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=woocommerce-product-csv-preflight-request.yml) with the tier, intended import action, mapping assumptions, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review for the built-in importer. Every tier covers only the supported checks and does not guarantee import acceptance because store state, extensions, custom mappings, remote files, and platform behavior remain outside the file. No store login, WordPress access, plugin installation, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row.
 - Every data row must contain the same number of columns as the header.
 - Duplicate detection is exact after trimming surrounding whitespace; it does not perform fuzzy matching.
 - Shopify preflight is not an exhaustive validator and does not access store state.
+- WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
 
 ## License
 
