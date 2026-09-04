@@ -51,6 +51,17 @@ Need this cleanup applied to a small dataset without setting up the tool yoursel
 
 [Open a CSV cleanup request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-cleanup-request.yml) with a small synthetic or redacted sample, the expected output, a deadline, and acceptance criteria. Do not attach confidential, personal, or production data to a public issue. A request is a fit check, not an agreement to begin work; private file-transfer details and the delivery date are confirmed before any real data is shared.
 
+## Fixed-price CSV transformation
+
+Need a repeatable conversion that goes beyond cleanup? A USD 50 fixed-price transformation includes:
+
+- one UTF-8 CSV up to 10 MB;
+- up to five deterministic column rules agreed from a synthetic or redacted sample;
+- a standalone Python script and test suite, the transformed CSV, and a short input/output row-count report; and
+- one revision limited to the rules agreed before work starts.
+
+[Open a CSV transformation request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-transformation-request.yml) with the input/output columns, numbered rules, a small safe sample, a deadline, and acceptance criteria. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue. A request is a fit check; scope, delivery, and private file transfer are confirmed before any real data is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row.

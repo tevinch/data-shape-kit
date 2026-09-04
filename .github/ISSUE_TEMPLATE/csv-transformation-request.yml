@@ -1,0 +1,95 @@
+name: CSV transformation request
+description: Request one fixed-price deterministic CSV conversion.
+title: "[CSV transformation] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The USD 50 fixed scope covers one UTF-8 CSV up to 10 MB, up to five deterministic column rules, a standalone Python script and test suite, the transformed CSV, a row-count report, and one in-scope revision.
+
+        This is a public issue. Share only synthetic or redacted examples with no confidential, personal, or production data. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Transformation summary
+      description: Briefly describe the source file and the business-ready result you need.
+      placeholder: Convert a supplier export into the five columns used by an internal catalog review.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: textarea
+    id: rules
+    attributes:
+      label: Deterministic column rules
+      description: Number no more than five rules. Each rule must have one expected result for the same input.
+      placeholder: |
+        1. Rename supplier_code to sku.
+        2. Uppercase sku after trimming whitespace.
+        3. Keep only rows whose active column is yes.
+    validations:
+      required: true
+
+  - type: input
+    id: columns
+    attributes:
+      label: Input and output columns
+      description: List the source headers and the exact headers expected in the delivered file.
+      placeholder: "Input: supplier_code, active, price. Output: sku, price."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected output and acceptance criteria
+      description: State how every rule and the final row count will be checked.
+      placeholder: The sample produces two rows, sku is uppercase, and output order is sku then price.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that USD 50 covers only the fixed scope described above and that no work begins until scope and delivery are confirmed.
+          required: true
