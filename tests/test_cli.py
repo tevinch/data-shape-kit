@@ -90,6 +90,28 @@ class CliTests(unittest.TestCase):
             self.assertNotIn("secret_alpha", output_text)
             self.assertNotIn("secret_beta", output_text)
 
+    def test_shopify_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "products.csv"
+            target = directory / "preflight.md"
+            source.write_text(
+                "Title,URL handle\nPrivate Product,bad handle\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--shopify-preflight", str(source), str(target)])
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 1\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("invalid_handle_format", output)
+            self.assertNotIn("Private Product", output)
+
 
 if __name__ == "__main__":
     unittest.main()

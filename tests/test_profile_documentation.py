@@ -19,7 +19,7 @@ class ProfileDocumentationTests(unittest.TestCase):
         readme = (self.root / "README.md").read_text(encoding="utf-8")
         command = (
             'python -m pip install "data-shape-kit @ '
-            'https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.3.0.tar.gz"'
+            'https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.4.0.tar.gz"'
         )
 
         self.assertIn(command, readme)

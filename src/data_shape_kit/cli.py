@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from .clean import CsvShapeError, clean_csv
 from .dictionary import write_dictionary
 from .profile import profile_csv
+from .shopify_preflight import preflight_shopify_csv
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -27,8 +28,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write a Markdown field dictionary without source cell values",
     )
+    mode.add_argument(
+        "--shopify-preflight",
+        action="store_true",
+        help="write value-free local checks for a Shopify product CSV",
+    )
     parser.add_argument("input", help="Path to the source CSV file")
-    parser.add_argument("output", help="Path for the cleaned CSV file")
+    parser.add_argument("output", help="Path for the output file")
     return parser
 
 
@@ -39,6 +45,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = profile_csv(args.input, args.output)
         elif args.dictionary:
             report = write_dictionary(args.input, args.output)
+        elif args.shopify_preflight:
+            report = preflight_shopify_csv(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -50,6 +58,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Columns profiled: {report.input_columns}")
     elif args.dictionary:
         print(f"Columns documented: {report.input_columns}")
+    elif args.shopify_preflight:
+        print(f"Findings: {len(report.findings)}")
+        return 1 if report.findings else 0
     else:
         print(f"Output rows: {report.output_rows}")
         print(f"Duplicates removed: {report.duplicates_removed}")

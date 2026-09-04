@@ -2,20 +2,34 @@ import unittest
 from pathlib import Path
 
 
-class DictionaryDocumentationTests(unittest.TestCase):
+class ShopifyDocumentationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(__file__).resolve().parents[1]
 
-    def test_public_readmes_document_dictionary_privacy_contract(self) -> None:
+    def test_public_readmes_document_local_preflight_contract(self) -> None:
         for filename in ("README.md", "PYPI_README.md"):
             with self.subTest(filename=filename):
                 text = (self.root / filename).read_text(encoding="utf-8")
                 self.assertIn(
-                    "data-shape-kit --dictionary input.csv dictionary.md", text
+                    "data-shape-kit --shopify-preflight products.csv preflight.md",
+                    text,
                 )
                 self.assertIn("does not include source cell values", text)
-                self.assertIn("observed data kind", text)
-                self.assertIn("distinct non-empty", text)
+                self.assertIn("does not guarantee import acceptance", text)
+                self.assertIn("URL handle", text)
+                self.assertIn("Option1", text)
+
+    def test_readme_links_to_current_official_shopify_guidance(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "https://help.shopify.com/en/manual/products/import-export/using-csv",
+            readme,
+        )
+        self.assertIn(
+            "https://help.shopify.com/en/manual/products/import-export/import-products",
+            readme,
+        )
 
     def test_github_install_command_is_pinned_to_new_version(self) -> None:
         readme = (self.root / "README.md").read_text(encoding="utf-8")

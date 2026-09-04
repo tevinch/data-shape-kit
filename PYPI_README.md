@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, and value-free Markdown data dictionaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -44,15 +44,24 @@ data-shape-kit --dictionary input.csv dictionary.md
 
 The dictionary reports each normalized field's position, observed data kind, non-empty and empty counts, and distinct non-empty count. The report does not include source cell values.
 
+Run supported local checks on a Shopify product CSV before reviewing an import:
+
+```bash
+data-shape-kit --shopify-preflight products.csv preflight.md
+```
+
+The preflight checks the exact `Title` header, current `URL handle` or legacy `Handle`, non-empty handle characters, contiguous handle groups, and matching Option1 headers when variant fields contain data. It writes only aggregate issue codes, severity, counts, and source row numbers; it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee import acceptance.
+
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting and do not include source cell values in their outputs. Normalized field names are included in both reports and should be treated as potentially sensitive metadata.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight mode holds handles in process memory only while checking group order. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
 
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row.
 - Every data row must contain the same number of columns as the header.
 - Duplicate detection is exact after trimming surrounding whitespace; it does not perform fuzzy matching.
+- Shopify preflight is not an exhaustive validator and does not access store state.
 
 ## License
 
