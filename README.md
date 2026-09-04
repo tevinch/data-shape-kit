@@ -135,15 +135,15 @@ Need a field guide and import handoff for a small CSV export? A USD 125 fixed-pr
 
 ## Fixed-price Shopify product CSV preflight
 
-Need a product file reviewed before you handle an import? A USD 150 fixed-price delivery includes:
+Need a product file reviewed before you handle an import? Choose one fixed scope:
 
-- one UTF-8 Shopify product CSV up to 10 MB and up to 50,000 rows;
-- a local preflight report covering exact headers, handle format and grouping, row shape, and supported variant/Option1 dependencies;
-- one corrected product CSV and a change log for the agreed findings;
-- a second preflight report for the corrected file; and
-- one revision limited to the agreed checks and corrections.
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One UTF-8 Shopify product CSV, up to 500 rows and 10 MB | A local report covering exact headers, handle format and grouping, row shape, and supported variant/Option1 dependencies. The source file is not changed. |
+| **USD 75 Correct** | One UTF-8 Shopify product CSV, up to 5,000 rows and 10 MB | The report, one corrected product CSV with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One UTF-8 Shopify product CSV, up to 50,000 rows and 10 MB | The Correct delivery plus a review of supported findings and one revision limited to the agreed checks and corrections. |
 
-[Open a Shopify product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=shopify-product-csv-preflight-request.yml) with the intended import action, header family, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review. It covers the supported checks and does not guarantee import acceptance because store state and platform behavior remain outside the file. No store login, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue.
+[Open a Shopify product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=shopify-product-csv-preflight-request.yml) with the tier, intended import action, header family, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review. Every tier covers only the supported checks and does not guarantee import acceptance because store state and platform behavior remain outside the file. No store login, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
 ## Limitations
 

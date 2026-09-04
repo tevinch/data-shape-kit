@@ -5,9 +5,20 @@ body:
   - type: markdown
     attributes:
       value: |
-        The USD 150 fixed scope covers one UTF-8 Shopify product CSV up to 10 MB and up to 50,000 rows, a local preflight report, one corrected product CSV, a change log, a second report, and one in-scope revision.
+        Choose one fixed scope: USD 25 Report covers one UTF-8 Shopify product CSV up to 500 rows and 10 MB with no file changes; USD 75 Correct covers up to 5,000 rows and 10 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 50,000 rows and 10 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
 
         This is an independent local file review. It covers supported checks and does not guarantee import acceptance because store state and platform behavior remain outside the file. This is a public issue: share only synthetic or redacted examples with no confidential, personal, or production data. No store login, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 500 rows; findings report; no file changes
+        - USD 75 Correct — up to 5,000 rows; agreed corrections, change log, and second report
+        - USD 150 Full — up to 50,000 rows; Correct delivery, supported-findings review, and one revision
+    validations:
+      required: true
 
   - type: textarea
     id: summary
@@ -74,9 +85,9 @@ body:
     attributes:
       label: Approximate row count
       options:
-        - Up to 1,000 rows
-        - 1,001 to 10,000 rows
-        - 10,001 to 50,000 rows
+        - Up to 500 rows
+        - 501 to 5,000 rows
+        - 5,001 to 50,000 rows
         - More than 50,000 rows (outside the fixed scope)
     validations:
       required: true
@@ -103,5 +114,5 @@ body:
     attributes:
       label: Fixed-scope acknowledgement
       options:
-        - label: I understand that USD 150 covers only the fixed local file scope above, does not guarantee import acceptance, and no work begins until scope and delivery are confirmed.
+        - label: I understand that my selected tier covers only its fixed local file scope, does not guarantee import acceptance, and no work begins until scope, delivery, and private file transfer are confirmed.
           required: true

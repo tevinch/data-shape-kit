@@ -214,6 +214,11 @@ class RepositorySurfaceTests(unittest.TestCase):
         readme = (self.root / "README.md").read_text(encoding="utf-8")
 
         self.assertIn("## Fixed-price Shopify product CSV preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 500 rows", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 5,000 rows", readme)
+        self.assertIn("USD 150 Full", readme)
         self.assertIn("USD 150", readme)
         self.assertIn("up to 50,000 rows", readme)
         self.assertIn("one corrected product CSV", readme)
@@ -236,6 +241,7 @@ class RepositorySurfaceTests(unittest.TestCase):
         form = form_path.read_text(encoding="utf-8")
 
         for field_id in (
+            "tier",
             "summary",
             "sample",
             "action",
@@ -249,6 +255,9 @@ class RepositorySurfaceTests(unittest.TestCase):
         ):
             with self.subTest(field_id=field_id):
                 self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
         self.assertIn("USD 150", form)
         self.assertIn("up to 50,000 rows", form)
         self.assertIn("no confidential, personal, or production data", form)

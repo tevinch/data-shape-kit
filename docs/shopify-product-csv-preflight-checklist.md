@@ -82,7 +82,7 @@ The report includes issue codes, severity, counts, and source row numbers. It do
 
 Use only a synthetic or fully redacted sample in a public issue. Replace product titles, handles, SKUs, image URLs, vendors, tags, metafields, and other business data with invented values. State the intended import action, header family, permitted corrections, expected finding counts, and delivery date.
 
-A [USD 150 fixed-price Shopify product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=shopify-product-csv-preflight-request.yml) covers one UTF-8 file up to 10 MB and 50,000 rows, a local report, one corrected CSV, a change log, a second report, and one in-scope revision. No store login, admin access, API credentials, production upload, actual import, or security work is included.
+A [fixed-price Shopify product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=shopify-product-csv-preflight-request.yml) starts with a USD 25 report and also offers USD 75 correction and USD 150 full-review tiers. Limits range from 500 rows for the report to 50,000 rows for the full delivery. No store login, admin access, API credentials, production upload, actual import, or security work is included.
 
 ## What the check does not prove
 
