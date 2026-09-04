@@ -83,10 +83,50 @@ class RepositorySurfaceTests(unittest.TestCase):
         self.assertIn("no confidential, personal, or production data", form)
         self.assertIn("No account access", form)
 
+    def test_readme_exposes_bounded_validation_request(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price CSV validation", readme)
+        self.assertIn("USD 75", readme)
+        self.assertIn("up to five reproducible validation rules", readme)
+        self.assertIn("read-only Python command and test suite", readme)
+        self.assertIn(
+            "issues/new?template=csv-validation-request.yml",
+            readme,
+        )
+        self.assertIn("does not modify your input", readme)
+
+    def test_validation_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root / ".github" / "ISSUE_TEMPLATE" / "csv-validation-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "CSV validation form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "summary",
+            "sample",
+            "rules",
+            "columns",
+            "report",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 75", form)
+        self.assertIn("up to five reproducible validation rules", form)
+        self.assertIn("no confidential, personal, or production data", form)
+        self.assertIn("does not modify the input", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
             "csv-transformation-request.yml",
+            "csv-validation-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

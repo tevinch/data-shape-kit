@@ -1,0 +1,105 @@
+name: CSV validation request
+description: Request one fixed-price read-only CSV validation command.
+title: "[CSV validation] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The USD 75 fixed scope covers one UTF-8 CSV up to 10 MB, up to five reproducible validation rules, a read-only Python command and test suite, a row-level CSV violation report, a short summary, and one in-scope revision. The command reports violations and does not modify the input.
+
+        This is a public issue. Share only synthetic or redacted examples with no confidential, personal, or production data. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Validation summary
+      description: Briefly describe the file and the decision the report should support.
+      placeholder: Check a supplier catalog before it enters an internal review process.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: textarea
+    id: rules
+    attributes:
+      label: Reproducible validation rules
+      description: Number no more than five rules using required values, unique keys, allowed values, regular expressions, numeric ranges, or ISO dates.
+      placeholder: |
+        1. sku is required and unique.
+        2. status is one of active, draft, or archived.
+        3. price is a decimal from 0.01 through 9999.99.
+    validations:
+      required: true
+
+  - type: input
+    id: columns
+    attributes:
+      label: Columns to validate
+      description: List the exact source headers used by the numbered rules.
+      placeholder: "sku, status, price"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: report
+    attributes:
+      label: Violation report layout
+      description: The report is a separate file and never changes the input CSV.
+      options:
+        - "CSV: row number, column, rule, observed value"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected report and acceptance criteria
+      description: State the exact violations expected for the synthetic sample and the summary counts you will check.
+      placeholder: The sample reports two violations on rows 3 and 5, with one count for each rule.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that USD 75 covers only the fixed scope described above and that no work begins until scope and delivery are confirmed.
+          required: true
