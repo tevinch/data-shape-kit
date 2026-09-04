@@ -45,6 +45,28 @@ class CliTests(unittest.TestCase):
             self.assertEqual(stderr.getvalue(), "error: expected a header row\n")
             self.assertFalse(target.exists())
 
+    def test_profile_mode_writes_private_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "input.csv"
+            target = directory / "profile.json"
+            source.write_text(
+                "Name,Region\nsecret_alpha,EU\nsecret_beta,EU\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--profile", str(source), str(target)])
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stdout.getvalue(), "Input rows: 2\nColumns profiled: 2\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output_text = target.read_text(encoding="utf-8")
+            self.assertNotIn("secret_alpha", output_text)
+            self.assertNotIn("secret_beta", output_text)
+
 
 if __name__ == "__main__":
     unittest.main()

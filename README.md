@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and prints a concise report.
+A small Python command-line tool for deterministic CSV cleanup and privacy-preserving profile summaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
 
 ## Requirements
 
@@ -30,6 +30,14 @@ Duplicates removed: 1
 
 The output keeps the first occurrence of each row after trimming surrounding whitespace. Column names are lowercased, converted to underscore-separated names, and made unique with numeric suffixes.
 
+Profile a CSV without copying its cell values into the report:
+
+```bash
+data-shape-kit --profile input.csv profile.json
+```
+
+The JSON profile reports input row and column counts plus each normalized column's empty values and distinct non-empty values. It does not include source cell values.
+
 ## Test
 
 ```bash
@@ -38,7 +46,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile mode holds distinct values only in process memory while counting and does not include source cell values in its JSON output.
 
 ## Fixed-price CSV cleanup
 
