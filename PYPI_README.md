@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup and privacy-preserving profile summaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, and value-free Markdown data dictionaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
 
 ## Requirements
 
@@ -36,9 +36,17 @@ data-shape-kit --profile input.csv profile.json
 
 The JSON profile reports input row and column counts plus each normalized column's empty values and distinct non-empty values. It does not include source cell values.
 
+Generate a Markdown data dictionary without copying source values into it:
+
+```bash
+data-shape-kit --dictionary input.csv dictionary.md
+```
+
+The dictionary reports each normalized field's position, observed data kind, non-empty and empty counts, and distinct non-empty count. The report does not include source cell values.
+
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile mode holds distinct values only in process memory while counting and does not include source cell values in its JSON output.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting and do not include source cell values in their outputs. Normalized field names are included in both reports and should be treated as potentially sensitive metadata.
 
 ## Limitations
 

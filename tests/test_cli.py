@@ -67,6 +67,29 @@ class CliTests(unittest.TestCase):
             self.assertNotIn("secret_alpha", output_text)
             self.assertNotIn("secret_beta", output_text)
 
+    def test_dictionary_mode_writes_value_free_markdown(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "input.csv"
+            target = directory / "dictionary.md"
+            source.write_text(
+                "Name,Active\nsecret_alpha,true\nsecret_beta,false\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--dictionary", str(source), str(target)])
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stdout.getvalue(), "Input rows: 2\nColumns documented: 2\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output_text = target.read_text(encoding="utf-8")
+            self.assertIn("| 2 | active | boolean | 2 | 0 | 2 |", output_text)
+            self.assertNotIn("secret_alpha", output_text)
+            self.assertNotIn("secret_beta", output_text)
+
 
 if __name__ == "__main__":
     unittest.main()

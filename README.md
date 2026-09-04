@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup and privacy-preserving profile summaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, and value-free Markdown data dictionaries. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate shape counts locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.2.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.3.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.2.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.3.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -46,6 +46,14 @@ data-shape-kit --profile input.csv profile.json
 
 The JSON profile reports input row and column counts plus each normalized column's empty values and distinct non-empty values. It does not include source cell values.
 
+Generate a Markdown data dictionary without copying source values into it:
+
+```bash
+data-shape-kit --dictionary input.csv dictionary.md
+```
+
+The dictionary reports each normalized field's position, observed data kind, non-empty and empty counts, and distinct non-empty count. The observed data kind is a conservative summary: boolean, integer, decimal, ISO date, ISO datetime, text, mixed, or empty. The report does not include source cell values.
+
 ## Test
 
 ```bash
@@ -54,7 +62,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile mode holds distinct values only in process memory while counting and does not include source cell values in its JSON output.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting and do not include source cell values in their outputs. Normalized field names are included in both reports and should be treated as potentially sensitive metadata.
 
 ## Fixed-price CSV cleanup
 
@@ -100,6 +108,18 @@ Need one repeatable command that turns a source export into review-ready files? 
 - one revision limited to the rules and outputs agreed before work starts.
 
 [Open a CSV reporting pipeline request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-reporting-pipeline-request.yml) with numbered rules, the grouping key, required output columns, a small safe sample, a deadline, and exact acceptance criteria. Every result must be reproducible from the input; open-ended analysis and subjective classification are outside the fixed scope. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue.
+
+## Fixed-price CSV data dictionary
+
+Need a field guide and import handoff for a small CSV export? A USD 125 fixed-price delivery includes:
+
+- one UTF-8 CSV up to 10 MB and up to 100 columns;
+- a Markdown data dictionary with agreed field definitions, required/optional status, and data kinds;
+- a machine-readable field specification and an import readiness checklist;
+- a local summary of completeness and distinct non-empty counts without source values in the report; and
+- one revision limited to the agreed fields and import requirements.
+
+[Open a CSV data dictionary request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-data-dictionary-request.yml) with the field list, known definitions and types, a small synthetic or redacted sample, the target import context, a deadline, and exact acceptance criteria. Field definitions and requirements are agreed before real data is shared. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue.
 
 ## Limitations
 

@@ -1,0 +1,110 @@
+name: CSV data dictionary request
+description: Request a fixed-price field guide and import specification for one CSV.
+title: "[CSV data dictionary] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The USD 125 fixed scope covers one UTF-8 CSV up to 10 MB and up to 100 columns, a Markdown data dictionary, a machine-readable field specification, an import readiness checklist, local aggregate counts, and one in-scope revision.
+
+        This is a public issue. Share only synthetic or redacted examples with no confidential, personal, or production data. No account access, external API integration, production-system upload, authentication, payment processing, infrastructure change, or security work is included.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Import or handoff goal
+      description: Describe who will use the field guide and what decision or import it should support.
+      placeholder: Document a supplier export before it is mapped into an internal catalog template.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: textarea
+    id: columns
+    attributes:
+      label: Field list
+      description: List the source headers in their current order. The fixed scope supports up to 100 columns.
+      placeholder: supplier_code, product_name, category, unit_price, available_on
+    validations:
+      required: true
+
+  - type: textarea
+    id: definitions
+    attributes:
+      label: Known field definitions
+      description: Provide any business definitions already known, and mark unknown fields clearly.
+      placeholder: supplier_code - supplier's stable identifier; category - unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: types
+    attributes:
+      label: Required data kinds and formats
+      description: List known types or formats, or state which fields need a conservative observed-kind summary.
+      placeholder: unit_price - decimal with two places; available_on - ISO date
+    validations:
+      required: true
+
+  - type: textarea
+    id: required
+    attributes:
+      label: Required and optional fields
+      description: Identify required fields and any known uniqueness rules.
+      placeholder: supplier_code is required and unique; product_name is required; category is optional.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State the exact files, headings, field order, and checks expected in the delivery.
+      placeholder: The Markdown and JSON specifications contain all five fields in source order, and the checklist covers required values, duplicates, types, and date format.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that USD 125 covers only the fixed scope described above and that no work begins until scope and delivery are confirmed.
+          required: true

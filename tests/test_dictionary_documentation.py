@@ -2,20 +2,22 @@ import unittest
 from pathlib import Path
 
 
-class ProfileDocumentationTests(unittest.TestCase):
+class DictionaryDocumentationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(__file__).resolve().parents[1]
 
-    def test_public_readmes_document_profile_privacy_contract(self) -> None:
+    def test_public_readmes_document_dictionary_privacy_contract(self) -> None:
         for filename in ("README.md", "PYPI_README.md"):
             with self.subTest(filename=filename):
                 text = (self.root / filename).read_text(encoding="utf-8")
-                self.assertIn("data-shape-kit --profile input.csv profile.json", text)
+                self.assertIn(
+                    "data-shape-kit --dictionary input.csv dictionary.md", text
+                )
                 self.assertIn("does not include source cell values", text)
-                self.assertIn("empty values", text)
-                self.assertIn("distinct non-empty values", text)
+                self.assertIn("observed data kind", text)
+                self.assertIn("distinct non-empty", text)
 
-    def test_github_install_command_is_pinned_to_the_package_version(self) -> None:
+    def test_github_install_command_is_pinned_to_new_version(self) -> None:
         readme = (self.root / "README.md").read_text(encoding="utf-8")
         command = (
             'python -m pip install "data-shape-kit @ '
@@ -23,8 +25,7 @@ class ProfileDocumentationTests(unittest.TestCase):
         )
 
         self.assertIn(command, readme)
-        self.assertNotIn("git+https://github.com/tevinch/data-shape-kit.git", readme)
-        self.assertNotIn("data-shape-kit.git@main", readme)
+        self.assertNotIn("archive/refs/tags/v0.2.0.tar.gz", readme)
 
 
 if __name__ == "__main__":
