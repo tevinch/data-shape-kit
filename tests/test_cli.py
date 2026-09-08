@@ -211,6 +211,31 @@ class CliTests(unittest.TestCase):
             )
             self.assertFalse(target.exists())
 
+    def test_redirect_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "redirects.csv"
+            target = directory / "preflight.md"
+            source.write_text(
+                "Source URL,Target URL,Status Code\n"
+                "https://private.example/a,https://private.example/a,301\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--redirect-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 1\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("self_redirect", output)
+            self.assertNotIn("private.example", output)
+
 
 if __name__ == "__main__":
     unittest.main()

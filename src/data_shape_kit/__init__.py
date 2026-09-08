@@ -5,6 +5,11 @@ from .compare import ComparisonFinding, CsvComparisonReport, compare_csvs
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
 from .ebay_preflight import EbayPreflightReport, preflight_ebay_csv
 from .profile import ColumnProfile, ProfileReport, profile_csv
+from .redirect_preflight import (
+    RedirectFinding,
+    RedirectPreflightReport,
+    preflight_redirect_map,
+)
 from .shopify_preflight import Finding, ShopifyPreflightReport, preflight_shopify_csv
 from .woocommerce_preflight import (
     WooCommercePreflightReport,
@@ -22,12 +27,15 @@ __all__ = [
     "EbayPreflightReport",
     "Finding",
     "ProfileReport",
+    "RedirectFinding",
+    "RedirectPreflightReport",
     "ShopifyPreflightReport",
     "WooCommercePreflightReport",
     "clean_csv",
     "compare_csvs",
     "normalize_headers",
     "profile_csv",
+    "preflight_redirect_map",
     "preflight_shopify_csv",
     "preflight_ebay_csv",
     "preflight_woocommerce_csv",

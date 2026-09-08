@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.7.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.8.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.7.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.8.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -99,6 +99,18 @@ data-shape-kit --compare-to current.csv --key "SKU" previous.csv comparison.md
 The comparison reports added, removed, or reordered columns; missing and duplicate keys; rows found on only one side; changed row pairs; and the number of matched unchanged rows. It compares all exact common headers and does not modify either input. The Markdown report contains counts and old/new source row numbers only, so it does not include source cell values, header names, key values, or file names. Duplicate keys are reported as ambiguous and are not matched.
 
 Use the [CSV comparison report checklist](docs/csv-comparison-report-checklist.md) to confirm key stability, file safety, and the fixed report scope.
+
+Run static checks on a site-migration redirect map:
+
+```bash
+data-shape-kit --redirect-preflight redirects.csv preflight.md
+```
+
+The CSV must use the exact `Source URL`, `Target URL`, and `Status Code` headers. The preflight checks absolute HTTP(S) URL shape, permanent 301/308 codes, duplicate or conflicting sources, self redirects, redirect chains and cycles, and targets shared by multiple sources. It writes issue codes, severity, counts, and source row numbers only, so it does not include source cell values. It does not make network requests, test deployed redirects, or judge whether two pages are meaningfully related, and it does not guarantee search performance.
+
+The checks follow Google Search Central's current [site-move guidance](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) and [redirect guidance](https://developers.google.com/search/docs/crawling-indexing/301-redirects).
+
+Use the [redirect map preflight checklist](docs/redirect-map-preflight-checklist.md) for a mapping-first review sequence, finding explanations, and scope boundaries.
 
 ## Test
 
@@ -215,6 +227,18 @@ Need to validate two ordinary catalog or inventory exports without manually alig
 
 [Open a CSV comparison report request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-comparison-report-request.yml) with the tier, exact key, columns, a small synthetic or fully redacted sample, a deadline, and exact acceptance criteria. The standard report identifies schema changes, missing or duplicate keys, only-old or only-new rows, and changed row pairs without publishing source values. It does not modify either input. No account or shared-sheet access, cloud integration, production-system access, import, upload, payment processing, infrastructure change, or security work is included. No regulated, confidential, personal, financial, medical, education, identity, credential, or production data is accepted. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price redirect map preflight
+
+Need a static review of a website migration mapping before your team configures redirects? Choose one fixed scope:
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One UTF-8 redirect map CSV, up to 500 mappings and 10 MB | A value-free report covering supported header, URL, status, duplicate, conflict, self-redirect, chain, cycle, and shared-target checks. No file changes. |
+| **USD 75 Correct** | One UTF-8 redirect map CSV, up to 5,000 mappings and 10 MB | The report, one corrected map with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One UTF-8 redirect map CSV, up to 50,000 mappings and 25 MB | The Correct delivery plus a supported-findings review and one revision limited to the agreed checks and corrections. |
+
+[Open a redirect map preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=redirect-map-preflight-request.yml) with the tier, exact headers, intended permanent redirects, a synthetic or publicly known URL sample, a deadline, and exact acceptance criteria. Real files must contain publicly known URLs only; private, staging, regulated, confidential, personal, financial, medical, education, identity, credential, or production data is outside scope. The static report does not test live HTTP responses, server rules, relevance, canonical tags, robots rules, sitemaps, or indexing, and it does not guarantee search performance. No site, server, CMS, analytics, or Search Console access, production deployment, infrastructure change, payment processing, or security work is included. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -224,6 +248,7 @@ Need to validate two ordinary catalog or inventory exports without manually alig
 - WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
 - eBay preflight supports listing and draft files with `Add` or `Draft` actions only; it does not access Seller Hub, category state, seller settings, business policies, fees, or upload results.
 - CSV comparison requires the exact key header once in each file. Duplicate key values are reported but not matched, and only exact common headers are compared unless a separate scope is agreed.
+- Redirect-map preflight is a static file check for absolute HTTP(S) URLs and permanent 301/308 mappings. It does not access a site or verify deployed behavior.
 
 ## License
 

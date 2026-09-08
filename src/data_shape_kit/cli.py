@@ -11,6 +11,7 @@ from .compare import compare_csvs
 from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
 from .profile import profile_csv
+from .redirect_preflight import preflight_redirect_map
 from .shopify_preflight import preflight_shopify_csv
 from .woocommerce_preflight import preflight_woocommerce_csv
 
@@ -51,6 +52,11 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="NEW_CSV",
         help="compare the source to a second CSV and write a value-free report",
     )
+    mode.add_argument(
+        "--redirect-preflight",
+        action="store_true",
+        help="write value-free static checks for a redirect map CSV",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -77,6 +83,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_woocommerce_csv(args.input, args.output)
         elif args.ebay_preflight:
             report = preflight_ebay_csv(args.input, args.output)
+        elif args.redirect_preflight:
+            report = preflight_redirect_map(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -94,7 +102,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Columns profiled: {report.input_columns}")
     elif args.dictionary:
         print(f"Columns documented: {report.input_columns}")
-    elif args.shopify_preflight or args.woocommerce_preflight or args.ebay_preflight:
+    elif (
+        args.shopify_preflight
+        or args.woocommerce_preflight
+        or args.ebay_preflight
+        or args.redirect_preflight
+    ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
     else:

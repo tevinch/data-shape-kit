@@ -408,6 +408,51 @@ class RepositorySurfaceTests(unittest.TestCase):
         self.assertIn("No account or shared-sheet access", form)
         self.assertIn("does not modify either input", form)
 
+    def test_readme_exposes_bounded_redirect_map_preflight_request(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price redirect map preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 500 mappings", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 5,000 mappings", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 50,000 mappings", readme)
+        self.assertIn(
+            "issues/new?template=redirect-map-preflight-request.yml", readme
+        )
+        self.assertIn("No site, server, CMS, analytics, or Search Console access", readme)
+        self.assertIn("publicly known URLs only", readme)
+
+    def test_redirect_map_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root / ".github" / "ISSUE_TEMPLATE" / "redirect-map-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "redirect map issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "headers",
+            "redirects",
+            "acceptance",
+            "size",
+            "rows",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("publicly known URLs only", form)
+        self.assertIn("No site, server, CMS, analytics, or Search Console access", form)
+        self.assertIn("does not guarantee search performance", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -419,6 +464,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "woocommerce-product-csv-preflight-request.yml",
             "ebay-listing-file-preflight-request.yml",
             "csv-comparison-report-request.yml",
+            "redirect-map-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

@@ -1,0 +1,119 @@
+name: Redirect map preflight request
+description: Request a fixed-price static review of one public-URL migration map CSV.
+title: "[Redirect map preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 500 mappings and 10 MB with no file changes; USD 75 Correct covers up to 5,000 mappings and 10 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 50,000 mappings and 25 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        This public issue accepts invented examples and publicly known URLs only. Do not share private, staging, regulated, confidential, personal, financial, medical, education, identity, credential, or production data. The static check does not make network requests, test live responses, determine page relevance, or guarantee search performance. No site, server, CMS, analytics, or Search Console access, production deployment, infrastructure change, payment processing, or security work is included.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 500 mappings; static report; no file changes
+        - USD 75 Correct — up to 5,000 mappings; agreed corrections, change log, and second report
+        - USD 150 Full — up to 50,000 mappings; Correct delivery, supported-findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Migration context
+      description: Describe the public website move and the decision the static report should support.
+      placeholder: Review an old-domain to new-domain mapping before our site administrator configures permanent redirects.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or public URL sample
+      description: Paste 5 to 20 invented mappings or mappings containing publicly known URLs only. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: dropdown
+    id: headers
+    attributes:
+      label: Exact headers
+      options:
+        - Source URL, Target URL, Status Code
+        - Different headers that can be renamed deterministically
+        - Unknown or inconsistent headers (outside the standard fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: redirects
+    attributes:
+      label: Intended redirect type
+      options:
+        - Permanent 301 redirects
+        - Permanent 308 redirects
+        - Mixed 301 and 308 permanent redirects
+        - Temporary or client-side redirects (outside the standard fixed scope)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State the required static checks, permitted corrections, expected files, and finding counts.
+      placeholder: Report invalid URLs, unsupported codes, duplicate or conflicting sources, self redirects, chains, cycles, and shared targets without URL values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - No more than 10 MB
+        - More than 10 MB and no more than 25 MB
+        - More than 25 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rows
+    attributes:
+      label: Approximate mapping count
+      options:
+        - Up to 500 mappings
+        - 501 to 5,000 mappings
+        - 5,001 to 50,000 mappings
+        - More than 50,000 mappings (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue and sample use invented or publicly known URLs only and contain no private, staging, regulated, confidential, personal, financial, medical, education, identity, credential, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the report is a static file check, does not guarantee search performance, and No site, server, CMS, analytics, or Search Console access or deployment is included.
+          required: true
