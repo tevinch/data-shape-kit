@@ -1,5 +1,6 @@
 """Local CSV cleanup and aggregate reporting utilities."""
 
+from .batch_preflight import BatchFinding, BatchPreflightReport, preflight_csv_batch
 from .clean import CleanReport, CsvShapeError, clean_csv, normalize_headers
 from .compare import ComparisonFinding, CsvComparisonReport, compare_csvs
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
@@ -18,6 +19,8 @@ from .woocommerce_preflight import (
 
 __all__ = [
     "CleanReport",
+    "BatchFinding",
+    "BatchPreflightReport",
     "ComparisonFinding",
     "ColumnProfile",
     "ColumnDictionary",
@@ -35,6 +38,7 @@ __all__ = [
     "compare_csvs",
     "normalize_headers",
     "profile_csv",
+    "preflight_csv_batch",
     "preflight_redirect_map",
     "preflight_shopify_csv",
     "preflight_ebay_csv",

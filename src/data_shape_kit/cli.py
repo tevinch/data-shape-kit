@@ -6,6 +6,7 @@ import argparse
 import sys
 from collections.abc import Sequence
 
+from .batch_preflight import preflight_csv_batch
 from .clean import CsvShapeError, clean_csv
 from .compare import compare_csvs
 from .dictionary import write_dictionary
@@ -57,6 +58,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free static checks for a redirect map CSV",
     )
+    mode.add_argument(
+        "--batch-preflight",
+        action="store_true",
+        help="write value-free structural checks for a directory of CSV files",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -85,6 +91,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_ebay_csv(args.input, args.output)
         elif args.redirect_preflight:
             report = preflight_redirect_map(args.input, args.output)
+        elif args.batch_preflight:
+            report = preflight_csv_batch(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -94,6 +102,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.compare_to is not None:
         print(f"Old rows: {report.old_rows}")
         print(f"New rows: {report.new_rows}")
+        print(f"Findings: {len(report.findings)}")
+        return 1 if report.findings else 0
+
+    if args.batch_preflight:
+        print(f"Files: {report.file_count}")
+        print(f"Input rows: {report.input_rows}")
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
 

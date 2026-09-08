@@ -2,45 +2,41 @@ import unittest
 from pathlib import Path
 
 
-class CsvComparisonDocumentationTests(unittest.TestCase):
+class BatchDocumentationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(__file__).resolve().parents[1]
 
-    def test_public_readmes_document_value_free_comparison_contract(self) -> None:
-        command = (
-            'data-shape-kit --compare-to current.csv --key "SKU" '
-            "previous.csv comparison.md"
-        )
+    def test_public_readmes_document_local_value_free_contract(self) -> None:
+        command = "data-shape-kit --batch-preflight exports/ batch-report.md"
         for filename in ("README.md", "PYPI_README.md"):
             with self.subTest(filename=filename):
                 text = (self.root / filename).read_text(encoding="utf-8")
                 self.assertIn(command, text)
+                self.assertIn("does not include file names", text)
                 self.assertIn("does not include source cell values", text)
-                self.assertIn("duplicate keys", text)
-                self.assertIn("changed row pairs", text)
-                self.assertIn("does not modify either input", text)
+                self.assertIn("does not read subdirectories", text)
+                self.assertIn("does not combine or modify files", text)
 
-    def test_guide_has_checks_safety_and_service_path(self) -> None:
-        guide_path = self.root / "docs" / "csv-comparison-report-checklist.md"
-        self.assertTrue(guide_path.is_file(), "CSV comparison guide is missing")
+    def test_guide_has_safety_findings_and_service_path(self) -> None:
+        guide_path = self.root / "docs" / "csv-batch-preflight-checklist.md"
+        self.assertTrue(guide_path.is_file(), "batch preflight guide is missing")
         guide = guide_path.read_text(encoding="utf-8")
         for required_text in (
-            "# CSV Comparison Report Checklist",
+            "# CSV Batch Preflight Checklist",
             "Last verified: 2026-09-08",
-            'data-shape-kit --compare-to current.csv --key "SKU" previous.csv comparison.md',
-            "does not include source cell values",
+            "stable file numbers",
+            "schema_mismatch",
+            "malformed_row",
             "synthetic or fully redacted sample",
             "USD 25",
             "USD 75",
             "USD 150",
-            "no regulated, confidential, personal, financial, medical, education, identity, credential, or production data",
-            "issues/new?template=csv-comparison-report-request.yml",
+            "issues/new?template=csv-batch-preflight-request.yml",
         ):
             with self.subTest(required_text=required_text):
                 self.assertIn(required_text, guide)
-
         readme = (self.root / "README.md").read_text(encoding="utf-8")
-        self.assertIn("docs/csv-comparison-report-checklist.md", readme)
+        self.assertIn("docs/csv-batch-preflight-checklist.md", readme)
 
     def test_github_install_command_is_pinned_to_new_version(self) -> None:
         readme = (self.root / "README.md").read_text(encoding="utf-8")
@@ -49,7 +45,7 @@ class CsvComparisonDocumentationTests(unittest.TestCase):
             'https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.9.0.tar.gz"'
         )
         self.assertIn(command, readme)
-        self.assertNotIn("archive/refs/tags/v0.7.0.tar.gz", readme)
+        self.assertNotIn("archive/refs/tags/v0.8.0.tar.gz", readme)
 
 
 if __name__ == "__main__":

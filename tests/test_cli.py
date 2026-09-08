@@ -236,6 +236,28 @@ class CliTests(unittest.TestCase):
             self.assertIn("self_redirect", output)
             self.assertNotIn("private.example", output)
 
+    def test_batch_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "inputs"
+            source.mkdir()
+            target = directory / "report.md"
+            (source / "one.csv").write_text("ID,Name\n1,One\n", encoding="utf-8")
+            (source / "two.csv").write_text("Name,ID\nTwo,2\n", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--batch-preflight", str(source), str(target)])
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Files: 2\nInput rows: 2\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("schema_mismatch", output)
+            self.assertNotIn("one.csv", output)
+            self.assertNotIn("two.csv", output)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,127 @@
+name: CSV batch preflight request
+description: Request a fixed-price structural review or deterministic combination of ordinary CSV files.
+title: "[CSV batch preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 30 files, 50,000 rows, and 25 MB with no file changes; USD 75 Combine covers up to 100 files, 250,000 rows, and 100 MB; USD 150 Full covers up to 500 files, 1,000,000 rows, and 500 MB with a reusable local command and one in-scope revision.
+
+        Use a synthetic or fully redacted public sample. The issue must contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data. No email, cloud-drive, SAP, or production-system access, account login, API integration, upload, payment processing, infrastructure change, or security work is included. No combine begins until the preflight passes and the deterministic order is confirmed.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 30 files; preflight report only
+        - USD 75 Combine — up to 100 files; passing report, combined CSV, reconciliation, and change log
+        - USD 150 Full — up to 500 files; Combine delivery, reusable command, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Batch goal
+      description: Describe the ordinary exports and the decision or deliverable the batch should support.
+      placeholder: Check a month of same-schema catalog exports before combining them for a manual review.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or fully redacted sample
+      description: Paste invented headers and 5 to 20 invented rows representing each expected shape. Do not attach real files.
+      render: csv
+    validations:
+      required: true
+
+  - type: textarea
+    id: headers
+    attributes:
+      label: Expected headers
+      description: List the exact, case-sensitive headers in their expected order.
+      placeholder: Order ID,Order date,Status
+    validations:
+      required: true
+
+  - type: textarea
+    id: order
+    attributes:
+      label: Deterministic file order
+      description: State the filename convention and required combine order without posting real file names.
+      placeholder: Sort ascending by an ISO date prefix such as 2026-08-01.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State the required checks, permitted corrections, expected outputs, and reconciliation totals.
+      placeholder: Report structural findings without names or values; after a passing report, combine once with one header row and reconcile every data row.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Total batch size
+      options:
+        - No more than 25 MB
+        - More than 25 MB and no more than 100 MB
+        - More than 100 MB and no more than 500 MB
+        - More than 500 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: files
+    attributes:
+      label: File count
+      options:
+        - Up to 30 files
+        - 31 to 100 files
+        - 101 to 500 files
+        - More than 500 files (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rows
+    attributes:
+      label: Total data rows
+      options:
+        - Up to 50,000 rows
+        - 50,001 to 250,000 rows
+        - 250,001 to 1,000,000 rows
+        - More than 1,000,000 rows (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue and sample use invented or fully redacted data and contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that no combine begins until the preflight passes and that No email, cloud-drive, SAP, or production-system access or upload is included.
+          required: true

@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.8.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.9.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.8.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.9.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -111,6 +111,16 @@ The CSV must use the exact `Source URL`, `Target URL`, and `Status Code` headers
 The checks follow Google Search Central's current [site-move guidance](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) and [redirect guidance](https://developers.google.com/search/docs/crawling-indexing/301-redirects).
 
 Use the [redirect map preflight checklist](docs/redirect-map-preflight-checklist.md) for a mapping-first review sequence, finding explanations, and scope boundaries.
+
+Check the structure of every immediate CSV file in one local directory:
+
+```bash
+data-shape-kit --batch-preflight exports/ batch-report.md
+```
+
+The batch preflight reports the file and row totals, schema-group count, missing or invalid headers, UTF-8 failures, schema mismatches, and malformed rows. It uses stable file numbers and row locations only: the report does not include file names, header names, or source cell values. It does not read subdirectories and does not combine or modify files. An exit status of 1 means findings were reported.
+
+Use the [CSV batch preflight checklist](docs/csv-batch-preflight-checklist.md) for preparation, finding explanations, and fixed-scope service options.
 
 ## Test
 
@@ -239,6 +249,18 @@ Need a static review of a website migration mapping before your team configures 
 
 [Open a redirect map preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=redirect-map-preflight-request.yml) with the tier, exact headers, intended permanent redirects, a synthetic or publicly known URL sample, a deadline, and exact acceptance criteria. Real files must contain publicly known URLs only; private, staging, regulated, confidential, personal, financial, medical, education, identity, credential, or production data is outside scope. The static report does not test live HTTP responses, server rules, relevance, canonical tags, robots rules, sitemaps, or indexing, and it does not guarantee search performance. No site, server, CMS, analytics, or Search Console access, production deployment, infrastructure change, payment processing, or security work is included. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price CSV batch preflight and combine
+
+Need a folder of ordinary CSV exports checked before a safe, deterministic merge? USD 25 Report covers up to 30 files, USD 75 Combine covers up to 100 files, and USD 150 Full covers up to 500 files.
+
+| Tier | Batch limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | Up to 30 UTF-8 CSV files, 50,000 rows, and 25 MB total | One value-free structural report; no file changes. |
+| **USD 75 Combine** | Up to 100 UTF-8 CSV files, 250,000 rows, and 100 MB total | The report, one combined CSV after preflight passes, a row-count reconciliation, and a change log. |
+| **USD 150 Full** | Up to 500 UTF-8 CSV files, 1,000,000 rows, and 500 MB total | The Combine delivery, a reusable local command, and one in-scope revision. |
+
+[Open a CSV batch preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-batch-preflight-request.yml) with the tier, expected headers and file order, a synthetic or fully redacted sample, total size and rows, deadline, and exact acceptance criteria. The public issue and sample must contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data. No combine begins until the preflight passes and the agreed deterministic order is confirmed. No email, cloud-drive, SAP, or production-system access, account login, API integration, upload, payment processing, infrastructure change, or security work is included. Scope, delivery, and a private file-transfer method are confirmed before any real files are shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -249,6 +271,7 @@ Need a static review of a website migration mapping before your team configures 
 - eBay preflight supports listing and draft files with `Add` or `Draft` actions only; it does not access Seller Hub, category state, seller settings, business policies, fees, or upload results.
 - CSV comparison requires the exact key header once in each file. Duplicate key values are reported but not matched, and only exact common headers are compared unless a separate scope is agreed.
 - Redirect-map preflight is a static file check for absolute HTTP(S) URLs and permanent 301/308 mappings. It does not access a site or verify deployed behavior.
+- Batch preflight reads immediate CSV files only, reports stable file numbers instead of names, and never combines or modifies files.
 
 ## License
 

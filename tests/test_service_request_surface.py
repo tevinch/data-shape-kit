@@ -453,6 +453,49 @@ class RepositorySurfaceTests(unittest.TestCase):
         self.assertIn("No site, server, CMS, analytics, or Search Console access", form)
         self.assertIn("does not guarantee search performance", form)
 
+    def test_readme_exposes_bounded_csv_batch_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price CSV batch preflight and combine", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 30 files", readme)
+        self.assertIn("USD 75 Combine", readme)
+        self.assertIn("up to 100 files", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 500 files", readme)
+        self.assertIn("issues/new?template=csv-batch-preflight-request.yml", readme)
+        self.assertIn("No email, cloud-drive, SAP, or production-system access", readme)
+
+    def test_csv_batch_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root / ".github" / "ISSUE_TEMPLATE" / "csv-batch-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "CSV batch issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "headers",
+            "order",
+            "acceptance",
+            "size",
+            "files",
+            "rows",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Combine", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("no regulated, confidential, personal", form)
+        self.assertIn("No email, cloud-drive, SAP, or production-system access", form)
+        self.assertIn("no combine begins until the preflight passes", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -465,6 +508,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "ebay-listing-file-preflight-request.yml",
             "csv-comparison-report-request.yml",
             "redirect-map-preflight-request.yml",
+            "csv-batch-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename
