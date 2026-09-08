@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.15.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.16.0.tar.gz"
 ```
 
 The tag keeps the installed source pinned to version 0.15.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
@@ -193,6 +193,18 @@ The check covers UTF-8 HTML up to 10 MB, JSON-LD script discovery, JSON syntax, 
 The checks follow the current [W3C JSON-LD 1.1 Recommendation](https://www.w3.org/TR/json-ld11/) and use [Google's structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) and [general guidelines](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) only to define important boundaries. Live rendering and Google-specific validation remain separate steps.
 
 Use the [JSON-LD preflight checklist](docs/json-ld-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on one public event calendar iCalendar file:
+
+```bash
+data-shape-kit --calendar-preflight events.ics preflight.md
+```
+
+The check covers UTF-8 iCalendar text up to 10 MB, CRLF line endings and folding, content-line shape, calendar and event component structure, required `PRODID`, `VERSION`, `UID`, `DTSTAMP`, and `DTSTART` properties, supported date and date-time syntax, conflicting end and duration fields, nonpositive event spans, and repeated event identifiers. The report contains finding codes, counts, and line numbers only, so it does not include source calendar values. Files containing attendee, organizer, contact, meeting-request, private, or confidential content are refused. It does not import or subscribe, make network requests, access a calendar account, send invitations, or modify the input, and it does not guarantee platform import, subscription refresh, interoperability, availability, traffic, or sales.
+
+The checks follow [RFC 5545](https://www.rfc-editor.org/rfc/rfc5545.html). [Google Calendar import troubleshooting](https://support.google.com/calendar/answer/45654?hl=en-uk&ref_topic=10510448) and [Microsoft's import-versus-subscribe guidance](https://support.microsoft.com/en-us/outlook/import-or-subscribe-to-a-calendar-in-outlook-com-or-outlook-on-the-web) help define platform boundaries; live import and subscription behavior remain separate steps.
+
+Use the [public event calendar file preflight checklist](docs/public-calendar-file-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
 
 ## Test
 
@@ -405,6 +417,18 @@ Need JSON-LD in one already-public page snapshot checked before your team handle
 
 [Open a JSON-LD preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=json-ld-preflight-request.yml) with the tier, a synthetic or already-public excerpt, script count, size, deadline, and acceptance criteria. The requester must own or control the public page. Private, staging, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, or unpublished pages are not accepted. No Search Console, WordPress, SEO-tool, hosting, or server access, account login, live URL retrieval, script execution, remote-context retrieval, deployment, upload, validation submission, payment processing, infrastructure change, or security work is included. The static check does not guarantee rich-result eligibility, appearance, ranking, traffic, or sales. Scope, delivery, authorization, and a private file-transfer method are confirmed before any eligible file is shared.
 
+## Fixed-price public event calendar file preflight
+
+Need one public event calendar file checked before your team handles distribution? USD 25 Report covers up to 250 events and 2 MB, USD 75 Correct covers up to 2,500 events and 5 MB, and USD 150 Full covers up to 10,000 events and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public event calendar file, up to 250 events and 2 MB | A value-free report covering supported line, component, required-property, date, span, and repeated-identifier checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 2,500 events and 5 MB | The report, one corrected iCalendar file with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 10,000 events and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a public event calendar file preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=public-calendar-file-preflight-request.yml) with the tier, a synthetic or already-public excerpt, event count, size, deadline, and acceptance criteria. The requester must own or control the public event calendar. Files containing attendee, organizer, contact, meeting-request, private, confidential, regulated, personal, identity, credential-bearing, tokenized, or unpublished content are refused. No calendar account, Google Calendar, Outlook, WordPress, hosting, or server access, live URL retrieval, import, subscription, invitation sending, recurrence expansion, deployment, upload, payment processing, infrastructure change, or security work is included. The static check does not guarantee platform import, subscription refresh, interoperability, availability, traffic, or sales. Scope, delivery, authorization, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -422,6 +446,7 @@ Need JSON-LD in one already-public page snapshot checked before your team handle
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only; live markup, HTTP behavior, caches, rendered images, deployment state, and platform previews remain outside scope.
 - JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only; remote contexts, vocabulary, visible-content comparison, dynamic rendering, feature-specific requirements, policy, deployment state, and search appearance remain outside scope.
+- Public event calendar file preflight covers one UTF-8 iCalendar snapshot containing public events only and supported static checks only; complete recurrence and time-zone semantics, MIME and HTTP behavior, calendar-account state, import, subscriptions, invitations, and private calendar data remain outside scope.
 
 ## License
 

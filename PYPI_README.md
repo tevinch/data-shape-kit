@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -140,6 +140,14 @@ data-shape-kit --json-ld-preflight page.html preflight.md
 
 The check covers UTF-8 HTML up to 10 MB, JSON-LD script discovery, JSON syntax, top-level and `@graph` shape, duplicate JSON members, basic `@context`, `@type`, and `@id` shape, completely repeated blocks, and repeated identifiers for review. The report contains finding codes, counts, script numbers, and script.object locations only, so it does not include source JSON-LD values. It does not make network requests, access an account, execute scripts, or modify the input. It does not resolve remote contexts, compare visible page content, or validate schema.org vocabulary, Google feature-specific requirements, truthfulness, or policy compliance, and it does not guarantee rich-result eligibility, appearance, ranking, traffic, or sales.
 
+Run supported static checks on one public event calendar iCalendar file:
+
+```bash
+data-shape-kit --calendar-preflight events.ics preflight.md
+```
+
+The check covers UTF-8 iCalendar text up to 10 MB, CRLF line endings and folding, content-line shape, calendar and event component structure, required properties, supported date and date-time syntax, end and duration conflicts, nonpositive event spans, and repeated event identifiers. The report contains finding codes, counts, and line numbers only, so it does not include source calendar values. Files containing attendee, organizer, contact, meeting-request, private, or confidential content are refused. It does not import or subscribe, make network requests, access a calendar account, send invitations, or modify the input, and it does not guarantee platform import, subscription refresh, interoperability, availability, traffic, or sales.
+
 ## Data privacy
 
 Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight and comparison modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell or URL values. Normalized field names, source row numbers, and entry numbers are metadata and should still be treated as potentially sensitive.
@@ -161,6 +169,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only.
 - JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only.
+- Public event calendar file preflight covers one UTF-8 iCalendar snapshot containing public events only and supported static checks only.
 
 ## License
 

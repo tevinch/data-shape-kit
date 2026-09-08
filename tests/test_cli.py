@@ -385,6 +385,30 @@ class CliTests(unittest.TestCase):
                 "missing_json_ld_script", target.read_text(encoding="utf-8")
             )
 
+    def test_calendar_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "events.ics"
+            target = directory / "preflight.md"
+            source.write_bytes(
+                b"BEGIN:VCALENDAR\r\n"
+                b"VERSION:2.0\r\n"
+                b"PRODID:-//Example//Public Events//EN\r\n"
+                b"END:VCALENDAR\r\n"
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--calendar-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 4\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            self.assertIn("empty_calendar", target.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

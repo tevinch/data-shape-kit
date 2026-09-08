@@ -1,6 +1,11 @@
 """Local CSV cleanup and aggregate reporting utilities."""
 
 from .batch_preflight import BatchFinding, BatchPreflightReport, preflight_csv_batch
+from .calendar_preflight import (
+    CalendarFinding,
+    CalendarPreflightReport,
+    preflight_calendar,
+)
 from .clean import CleanReport, CsvShapeError, clean_csv, normalize_headers
 from .compare import ComparisonFinding, CsvComparisonReport, compare_csvs
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
@@ -47,6 +52,8 @@ __all__ = [
     "CleanReport",
     "BatchFinding",
     "BatchPreflightReport",
+    "CalendarFinding",
+    "CalendarPreflightReport",
     "ComparisonFinding",
     "ColumnProfile",
     "ColumnDictionary",
@@ -77,6 +84,7 @@ __all__ = [
     "normalize_headers",
     "profile_csv",
     "preflight_csv_batch",
+    "preflight_calendar",
     "preflight_json_ld",
     "preflight_redirect_map",
     "preflight_robots",

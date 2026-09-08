@@ -821,6 +821,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "podcast-rss-preflight-request.yml",
             "social-card-metadata-preflight-request.yml",
             "json-ld-preflight-request.yml",
+            "public-calendar-file-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename
