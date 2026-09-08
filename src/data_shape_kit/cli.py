@@ -11,6 +11,7 @@ from .clean import CsvShapeError, clean_csv
 from .compare import compare_csvs
 from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
+from .json_ld_preflight import preflight_json_ld
 from .merchant_feed_preflight import preflight_merchant_feed
 from .profile import profile_csv
 from .podcast_feed_preflight import preflight_podcast_feed
@@ -93,6 +94,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for Open Graph metadata in HTML",
     )
+    mode.add_argument(
+        "--json-ld-preflight",
+        action="store_true",
+        help="write value-free local checks for JSON-LD embedded in HTML",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -133,6 +139,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_podcast_feed(args.input, args.output)
         elif args.social_card_preflight:
             report = preflight_social_card(args.input, args.output)
+        elif args.json_ld_preflight:
+            report = preflight_json_ld(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -166,6 +174,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.robots_preflight
         or args.podcast_feed_preflight
         or args.social_card_preflight
+        or args.json_ld_preflight
     ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0

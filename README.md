@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.14.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.15.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.14.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.15.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -181,6 +181,18 @@ The check covers UTF-8 HTML up to 10 MB, the four required Open Graph properties
 The checks follow the current [Open Graph protocol](https://ogp.me/). Live-page markup, HTTP responses, caching, image content, framework output, and platform-specific interpretation remain outside this local snapshot check.
 
 Use the [social card metadata preflight checklist](docs/social-card-metadata-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on JSON-LD embedded in one public HTML snapshot:
+
+```bash
+data-shape-kit --json-ld-preflight page.html preflight.md
+```
+
+The check covers UTF-8 HTML up to 10 MB, JSON-LD script discovery, JSON syntax, top-level and `@graph` shape, duplicate JSON members, basic `@context`, `@type`, and `@id` shape, completely repeated blocks, and repeated identifiers for review. The report contains finding codes, counts, script numbers, and script.object locations only, so it does not include source JSON-LD values. It does not make network requests, access an account, execute scripts, or modify the input. It does not resolve remote contexts, compare visible page content, or validate schema.org vocabulary, Google feature-specific requirements, truthfulness, or policy compliance, and it does not guarantee rich-result eligibility, appearance, ranking, traffic, or sales.
+
+The checks follow the current [W3C JSON-LD 1.1 Recommendation](https://www.w3.org/TR/json-ld11/) and use [Google's structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) and [general guidelines](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) only to define important boundaries. Live rendering and Google-specific validation remain separate steps.
+
+Use the [JSON-LD preflight checklist](docs/json-ld-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
 
 ## Test
 
@@ -381,6 +393,18 @@ Need one already-public page snapshot checked before your team handles a release
 
 [Open a social card metadata preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=social-card-metadata-preflight-request.yml) with the tier, a synthetic or already-public excerpt, meta-tag count, size, deadline, and acceptance criteria. The requester must own or control the public page. Private, staging, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, or unpublished pages are not accepted. No WordPress, social-platform, CDN, hosting, or server access, account login, live URL retrieval, script execution, image download or inspection, deployment, upload, cache refresh, platform validation, payment processing, infrastructure change, or security work is included. The static check does not guarantee a preview, platform behavior, clicks, traffic, or sales. Scope, delivery, authorization, and a private file-transfer method are confirmed before any eligible file is shared.
 
+## Fixed-price JSON-LD preflight
+
+Need JSON-LD in one already-public page snapshot checked before your team handles a release? USD 25 Report covers up to 25 JSON-LD scripts and 2 MB, USD 75 Correct covers up to 100 JSON-LD scripts and 5 MB, and USD 150 Full covers up to 250 JSON-LD scripts and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public HTML snapshot, up to 25 JSON-LD scripts and 2 MB | A value-free report covering supported script, JSON, top-level, context, type, ID, graph, duplicate-member, duplicate-block, and repeated-ID checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 100 JSON-LD scripts and 5 MB | The report, one corrected HTML snapshot with agreed deterministic JSON-LD corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 250 JSON-LD scripts and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a JSON-LD preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=json-ld-preflight-request.yml) with the tier, a synthetic or already-public excerpt, script count, size, deadline, and acceptance criteria. The requester must own or control the public page. Private, staging, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, or unpublished pages are not accepted. No Search Console, WordPress, SEO-tool, hosting, or server access, account login, live URL retrieval, script execution, remote-context retrieval, deployment, upload, validation submission, payment processing, infrastructure change, or security work is included. The static check does not guarantee rich-result eligibility, appearance, ranking, traffic, or sales. Scope, delivery, authorization, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -397,6 +421,7 @@ Need one already-public page snapshot checked before your team handles a release
 - robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only; live markup, HTTP behavior, caches, rendered images, deployment state, and platform previews remain outside scope.
+- JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only; remote contexts, vocabulary, visible-content comparison, dynamic rendering, feature-specific requirements, policy, deployment state, and search appearance remain outside scope.
 
 ## License
 

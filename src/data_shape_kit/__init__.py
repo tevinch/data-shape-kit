@@ -5,6 +5,11 @@ from .clean import CleanReport, CsvShapeError, clean_csv, normalize_headers
 from .compare import ComparisonFinding, CsvComparisonReport, compare_csvs
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
 from .ebay_preflight import EbayPreflightReport, preflight_ebay_csv
+from .json_ld_preflight import (
+    JsonLdFinding,
+    JsonLdPreflightReport,
+    preflight_json_ld,
+)
 from .merchant_feed_preflight import (
     MerchantFeedPreflightReport,
     MerchantFinding,
@@ -50,6 +55,8 @@ __all__ = [
     "DictionaryReport",
     "EbayPreflightReport",
     "Finding",
+    "JsonLdFinding",
+    "JsonLdPreflightReport",
     "MerchantFeedPreflightReport",
     "MerchantFinding",
     "PodcastFeedPreflightReport",
@@ -70,6 +77,7 @@ __all__ = [
     "normalize_headers",
     "profile_csv",
     "preflight_csv_batch",
+    "preflight_json_ld",
     "preflight_redirect_map",
     "preflight_robots",
     "preflight_shopify_csv",

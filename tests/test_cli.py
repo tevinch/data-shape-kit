@@ -364,6 +364,27 @@ class CliTests(unittest.TestCase):
             self.assertEqual(stderr.getvalue(), "")
             self.assertIn("missing_og_image", target.read_text(encoding="utf-8"))
 
+    def test_json_ld_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "page.html"
+            target = directory / "preflight.md"
+            source.write_text("<html><head></head></html>", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--json-ld-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 0\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            self.assertIn(
+                "missing_json_ld_script", target.read_text(encoding="utf-8")
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

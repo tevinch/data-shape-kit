@@ -31,7 +31,7 @@ For a public request, share only a synthetic or publicly known URL sample. A rea
 Install the immutable public version:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.14.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.15.0.tar.gz"
 ```
 
 Run the preflight:
