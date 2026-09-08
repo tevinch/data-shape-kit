@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -68,9 +68,17 @@ data-shape-kit --ebay-preflight listings.csv preflight.md
 
 The preflight preserves leading `#INFO` rows, supports `Add` and `Draft` files, and checks documented file-level rules for `Action`, `Category ID`, `Title`, required listing fields, formats, image URLs, schedules, SKUs, and `Relationship details`. It writes only aggregate issue codes, severity, counts, and source row numbers; it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee upload acceptance.
 
+Compare two local CSV files with one exact, unique key:
+
+```bash
+data-shape-kit --compare-to current.csv --key "SKU" previous.csv comparison.md
+```
+
+The comparison reports schema counts, missing and duplicate keys, rows found on only one side, changed row pairs, and matched unchanged rows. It compares exact common headers and does not modify either input. The report contains counts and old/new source row numbers only, so it does not include source cell values, header names, key values, or file names. Duplicate keys are reported as ambiguous and are not matched.
+
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight and comparison modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
 
 ## Limitations
 
@@ -80,6 +88,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - Shopify preflight is not an exhaustive validator and does not access store state.
 - WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
 - eBay preflight supports listing and draft files with `Add` or `Draft` actions only; it does not access Seller Hub, category state, seller settings, business policies, fees, or upload results.
+- CSV comparison requires the exact key header once in each file. Duplicate keys are not matched, and only exact common headers are compared.
 
 ## License
 

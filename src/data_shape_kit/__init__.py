@@ -1,6 +1,7 @@
 """Local CSV cleanup and aggregate reporting utilities."""
 
 from .clean import CleanReport, CsvShapeError, clean_csv, normalize_headers
+from .compare import ComparisonFinding, CsvComparisonReport, compare_csvs
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
 from .ebay_preflight import EbayPreflightReport, preflight_ebay_csv
 from .profile import ColumnProfile, ProfileReport, profile_csv
@@ -12,9 +13,11 @@ from .woocommerce_preflight import (
 
 __all__ = [
     "CleanReport",
+    "ComparisonFinding",
     "ColumnProfile",
     "ColumnDictionary",
     "CsvShapeError",
+    "CsvComparisonReport",
     "DictionaryReport",
     "EbayPreflightReport",
     "Finding",
@@ -22,6 +25,7 @@ __all__ = [
     "ShopifyPreflightReport",
     "WooCommercePreflightReport",
     "clean_csv",
+    "compare_csvs",
     "normalize_headers",
     "profile_csv",
     "preflight_shopify_csv",

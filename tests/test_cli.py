@@ -159,6 +159,58 @@ class CliTests(unittest.TestCase):
             self.assertIn("invalid_category_id", output)
             self.assertNotIn("Private Listing", output)
 
+    def test_compare_mode_reports_findings_without_values(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            old = directory / "old.csv"
+            new = directory / "new.csv"
+            target = directory / "comparison.md"
+            old.write_text("SKU,Name\nsecret-1,Private old\n", encoding="utf-8")
+            new.write_text("SKU,Name\nsecret-1,Private new\n", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    [
+                        "--compare-to",
+                        str(new),
+                        "--key",
+                        "SKU",
+                        str(old),
+                        str(target),
+                    ]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(
+                stdout.getvalue(), "Old rows: 1\nNew rows: 1\nFindings: 1\n"
+            )
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("changed_record", output)
+            self.assertNotIn("secret-1", output)
+            self.assertNotIn("Private old", output)
+            self.assertNotIn("Private new", output)
+
+    def test_compare_mode_requires_key_and_second_file_together(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "old.csv"
+            target = directory / "comparison.md"
+            source.write_text("ID\n1\n", encoding="utf-8")
+            stderr = StringIO()
+
+            with redirect_stderr(stderr):
+                exit_code = main(["--key", "ID", str(source), str(target)])
+
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(
+                stderr.getvalue(),
+                "error: --compare-to and --key must be used together\n",
+            )
+            self.assertFalse(target.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

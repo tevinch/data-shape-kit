@@ -1,0 +1,115 @@
+name: CSV comparison report request
+description: Request a fixed-price offline comparison of two ordinary catalog or inventory CSV files.
+title: "[CSV comparison report] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers two UTF-8 CSV files up to 500 rows each and 10 MB combined; USD 75 Select covers up to 5,000 rows each and 20 MB combined with up to 10 selected exact common columns; USD 150 Full covers up to 50,000 rows each and 50 MB combined with all exact common columns and an agreed header-pairing plan.
+
+        The report does not modify either input and contains counts plus old/new source row numbers only. This public issue must contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data. Use invented or fully redacted examples only. No account or shared-sheet access, cloud integration, production-system access, import, upload, payment processing, infrastructure change, or security work is included.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 500 rows per file; all exact common columns; report only
+        - USD 75 Select — up to 5,000 rows per file; up to 10 selected exact common columns
+        - USD 150 Full — up to 50,000 rows per file; all exact common columns and agreed header pairing
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Comparison goal
+      description: Describe the ordinary catalog or inventory files and the decision the report should support.
+      placeholder: Compare last week's inventory export with the current export before a manual review.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or fully redacted sample
+      description: Paste 5 to 20 representative invented or fully redacted rows from each shape. Do not attach real files.
+      render: csv
+    validations:
+      required: true
+
+  - type: input
+    id: key
+    attributes:
+      label: Exact key header
+      description: Give the exact, case-sensitive header that appears once in each file and should uniquely identify rows.
+      placeholder: SKU
+    validations:
+      required: true
+
+  - type: textarea
+    id: columns
+    attributes:
+      label: Comparison columns
+      description: State whether all exact common headers or a selected list should be compared. Describe any requested header pairing.
+      placeholder: Compare all exact common headers; no header pairing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State the required counts, row references, command, and any permitted header pairing.
+      placeholder: Report schema counts, missing and duplicate keys, only-old and only-new rows, changed row pairs, and matched unchanged rows without source values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Combined file size
+      options:
+        - No more than 10 MB
+        - More than 10 MB and no more than 20 MB
+        - More than 20 MB and no more than 50 MB
+        - More than 50 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rows
+    attributes:
+      label: Larger file row count
+      options:
+        - Up to 500 rows per file
+        - 501 to 5,000 rows per file
+        - 5,001 to 50,000 rows per file
+        - More than 50,000 rows per file (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue and sample contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the service does not modify either input, duplicate keys are not matched, No account or shared-sheet access is included, and no work begins until scope, delivery, and private file transfer are confirmed.
+          required: true

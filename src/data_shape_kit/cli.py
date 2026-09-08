@@ -7,6 +7,7 @@ import sys
 from collections.abc import Sequence
 
 from .clean import CsvShapeError, clean_csv
+from .compare import compare_csvs
 from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
 from .profile import profile_csv
@@ -45,6 +46,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for an eBay listing or draft CSV",
     )
+    mode.add_argument(
+        "--compare-to",
+        metavar="NEW_CSV",
+        help="compare the source to a second CSV and write a value-free report",
+    )
+    parser.add_argument(
+        "--key",
+        help="exact header used to match rows in comparison mode",
+    )
     parser.add_argument("input", help="Path to the source CSV file")
     parser.add_argument("output", help="Path for the output file")
     return parser
@@ -53,7 +63,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        if args.profile:
+        if (args.compare_to is None) != (args.key is None):
+            raise CsvShapeError("--compare-to and --key must be used together")
+        if args.compare_to is not None:
+            report = compare_csvs(args.input, args.compare_to, args.key, args.output)
+        elif args.profile:
             report = profile_csv(args.input, args.output)
         elif args.dictionary:
             report = write_dictionary(args.input, args.output)
@@ -68,6 +82,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (CsvShapeError, OSError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
+
+    if args.compare_to is not None:
+        print(f"Old rows: {report.old_rows}")
+        print(f"New rows: {report.new_rows}")
+        print(f"Findings: {len(report.findings)}")
+        return 1 if report.findings else 0
 
     print(f"Input rows: {report.input_rows}")
     if args.profile:

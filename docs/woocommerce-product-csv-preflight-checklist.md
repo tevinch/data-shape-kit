@@ -29,7 +29,7 @@ Review repeated non-empty SKU values within the file. A variation row should ide
 Install the fixed public version, then run the report locally:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.6.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.7.0.tar.gz"
 data-shape-kit --woocommerce-preflight products.csv preflight.md
 ```
 

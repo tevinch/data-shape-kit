@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.6.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.7.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.6.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.7.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -89,6 +89,16 @@ The preflight preserves leading `#INFO` rows while locating the exact header row
 The checks follow eBay's current [Seller Hub Reports help](https://www.ebay.com/help/selling/selling-tools/seller-hub-reports?id=4096) and [inventory onboarding guide](https://pages.ebay.com/sh/reports/help/create-listings-bulk/). Category-specific item requirements, seller settings, business policies, fees, listing eligibility, and the upload results remain outside the local file check.
 
 Use the [eBay listing file preflight checklist](docs/ebay-listing-file-preflight-checklist.md) for a backup-first review sequence, finding explanations, and official references.
+
+Compare two local CSV files with one exact, unique key:
+
+```bash
+data-shape-kit --compare-to current.csv --key "SKU" previous.csv comparison.md
+```
+
+The comparison reports added, removed, or reordered columns; missing and duplicate keys; rows found on only one side; changed row pairs; and the number of matched unchanged rows. It compares all exact common headers and does not modify either input. The Markdown report contains counts and old/new source row numbers only, so it does not include source cell values, header names, key values, or file names. Duplicate keys are reported as ambiguous and are not matched.
+
+Use the [CSV comparison report checklist](docs/csv-comparison-report-checklist.md) to confirm key stability, file safety, and the fixed report scope.
 
 ## Test
 
@@ -193,6 +203,18 @@ Need a Seller Hub Reports `Add` or `Draft` CSV reviewed before you handle an upl
 
 [Open an eBay listing file preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=ebay-listing-file-preflight-request.yml) with the tier, template source, intended action, eBay site, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review for supported `Add` and `Draft` files. Every tier covers only the documented checks and does not guarantee upload acceptance because category rules, seller settings, business policies, fees, listing eligibility, image availability, and later platform behavior remain outside the file. No seller account login, Seller Hub access, API credentials, production upload, actual listing action, image hosting, website retrieval, payment processing, infrastructure change, restricted-item review, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price CSV comparison report
+
+Need to validate two ordinary catalog or inventory exports without manually aligning rows? Choose one fixed scope:
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | Two UTF-8 CSV files, up to 500 rows per file and 10 MB combined | One exact-key, all-common-column comparison report with counts and source row numbers only. No file changes. |
+| **USD 75 Select** | Two UTF-8 CSV files, up to 5,000 rows per file and 20 MB combined | One exact-key comparison across up to 10 selected common columns, a reusable command, and one in-scope report revision. |
+| **USD 150 Full** | Two UTF-8 CSV files, up to 50,000 rows per file and 50 MB combined | One exact-key, all-common-column report, a documented header-pairing plan for agreed header differences, a reusable command, and one in-scope revision. |
+
+[Open a CSV comparison report request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-comparison-report-request.yml) with the tier, exact key, columns, a small synthetic or fully redacted sample, a deadline, and exact acceptance criteria. The standard report identifies schema changes, missing or duplicate keys, only-old or only-new rows, and changed row pairs without publishing source values. It does not modify either input. No account or shared-sheet access, cloud integration, production-system access, import, upload, payment processing, infrastructure change, or security work is included. No regulated, confidential, personal, financial, medical, education, identity, credential, or production data is accepted. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -201,6 +223,7 @@ Need a Seller Hub Reports `Add` or `Draft` CSV reviewed before you handle an upl
 - Shopify preflight is not an exhaustive validator and does not access store state.
 - WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
 - eBay preflight supports listing and draft files with `Add` or `Draft` actions only; it does not access Seller Hub, category state, seller settings, business policies, fees, or upload results.
+- CSV comparison requires the exact key header once in each file. Duplicate key values are reported but not matched, and only exact common headers are compared unless a separate scope is agreed.
 
 ## License
 
