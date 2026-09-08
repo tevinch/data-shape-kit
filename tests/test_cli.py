@@ -258,6 +258,31 @@ class CliTests(unittest.TestCase):
             self.assertNotIn("one.csv", output)
             self.assertNotIn("two.csv", output)
 
+    def test_merchant_feed_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "products.tsv"
+            target = directory / "preflight.md"
+            source.write_text(
+                "id\ttitle\tdescription\tlink\timage_link\tavailability\tprice\n"
+                "private-id\tPrivate\tPrivate\thttps://shop.example/item\thttps://shop.example/item.jpg\tsoon\t10 USD\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--merchant-feed-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 1\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("invalid_availability", output)
+            self.assertNotIn("private-id", output)
+
 
 if __name__ == "__main__":
     unittest.main()

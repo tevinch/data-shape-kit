@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -92,6 +92,14 @@ data-shape-kit --batch-preflight exports/ batch-report.md
 
 The batch preflight reports file and row totals, schema groups, missing or invalid headers, UTF-8 failures, schema mismatches, and malformed rows. It uses stable file numbers: the report does not include file names, header names, and does not include source cell values. It does not read subdirectories and does not combine or modify files.
 
+Run supported static checks on a tab-delimited Merchant product feed:
+
+```bash
+data-shape-kit --merchant-feed-preflight products.tsv preflight.md
+```
+
+The file must be UTF-8 tab-delimited text. The check covers exact core attributes, missing values, duplicate IDs, malformed rows, supported availability and condition values, positive numeric price plus three-letter currency format, HTTP(S) URL shape, and the preorder date dependency. The report contains finding codes, counts, and source row numbers only, so it does not include source cell values. It does not make network requests, access an account, or modify the input, and it does not guarantee approval, eligibility, visibility, traffic, or sales.
+
 ## Data privacy
 
 Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight and comparison modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
@@ -107,6 +115,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - CSV comparison requires the exact key header once in each file. Duplicate keys are not matched, and only exact common headers are compared.
 - Redirect-map preflight is a static file check for absolute HTTP(S) URLs and permanent 301/308 mappings. It does not access a site or verify deployed behavior.
 - Batch preflight reads immediate CSV files only and reports stable file numbers instead of names.
+- Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only.
 
 ## License
 

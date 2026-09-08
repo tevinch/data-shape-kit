@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.9.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.10.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.9.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.10.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -121,6 +121,18 @@ data-shape-kit --batch-preflight exports/ batch-report.md
 The batch preflight reports the file and row totals, schema-group count, missing or invalid headers, UTF-8 failures, schema mismatches, and malformed rows. It uses stable file numbers and row locations only: the report does not include file names, header names, or source cell values. It does not read subdirectories and does not combine or modify files. An exit status of 1 means findings were reported.
 
 Use the [CSV batch preflight checklist](docs/csv-batch-preflight-checklist.md) for preparation, finding explanations, and fixed-scope service options.
+
+Run supported static checks on a tab-delimited Merchant product feed:
+
+```bash
+data-shape-kit --merchant-feed-preflight products.tsv preflight.md
+```
+
+The file must be UTF-8 tab-delimited text. The check recognizes the exact core attributes `id`, `title` or `structured_title`, `description` or `structured_description`, `link`, `image_link`, `availability`, and `price`. It reports missing fields, duplicate IDs, malformed rows, supported availability and condition values, positive numeric price plus three-letter currency format, HTTP(S) URL shape, and the preorder date dependency. The report contains finding codes, counts, and source row numbers only, so it does not include source cell values. It does not make network requests, access an account, or modify the input, and it does not guarantee approval, eligibility, visibility, traffic, or sales.
+
+The checks follow Google's current [product data specification](https://support.google.com/merchants/answer/7052112?hl=en), [tab-delimited file guidance](https://support.google.com/merchants/answer/14989239?hl=en), and [2026 specification update](https://support.google.com/merchants/answer/16989427?hl=en).
+
+Use the [Merchant product feed preflight checklist](docs/merchant-product-feed-preflight-checklist.md) for exact scope, current sources, and preparation steps.
 
 ## Test
 
@@ -261,6 +273,18 @@ Need a folder of ordinary CSV exports checked before a safe, deterministic merge
 
 [Open a CSV batch preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=csv-batch-preflight-request.yml) with the tier, expected headers and file order, a synthetic or fully redacted sample, total size and rows, deadline, and exact acceptance criteria. The public issue and sample must contain no regulated, confidential, personal, financial, medical, education, identity, credential, or production data. No combine begins until the preflight passes and the agreed deterministic order is confirmed. No email, cloud-drive, SAP, or production-system access, account login, API integration, upload, payment processing, infrastructure change, or security work is included. Scope, delivery, and a private file-transfer method are confirmed before any real files are shared.
 
+## Fixed-price Merchant product feed preflight
+
+Need a tab-delimited product file checked before your team handles submission? USD 25 Report covers up to 500 rows, USD 75 Correct covers up to 5,000 rows, and USD 150 Full covers up to 50,000 rows.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One UTF-8 tab-delimited product file, up to 500 rows and 10 MB | A value-free report covering the supported core attributes, row shape, IDs, URLs, availability, condition, and price format. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 5,000 rows and 20 MB | The report, one corrected file with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 50,000 rows and 50 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a Merchant product feed preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=merchant-product-feed-preflight-request.yml) with the tier, file format, exact headers, a synthetic or fully redacted sample, total size and rows, deadline, and acceptance criteria. Real work accepts publicly available product catalog data only; no regulated, confidential, personal, private pricing, cost, margin, financial, medical, education, identity, credential, unpublished, or production data. No Merchant Center, Google Ads, store, or production-system access, account login, API integration, website retrieval, submission, upload, policy appeal, payment processing, infrastructure change, or security work is included. The static check does not guarantee approval, eligibility, visibility, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -272,6 +296,7 @@ Need a folder of ordinary CSV exports checked before a safe, deterministic merge
 - CSV comparison requires the exact key header once in each file. Duplicate key values are reported but not matched, and only exact common headers are compared unless a separate scope is agreed.
 - Redirect-map preflight is a static file check for absolute HTTP(S) URLs and permanent 301/308 mappings. It does not access a site or verify deployed behavior.
 - Batch preflight reads immediate CSV files only, reports stable file numbers instead of names, and never combines or modifies files.
+- Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only; conditional requirements, account state, policies, live pages, and submission outcomes remain outside scope.
 
 ## License
 

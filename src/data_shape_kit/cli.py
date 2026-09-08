@@ -11,6 +11,7 @@ from .clean import CsvShapeError, clean_csv
 from .compare import compare_csvs
 from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
+from .merchant_feed_preflight import preflight_merchant_feed
 from .profile import profile_csv
 from .redirect_preflight import preflight_redirect_map
 from .shopify_preflight import preflight_shopify_csv
@@ -63,6 +64,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free structural checks for a directory of CSV files",
     )
+    mode.add_argument(
+        "--merchant-feed-preflight",
+        action="store_true",
+        help="write value-free local checks for a tab-delimited product feed",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -93,6 +99,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_redirect_map(args.input, args.output)
         elif args.batch_preflight:
             report = preflight_csv_batch(args.input, args.output)
+        elif args.merchant_feed_preflight:
+            report = preflight_merchant_feed(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -121,6 +129,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.woocommerce_preflight
         or args.ebay_preflight
         or args.redirect_preflight
+        or args.merchant_feed_preflight
     ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0

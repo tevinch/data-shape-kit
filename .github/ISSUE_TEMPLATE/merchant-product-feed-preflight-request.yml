@@ -1,0 +1,117 @@
+name: Merchant product feed preflight request
+description: Request a fixed-price offline review of one ordinary tab-delimited product file.
+title: "[Merchant product feed preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 500 rows and 10 MB with no file changes; USD 75 Correct covers up to 5,000 rows and 20 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 50,000 rows and 50 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        Use an invented or fully redacted public sample. Real work accepts publicly available product catalog data only. Do not share private pricing, costs, margins, customer or order data, or any regulated, confidential, personal, financial, medical, education, identity, credential, unpublished, or production data. No Merchant Center, Google Ads, store, or production-system access, account login, API integration, website retrieval, submission, upload, policy appeal, payment processing, infrastructure change, or security work is included. The static check does not guarantee approval, eligibility, visibility, traffic, or sales.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 500 rows; supported static report only
+        - USD 75 Correct — up to 5,000 rows; agreed corrections, change log, and second report
+        - USD 150 Full — up to 50,000 rows; Correct delivery, findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: File review goal
+      description: Describe the ordinary public product catalog and the decision the report should support.
+      placeholder: Review a tab-delimited public catalog export before our authorized merchant handles submission.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or fully redacted sample
+      description: Paste invented headers and 5 to 20 invented rows. Do not attach a real file.
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: File format
+      options:
+        - UTF-8 tab-delimited .tsv
+        - UTF-8 tab-delimited .txt
+        - CSV, XML, spreadsheet, or another format (outside the standard fixed scope)
+    validations:
+      required: true
+
+  - type: textarea
+    id: headers
+    attributes:
+      label: Exact technical headers
+      description: List the exact, case-sensitive attribute names in order. Do not paste product values.
+      placeholder: id, title, description, link, image_link, availability, price
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State required checks, permitted deterministic corrections, and expected outputs.
+      placeholder: Report core header and value gaps, duplicate IDs, row-width errors, URL shape, availability, condition, and price format without product values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: File size
+      options:
+        - No more than 10 MB
+        - More than 10 MB and no more than 20 MB
+        - More than 20 MB and no more than 50 MB
+        - More than 50 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rows
+    attributes:
+      label: Product row count
+      options:
+        - Up to 500 rows
+        - 501 to 5,000 rows
+        - 5,001 to 50,000 rows
+        - More than 50,000 rows (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue uses invented or fully redacted data and that real work contains publicly available product catalog data only, with none of the excluded data classes above.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the report does not guarantee approval, eligibility, visibility, traffic, or sales and that No Merchant Center, Google Ads, store, or production-system access or submission is included.
+          required: true
