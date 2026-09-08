@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.16.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.17.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.15.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.17.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -169,6 +169,18 @@ The check covers UTF-8 XML up to 10 MB, an RSS 2.0 root with one channel, requir
 The checks follow Apple's current [podcast RSS feed requirements](https://podcasters.apple.com/support/823-podcast-requirements) and the [RSS 2.0 specification](https://www.rssboard.org/rss-specification). Live-host behavior, artwork dimensions, media formats, and content review remain outside this local file check.
 
 Use the [Podcast RSS preflight checklist](docs/podcast-rss-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on one already-public RSS or Atom file:
+
+```bash
+data-shape-kit --feed-preflight feed.xml preflight.md
+```
+
+The check covers one UTF-8 XML snapshot up to 10 MB in RSS 2.0 and Atom 1.0. RSS checks cover the root, version, channel fields, item title-or-description, identifiers, public HTTP(S) links, supported dates, and duplicate GUIDs or links. Atom checks cover the required namespace, feed and entry IDs, titles, `updated` values, author inheritance, content or alternate links, and duplicate IDs or links. DTD and entity declarations are refused, as are files with contact-email fields or authenticated, tokenized, or private access markers. The report contains the feed type, finding codes, counts, and stable entry numbers only, so it does not include source feed values. It does not make network requests, access an account or CMS, import, subscribe, or modify the input, and it does not guarantee HTTP behavior, MIME handling, or reader acceptance, publication, availability, traffic, or sales.
+
+The checks follow the [RSS 2.0 specification](https://www.rssboard.org/rss-specification) and [RFC 4287](https://www.rfc-editor.org/rfc/rfc4287.html). The [W3C Feed Validation Service documentation](https://validator.w3.org/feed/docs/) is a complementary reference; different validators and readers can apply additional rules.
+
+Use the [RSS and Atom feed preflight checklist](docs/rss-atom-feed-preflight-checklist.md) for exact scope, finding explanations, safety boundaries, and preparation steps.
 
 Run supported static checks on Open Graph metadata in one public HTML snapshot:
 
@@ -393,6 +405,18 @@ Need one already-public podcast feed checked before your team handles a platform
 
 [Open a podcast RSS preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=podcast-rss-preflight-request.yml) with the tier, a synthetic or already-public excerpt, episode count, size, deadline, and acceptance criteria. The requester must own or control the public feed. Private, paid-subscriber, password-protected, tokenized, personal, regulated, confidential, credential-bearing, or unpublished feeds are not accepted. No Apple Podcasts, Spotify, WordPress, hosting, or server access, account login, live URL retrieval, media download, artwork inspection, deployment, upload, submission, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee platform acceptance, listing, availability, playback, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any eligible file is shared.
 
+## Fixed-price RSS and Atom feed preflight
+
+Need one already-public web feed checked before your team handles publication or reader testing? USD 25 Report covers up to 250 entries and 2 MB, USD 75 Correct covers up to 2,500 entries and 5 MB, and USD 150 Full covers up to 10,000 entries and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public RSS 2.0 or Atom 1.0 snapshot, up to 250 entries and 2 MB | A value-free report covering supported XML, root, channel or feed, entry, author, link, date, and duplicate checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 2,500 entries and 5 MB | The report, one corrected XML file with agreed deterministic corrections using requester-supplied replacement values, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 10,000 entries and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open an RSS and Atom feed preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=rss-atom-feed-preflight-request.yml) with the tier, format, a synthetic or already-public excerpt, entry count, size, deadline, and acceptance criteria. The requester must own or control the public feed. Contact-email fields and private, authenticated, tokenized, paid-subscriber, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, unpublished, or production feeds are refused. No feed reader, CMS, hosting, or server access, account login, live URL retrieval, import, subscription, publication, deployment, upload, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee HTTP behavior, MIME handling, or reader acceptance, publication, availability, traffic, or sales. Scope, delivery, authorization, supplied correction values, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Fixed-price social card metadata preflight
 
 Need one already-public page snapshot checked before your team handles a release? USD 25 Report covers up to 100 meta tags and 2 MB, USD 75 Correct covers up to 250 meta tags and 5 MB, and USD 150 Full covers up to 500 meta tags and 10 MB.
@@ -444,6 +468,7 @@ Need one public event calendar file checked before your team handles distributio
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only; extensions, live responses, deployment state, Search Console, crawling, and indexing remain outside scope.
 - robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
+- RSS and Atom feed preflight covers one already-public UTF-8 XML snapshot and supported RSS 2.0 or Atom 1.0 rules only; HTTP and MIME behavior, extension semantics, reader state, publication, import, subscriptions, and private or authenticated feed data remain outside scope.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only; live markup, HTTP behavior, caches, rendered images, deployment state, and platform previews remain outside scope.
 - JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only; remote contexts, vocabulary, visible-content comparison, dynamic rendering, feature-specific requirements, policy, deployment state, and search appearance remain outside scope.
 - Public event calendar file preflight covers one UTF-8 iCalendar snapshot containing public events only and supported static checks only; complete recurrence and time-zone semantics, MIME and HTTP behavior, calendar-account state, import, subscriptions, invitations, and private calendar data remain outside scope.

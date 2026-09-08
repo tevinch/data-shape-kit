@@ -802,6 +802,63 @@ class RepositorySurfaceTests(unittest.TestCase):
         )
         self.assertIn("does not guarantee rich-result eligibility", form)
 
+    def test_readme_exposes_bounded_rss_atom_feed_preflight_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price RSS and Atom feed preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 250 entries and 2 MB", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 2,500 entries and 5 MB", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 10,000 entries and 10 MB", readme)
+        self.assertIn(
+            "issues/new?template=rss-atom-feed-preflight-request.yml", readme
+        )
+        self.assertIn(
+            "No feed reader, CMS, hosting, or server access", readme
+        )
+        self.assertIn(
+            "does not guarantee HTTP behavior, MIME handling, or reader acceptance",
+            readme,
+        )
+
+    def test_rss_atom_feed_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root
+            / ".github"
+            / "ISSUE_TEMPLATE"
+            / "rss-atom-feed-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "RSS and Atom issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "format",
+            "entries",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("public RSS 2.0 or Atom 1.0", form)
+        self.assertIn(
+            "No feed reader, CMS, hosting, or server access", form
+        )
+        self.assertIn(
+            "does not guarantee HTTP behavior, MIME handling, or reader acceptance",
+            form,
+        )
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -822,6 +879,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "social-card-metadata-preflight-request.yml",
             "json-ld-preflight-request.yml",
             "public-calendar-file-preflight-request.yml",
+            "rss-atom-feed-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

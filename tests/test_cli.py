@@ -345,6 +345,30 @@ class CliTests(unittest.TestCase):
             self.assertEqual(stderr.getvalue(), "")
             self.assertIn("invalid_root", target.read_text(encoding="utf-8"))
 
+    def test_feed_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "feed.xml"
+            target = directory / "preflight.md"
+            source.write_text("<feed/>", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--feed-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(
+                stdout.getvalue(),
+                "Feed type: unknown\nEntries: 0\nFindings: 1\n",
+            )
+            self.assertEqual(stderr.getvalue(), "")
+            self.assertIn(
+                "invalid_atom_namespace", target.read_text(encoding="utf-8")
+            )
+
     def test_social_card_preflight_exit_status_reflects_findings(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp)

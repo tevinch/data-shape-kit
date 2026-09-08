@@ -12,6 +12,7 @@ from .clean import CsvShapeError, clean_csv
 from .compare import compare_csvs
 from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
+from .feed_preflight import preflight_feed
 from .json_ld_preflight import preflight_json_ld
 from .merchant_feed_preflight import preflight_merchant_feed
 from .profile import profile_csv
@@ -91,6 +92,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="write value-free local checks for one public podcast RSS file",
     )
     mode.add_argument(
+        "--feed-preflight",
+        action="store_true",
+        help="write value-free local checks for one public RSS or Atom file",
+    )
+    mode.add_argument(
         "--social-card-preflight",
         action="store_true",
         help="write value-free local checks for Open Graph metadata in HTML",
@@ -143,6 +149,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_robots(args.input, args.output)
         elif args.podcast_feed_preflight:
             report = preflight_podcast_feed(args.input, args.output)
+        elif args.feed_preflight:
+            report = preflight_feed(args.input, args.output)
         elif args.social_card_preflight:
             report = preflight_social_card(args.input, args.output)
         elif args.json_ld_preflight:
@@ -164,6 +172,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.batch_preflight:
         print(f"Files: {report.file_count}")
         print(f"Input rows: {report.input_rows}")
+        print(f"Findings: {len(report.findings)}")
+        return 1 if report.findings else 0
+
+    if args.feed_preflight:
+        print(f"Feed type: {report.feed_type}")
+        print(f"Entries: {report.input_rows}")
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
 
