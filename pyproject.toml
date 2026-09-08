@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-shape-kit"
-version = "0.13.0"
+version = "0.14.0"
 description = "Local file cleanup and preflight reports"
 readme = { file = "PYPI_README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "Tevinch" }]
 dependencies = []
-keywords = ["csv", "tsv", "podcast-rss", "robots-txt", "xml-sitemap", "product-feed", "batch-csv", "data-cleaning", "data-comparison", "data-dictionary", "redirect-map", "site-migration", "shopify-csv", "woocommerce-csv", "ebay-csv", "deduplication", "command-line"]
+keywords = ["csv", "tsv", "open-graph", "social-card", "podcast-rss", "robots-txt", "xml-sitemap", "product-feed", "batch-csv", "data-cleaning", "data-comparison", "data-dictionary", "redirect-map", "site-migration", "shopify-csv", "woocommerce-csv", "ebay-csv", "deduplication", "command-line"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",

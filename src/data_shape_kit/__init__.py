@@ -23,6 +23,11 @@ from .redirect_preflight import (
 )
 from .robots_preflight import RobotsFinding, RobotsPreflightReport, preflight_robots
 from .shopify_preflight import Finding, ShopifyPreflightReport, preflight_shopify_csv
+from .social_card_preflight import (
+    SocialCardFinding,
+    SocialCardPreflightReport,
+    preflight_social_card,
+)
 from .sitemap_preflight import (
     SitemapFinding,
     SitemapPreflightReport,
@@ -55,6 +60,8 @@ __all__ = [
     "RobotsFinding",
     "RobotsPreflightReport",
     "ShopifyPreflightReport",
+    "SocialCardFinding",
+    "SocialCardPreflightReport",
     "SitemapFinding",
     "SitemapPreflightReport",
     "WooCommercePreflightReport",
@@ -66,6 +73,7 @@ __all__ = [
     "preflight_redirect_map",
     "preflight_robots",
     "preflight_shopify_csv",
+    "preflight_social_card",
     "preflight_sitemap",
     "preflight_ebay_csv",
     "preflight_merchant_feed",

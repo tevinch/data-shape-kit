@@ -699,6 +699,58 @@ class RepositorySurfaceTests(unittest.TestCase):
         )
         self.assertIn("does not guarantee platform acceptance", form)
 
+    def test_readme_exposes_bounded_social_card_preflight_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price social card metadata preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 100 meta tags and 2 MB", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 250 meta tags and 5 MB", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 500 meta tags and 10 MB", readme)
+        self.assertIn(
+            "issues/new?template=social-card-metadata-preflight-request.yml",
+            readme,
+        )
+        self.assertIn(
+            "No WordPress, social-platform, CDN, hosting, or server access",
+            readme,
+        )
+
+    def test_social_card_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root
+            / ".github"
+            / "ISSUE_TEMPLATE"
+            / "social-card-metadata-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "social card issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "metadata",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("public HTML snapshot", form)
+        self.assertIn(
+            "No WordPress, social-platform, CDN, hosting, or server access",
+            form,
+        )
+        self.assertIn("does not guarantee a preview", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -716,6 +768,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "xml-sitemap-preflight-request.yml",
             "robots-txt-preflight-request.yml",
             "podcast-rss-preflight-request.yml",
+            "social-card-metadata-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

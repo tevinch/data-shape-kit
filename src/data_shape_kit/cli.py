@@ -17,6 +17,7 @@ from .podcast_feed_preflight import preflight_podcast_feed
 from .redirect_preflight import preflight_redirect_map
 from .robots_preflight import preflight_robots
 from .shopify_preflight import preflight_shopify_csv
+from .social_card_preflight import preflight_social_card
 from .sitemap_preflight import preflight_sitemap
 from .woocommerce_preflight import preflight_woocommerce_csv
 
@@ -87,6 +88,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for one public podcast RSS file",
     )
+    mode.add_argument(
+        "--social-card-preflight",
+        action="store_true",
+        help="write value-free local checks for Open Graph metadata in HTML",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -125,6 +131,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_robots(args.input, args.output)
         elif args.podcast_feed_preflight:
             report = preflight_podcast_feed(args.input, args.output)
+        elif args.social_card_preflight:
+            report = preflight_social_card(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -157,6 +165,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.sitemap_preflight
         or args.robots_preflight
         or args.podcast_feed_preflight
+        or args.social_card_preflight
     ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0

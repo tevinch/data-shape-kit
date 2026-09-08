@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -124,6 +124,14 @@ data-shape-kit --podcast-feed-preflight feed.xml preflight.md
 
 The check covers UTF-8 XML up to 10 MB, RSS 2.0 channel structure, show artwork, episode titles, enclosure components and uniqueness, GUID presence and uniqueness, and supported date syntax. DTD and entity declarations are refused. The report contains finding codes, counts, and episode numbers only, so it does not include source feed values. It does not make network requests, access an account, download media, or modify the input, and it does not guarantee platform acceptance, listing, availability, playback, traffic, or sales.
 
+Run supported static checks on Open Graph metadata in one public HTML snapshot:
+
+```bash
+data-shape-kit --social-card-preflight page.html preflight.md
+```
+
+The check covers UTF-8 HTML up to 10 MB, required Open Graph properties, the recommended description and image alternative, public HTTP(S) URL shape, exact duplicate images, supported numeric image dimensions, and placement inside `head`. The report contains finding codes, counts, and meta-tag numbers only, so it does not include source metadata values. It does not make network requests, access an account, execute scripts, download images, or modify the input, and it does not guarantee a preview, platform behavior, clicks, traffic, or sales.
+
 ## Data privacy
 
 Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight and comparison modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell or URL values. Normalized field names, source row numbers, and entry numbers are metadata and should still be treated as potentially sensitive.
@@ -143,6 +151,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only.
 - robots.txt preflight covers one UTF-8 text file and supported static rules only.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only.
+- Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only.
 
 ## License
 

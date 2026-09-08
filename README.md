@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.13.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.14.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.13.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.14.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -169,6 +169,18 @@ The check covers UTF-8 XML up to 10 MB, an RSS 2.0 root with one channel, requir
 The checks follow Apple's current [podcast RSS feed requirements](https://podcasters.apple.com/support/823-podcast-requirements) and the [RSS 2.0 specification](https://www.rssboard.org/rss-specification). Live-host behavior, artwork dimensions, media formats, and content review remain outside this local file check.
 
 Use the [Podcast RSS preflight checklist](docs/podcast-rss-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on Open Graph metadata in one public HTML snapshot:
+
+```bash
+data-shape-kit --social-card-preflight page.html preflight.md
+```
+
+The check covers UTF-8 HTML up to 10 MB, the four required Open Graph properties, the recommended description and image alternative, public HTTP(S) URL shape, exact duplicate images, supported numeric image dimensions, and metadata placement inside `head`. The report contains finding codes, counts, and meta-tag numbers only, so it does not include source metadata values. It does not make network requests, access an account, execute scripts, download images, or modify the input, and it does not guarantee a preview, platform behavior, clicks, traffic, or sales.
+
+The checks follow the current [Open Graph protocol](https://ogp.me/). Live-page markup, HTTP responses, caching, image content, framework output, and platform-specific interpretation remain outside this local snapshot check.
+
+Use the [social card metadata preflight checklist](docs/social-card-metadata-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
 
 ## Test
 
@@ -357,6 +369,18 @@ Need one already-public podcast feed checked before your team handles a platform
 
 [Open a podcast RSS preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=podcast-rss-preflight-request.yml) with the tier, a synthetic or already-public excerpt, episode count, size, deadline, and acceptance criteria. The requester must own or control the public feed. Private, paid-subscriber, password-protected, tokenized, personal, regulated, confidential, credential-bearing, or unpublished feeds are not accepted. No Apple Podcasts, Spotify, WordPress, hosting, or server access, account login, live URL retrieval, media download, artwork inspection, deployment, upload, submission, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee platform acceptance, listing, availability, playback, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any eligible file is shared.
 
+## Fixed-price social card metadata preflight
+
+Need one already-public page snapshot checked before your team handles a release? USD 25 Report covers up to 100 meta tags and 2 MB, USD 75 Correct covers up to 250 meta tags and 5 MB, and USD 150 Full covers up to 500 meta tags and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public HTML snapshot, up to 100 meta tags and 2 MB | A value-free report covering supported required properties, values, URLs, duplicate images, image alternatives and dimensions, and placement. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 250 meta tags and 5 MB | The report, one corrected HTML snapshot with agreed deterministic metadata corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 500 meta tags and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a social card metadata preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=social-card-metadata-preflight-request.yml) with the tier, a synthetic or already-public excerpt, meta-tag count, size, deadline, and acceptance criteria. The requester must own or control the public page. Private, staging, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, or unpublished pages are not accepted. No WordPress, social-platform, CDN, hosting, or server access, account login, live URL retrieval, script execution, image download or inspection, deployment, upload, cache refresh, platform validation, payment processing, infrastructure change, or security work is included. The static check does not guarantee a preview, platform behavior, clicks, traffic, or sales. Scope, delivery, authorization, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -372,6 +396,7 @@ Need one already-public podcast feed checked before your team handles a platform
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only; extensions, live responses, deployment state, Search Console, crawling, and indexing remain outside scope.
 - robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
+- Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only; live markup, HTTP behavior, caches, rendered images, deployment state, and platform previews remain outside scope.
 
 ## License
 
