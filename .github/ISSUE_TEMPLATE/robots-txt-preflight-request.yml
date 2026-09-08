@@ -1,0 +1,105 @@
+name: robots.txt preflight request
+description: Request a fixed-price offline review of one public-site rules file.
+title: "[robots.txt preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 100 lines and 50 KiB with no file changes; USD 75 Correct covers up to 1,000 lines and 250 KiB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers one eligible file up to 500 KiB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        Use an invented excerpt or content that is already public. Real work accepts a public website robots.txt file only. Do not share private, staging, regulated, confidential, personal, identity, credential, unpublished, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, upload, submission, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 100 lines and 50 KiB; supported static report only
+        - USD 75 Correct — up to 1,000 lines and 250 KiB; agreed corrections, change log, and second report
+        - USD 150 Full — one eligible file up to 500 KiB; Correct delivery, findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: File review goal
+      description: Describe the public site and the decision the report should support.
+      placeholder: Review one public robots.txt file before our authorized site owner handles deployment.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or public excerpt
+      description: Paste an invented excerpt or already public content. Do not attach a real file.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: groups
+    attributes:
+      label: Crawler groups
+      description: List the intended group names without private deployment details.
+      placeholder: Wildcard group and one named crawler group
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lines
+    attributes:
+      label: Line count
+      options:
+        - Up to 100 lines
+        - 101 to 1,000 lines
+        - More than 1,000 lines
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State required checks, permitted deterministic corrections, and expected outputs.
+      placeholder: Report supported syntax, group, path, sitemap, duplicate, conflict, and wildcard crawl-block findings without source directive values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: File size
+      options:
+        - No more than 50 KiB
+        - More than 50 KiB and no more than 250 KiB
+        - More than 250 KiB and no more than 500 KiB
+        - More than 500 KiB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-11, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue uses invented or already public content and that real work is a public website robots.txt file with none of the excluded data classes above.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the report does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales and that no account access, live URL retrieval, deployment, upload, or submission is included.
+          required: true

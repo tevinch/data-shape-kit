@@ -16,6 +16,7 @@ from .redirect_preflight import (
     RedirectPreflightReport,
     preflight_redirect_map,
 )
+from .robots_preflight import RobotsFinding, RobotsPreflightReport, preflight_robots
 from .shopify_preflight import Finding, ShopifyPreflightReport, preflight_shopify_csv
 from .sitemap_preflight import (
     SitemapFinding,
@@ -44,6 +45,8 @@ __all__ = [
     "ProfileReport",
     "RedirectFinding",
     "RedirectPreflightReport",
+    "RobotsFinding",
+    "RobotsPreflightReport",
     "ShopifyPreflightReport",
     "SitemapFinding",
     "SitemapPreflightReport",
@@ -54,6 +57,7 @@ __all__ = [
     "profile_csv",
     "preflight_csv_batch",
     "preflight_redirect_map",
+    "preflight_robots",
     "preflight_shopify_csv",
     "preflight_sitemap",
     "preflight_ebay_csv",

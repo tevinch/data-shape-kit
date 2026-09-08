@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.11.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.12.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.11.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.12.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -145,6 +145,18 @@ The check covers UTF-8 XML up to 50 MB, the `urlset` or `sitemapindex` root and 
 The checks follow Google Search Central's current [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=en) and the [Sitemaps protocol](https://www.sitemaps.org/protocol.html). Google ignores `priority` and `changefreq`; this command checks their protocol syntax only when they are present.
 
 Use the [XML sitemap preflight checklist](docs/xml-sitemap-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on one robots.txt file:
+
+```bash
+data-shape-kit --robots-preflight robots.txt preflight.md
+```
+
+The check covers UTF-8 text up to 500 KiB, supported `user-agent`, `allow`, `disallow`, and `sitemap` fields, group association, rule-path shape, absolute HTTP(S) sitemap locations, duplicate or conflicting rules, and a full-site crawl block for the wildcard group. The report contains finding codes, counts, and line numbers only, so it does not include source directive values. It does not make network requests, access an account, or modify the input, and it does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales.
+
+The checks follow Google's current [robots.txt specification](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec), [creation guidance](https://developers.google.com/crawling/docs/robots-txt/create-robots-txt), and [RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html). Fields outside the supported set are reported for review rather than interpreted.
+
+Use the [robots.txt preflight checklist](docs/robots-txt-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
 
 ## Test
 
@@ -309,6 +321,18 @@ Need one public-site XML sitemap checked before your team handles deployment or 
 
 [Open an XML sitemap preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=xml-sitemap-preflight-request.yml) with the tier, root kind, a small synthetic or public sample, entry count, size, deadline, and acceptance criteria. Real work accepts a public website sitemap only; no private, staging, regulated, confidential, personal, identity, credential, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, submission, upload, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price robots.txt preflight
+
+Need one public-site rules file checked before your team handles deployment? USD 25 Report covers up to 100 lines and 50 KiB, USD 75 Correct covers up to 1,000 lines and 250 KiB, and USD 150 Full covers one eligible file up to 500 KiB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public website robots.txt file, up to 100 lines and 50 KiB | A value-free report covering supported syntax, groups, paths, sitemap locations, duplicates, conflicts, and wildcard crawl-block checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 1,000 lines and 250 KiB | The report, one corrected text file with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 500 KiB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a robots.txt preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=robots-txt-preflight-request.yml) with the tier, crawler groups, a small synthetic or already public excerpt, line count, size, deadline, and acceptance criteria. Real work accepts a public website robots.txt file only; no private, staging, regulated, confidential, personal, identity, credential, unpublished, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, upload, submission, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -322,6 +346,7 @@ Need one public-site XML sitemap checked before your team handles deployment or 
 - Batch preflight reads immediate CSV files only, reports stable file numbers instead of names, and never combines or modifies files.
 - Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only; conditional requirements, account state, policies, live pages, and submission outcomes remain outside scope.
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only; extensions, live responses, deployment state, Search Console, crawling, and indexing remain outside scope.
+- robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
 
 ## License
 

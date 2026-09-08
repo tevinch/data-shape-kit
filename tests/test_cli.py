@@ -307,6 +307,25 @@ class CliTests(unittest.TestCase):
             self.assertIn("invalid_loc", output)
             self.assertNotIn("private-relative-path", output)
 
+    def test_robots_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "robots.txt"
+            target = directory / "preflight.md"
+            source.write_text("Allow: /private-before-group\n", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--robots-preflight", str(source), str(target)])
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 1\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("rule_without_user_agent", output)
+            self.assertNotIn("private-before-group", output)
+
 
 if __name__ == "__main__":
     unittest.main()
