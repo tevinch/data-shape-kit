@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, OPDS 2.0 catalog checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.17.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.18.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.17.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.18.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -181,6 +181,18 @@ The check covers one UTF-8 XML snapshot up to 10 MB in RSS 2.0 and Atom 1.0. RSS
 The checks follow the [RSS 2.0 specification](https://www.rssboard.org/rss-specification) and [RFC 4287](https://www.rfc-editor.org/rfc/rfc4287.html). The [W3C Feed Validation Service documentation](https://validator.w3.org/feed/docs/) is a complementary reference; different validators and readers can apply additional rules.
 
 Use the [RSS and Atom feed preflight checklist](docs/rss-atom-feed-preflight-checklist.md) for exact scope, finding explanations, safety boundaries, and preparation steps.
+
+Run supported static checks on one already-public, authentication-free OPDS 2.0 catalog snapshot:
+
+```bash
+data-shape-kit --opds-preflight catalog.json preflight.md
+```
+
+The check covers UTF-8 JSON up to 10 MB, strict JSON syntax and duplicate members, feed title and self link, navigation titles, group and facet shape, publication metadata, public download or preview links, and supported publication image types. Paid, borrowed, subscribed, authenticated, DRM-protected, tokenized, local, private, restricted, or contact-email-bearing catalogs are refused. The report contains only catalog type, collection and publication counts, finding codes, severity, counts, and stable locations, so it does not include source catalog values. It does not make network requests, authenticate, download publications, access a reader or catalog server, or modify the input, and it does not guarantee HTTP behavior, MIME handling, or reader acceptance.
+
+The checks follow the current [OPDS 2.0 specification](https://specs.opds.io/opds-2.0) and its official feed and publication JSON Schemas. The local report is intentionally narrower than the complete specification and any reader-specific behavior.
+
+Use the [OPDS 2.0 catalog preflight checklist](docs/opds-2-catalog-preflight-checklist.md) for exact scope, finding explanations, safety boundaries, and preparation steps.
 
 Run supported static checks on Open Graph metadata in one public HTML snapshot:
 
@@ -417,6 +429,18 @@ Need one already-public web feed checked before your team handles publication or
 
 [Open an RSS and Atom feed preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=rss-atom-feed-preflight-request.yml) with the tier, format, a synthetic or already-public excerpt, entry count, size, deadline, and acceptance criteria. The requester must own or control the public feed. Contact-email fields and private, authenticated, tokenized, paid-subscriber, password-protected, personalized, regulated, confidential, personal, identity, credential-bearing, unpublished, or production feeds are refused. No feed reader, CMS, hosting, or server access, account login, live URL retrieval, import, subscription, publication, deployment, upload, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee HTTP behavior, MIME handling, or reader acceptance, publication, availability, traffic, or sales. Scope, delivery, authorization, supplied correction values, and a private file-transfer method are confirmed before any eligible file is shared.
 
+## Fixed-price OPDS 2.0 catalog preflight
+
+Need one already-public catalog snapshot checked before your team handles reader testing? USD 25 Report covers up to 250 publications and 2 MB, USD 75 Correct covers up to 2,500 publications and 5 MB, and USD 150 Full covers up to 10,000 publications and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public, authentication-free OPDS 2.0 JSON snapshot, up to 250 publications and 2 MB | A value-free report covering supported JSON, feed, link, collection, publication, acquisition, and image checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 2,500 publications and 5 MB | The report, one corrected JSON file using requester-supplied replacement values, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 10,000 publications and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open an OPDS 2.0 catalog preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=opds-2-catalog-preflight-request.yml) with the tier, a synthetic or already-public excerpt, acquisition mode, publication count, size, deadline, and acceptance criteria. The requester must own or control the public catalog. Contact-email fields and paid, borrowed, subscribed, authenticated, DRM-protected, tokenized, personalized, private, restricted, confidential, personal, identity, credential-bearing, unpublished, or production catalogs are refused. No reader, catalog server, hosting, or account access, login, live URL retrieval, publication download, import, subscription, publication, deployment, upload, payment processing, infrastructure change, or security work is included. The static check does not guarantee HTTP behavior, MIME handling, or reader acceptance, availability, traffic, or sales. Scope, delivery, authorization, supplied correction values, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Fixed-price social card metadata preflight
 
 Need one already-public page snapshot checked before your team handles a release? USD 25 Report covers up to 100 meta tags and 2 MB, USD 75 Correct covers up to 250 meta tags and 5 MB, and USD 150 Full covers up to 500 meta tags and 10 MB.
@@ -469,6 +493,7 @@ Need one public event calendar file checked before your team handles distributio
 - robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
 - RSS and Atom feed preflight covers one already-public UTF-8 XML snapshot and supported RSS 2.0 or Atom 1.0 rules only; HTTP and MIME behavior, extension semantics, reader state, publication, import, subscriptions, and private or authenticated feed data remain outside scope.
+- OPDS 2.0 catalog preflight covers one already-public, authentication-free UTF-8 JSON snapshot and supported static rules only; complete schema conformance, live HTTP and MIME behavior, reader state, publication downloads, transactions, subscriptions, and private or authenticated catalog data remain outside scope.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only; live markup, HTTP behavior, caches, rendered images, deployment state, and platform previews remain outside scope.
 - JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only; remote contexts, vocabulary, visible-content comparison, dynamic rendering, feature-specific requirements, policy, deployment state, and search appearance remain outside scope.
 - Public event calendar file preflight covers one UTF-8 iCalendar snapshot containing public events only and supported static checks only; complete recurrence and time-zone semantics, MIME and HTTP behavior, calendar-account state, import, subscriptions, invitations, and private calendar data remain outside scope.

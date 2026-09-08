@@ -369,6 +369,28 @@ class CliTests(unittest.TestCase):
                 "invalid_atom_namespace", target.read_text(encoding="utf-8")
             )
 
+    def test_opds_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "catalog.json"
+            target = directory / "preflight.md"
+            source.write_text("[]", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--opds-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(
+                stdout.getvalue(),
+                "Catalog type: OPDS 2.0\nPublications: 0\nFindings: 1\n",
+            )
+            self.assertEqual(stderr.getvalue(), "")
+            self.assertIn("invalid_root", target.read_text(encoding="utf-8"))
+
     def test_social_card_preflight_exit_status_reflects_findings(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp)

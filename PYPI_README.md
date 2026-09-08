@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, OPDS 2.0 catalog checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -132,6 +132,14 @@ data-shape-kit --feed-preflight feed.xml preflight.md
 
 The check covers one UTF-8 XML snapshot up to 10 MB in RSS 2.0 and Atom 1.0. RSS checks cover the root, version, channel fields, item title-or-description, identifiers, public HTTP(S) links, supported dates, and duplicate GUIDs or links. Atom checks cover the required namespace, feed and entry IDs, titles, `updated` values, author inheritance, content or alternate links, and duplicate IDs or links. DTD and entity declarations are refused, as are files with contact-email fields or authenticated, tokenized, or private access markers. The report contains the feed type, finding codes, counts, and stable entry numbers only, so it does not include source feed values. It does not make network requests, access an account or CMS, import, subscribe, or modify the input, and it does not guarantee HTTP behavior, MIME handling, or reader acceptance, publication, availability, traffic, or sales.
 
+Run supported static checks on one already-public, authentication-free OPDS 2.0 catalog snapshot:
+
+```bash
+data-shape-kit --opds-preflight catalog.json preflight.md
+```
+
+The check covers UTF-8 JSON up to 10 MB, strict syntax and duplicate members, feed title and self link, collections, publication metadata, public download or preview links, and supported image types. Catalogs that are paid, borrowed, subscribed, authenticated, DRM-protected, tokenized, local, private, restricted, or contact-email-bearing are refused. The report contains only aggregate counts, finding codes, severity, and stable locations, so it does not include source catalog values. It does not make network requests, access a reader or catalog server, authenticate, download publications, or modify the input, and it does not guarantee HTTP behavior, MIME handling, or reader acceptance.
+
 Run supported static checks on Open Graph metadata in one public HTML snapshot:
 
 ```bash
@@ -176,6 +184,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - robots.txt preflight covers one UTF-8 text file and supported static rules only.
 - Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only.
 - RSS and Atom feed preflight covers one already-public UTF-8 XML snapshot and supported RSS 2.0 or Atom 1.0 rules only.
+- OPDS 2.0 catalog preflight covers one already-public, authentication-free UTF-8 JSON snapshot and supported static rules only.
 - Social card metadata preflight covers one already-public UTF-8 HTML snapshot and supported static Open Graph rules only.
 - JSON-LD preflight covers one already-public UTF-8 HTML snapshot and supported syntax and shape checks only.
 - Public event calendar file preflight covers one UTF-8 iCalendar snapshot containing public events only and supported static checks only.

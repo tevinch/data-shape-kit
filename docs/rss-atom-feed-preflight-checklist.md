@@ -29,7 +29,7 @@ Specifications, validators, and reader behavior can change. Recheck the primary 
 Install the immutable public version:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.17.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.18.0.tar.gz"
 ```
 
 Run the preflight:

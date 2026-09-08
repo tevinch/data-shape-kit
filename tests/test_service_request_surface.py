@@ -859,6 +859,59 @@ class RepositorySurfaceTests(unittest.TestCase):
             form,
         )
 
+    def test_readme_exposes_bounded_opds_preflight_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price OPDS 2.0 catalog preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 250 publications and 2 MB", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 2,500 publications and 5 MB", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 10,000 publications and 10 MB", readme)
+        self.assertIn(
+            "issues/new?template=opds-2-catalog-preflight-request.yml", readme
+        )
+        self.assertIn("No reader, catalog server, hosting, or account access", readme)
+        self.assertIn(
+            "does not guarantee HTTP behavior, MIME handling, or reader acceptance",
+            readme,
+        )
+
+    def test_opds_preflight_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root
+            / ".github"
+            / "ISSUE_TEMPLATE"
+            / "opds-2-catalog-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "OPDS issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "publications",
+            "acquisition",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("public, authentication-free OPDS 2.0", form)
+        self.assertIn("No reader, catalog server, hosting, or account access", form)
+        self.assertIn(
+            "does not guarantee HTTP behavior, MIME handling, or reader acceptance",
+            form,
+        )
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -880,6 +933,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "json-ld-preflight-request.yml",
             "public-calendar-file-preflight-request.yml",
             "rss-atom-feed-preflight-request.yml",
+            "opds-2-catalog-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

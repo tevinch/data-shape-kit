@@ -15,13 +15,14 @@ from .ebay_preflight import preflight_ebay_csv
 from .feed_preflight import preflight_feed
 from .json_ld_preflight import preflight_json_ld
 from .merchant_feed_preflight import preflight_merchant_feed
-from .profile import profile_csv
+from .opds_preflight import preflight_opds
 from .podcast_feed_preflight import preflight_podcast_feed
+from .profile import profile_csv
 from .redirect_preflight import preflight_redirect_map
 from .robots_preflight import preflight_robots
 from .shopify_preflight import preflight_shopify_csv
-from .social_card_preflight import preflight_social_card
 from .sitemap_preflight import preflight_sitemap
+from .social_card_preflight import preflight_social_card
 from .woocommerce_preflight import preflight_woocommerce_csv
 
 
@@ -111,6 +112,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for one public-event iCalendar file",
     )
+    mode.add_argument(
+        "--opds-preflight",
+        action="store_true",
+        help="write value-free local checks for one public OPDS 2.0 catalog",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -157,6 +163,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_json_ld(args.input, args.output)
         elif args.calendar_preflight:
             report = preflight_calendar(args.input, args.output)
+        elif args.opds_preflight:
+            report = preflight_opds(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -178,6 +186,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.feed_preflight:
         print(f"Feed type: {report.feed_type}")
         print(f"Entries: {report.input_rows}")
+        print(f"Findings: {len(report.findings)}")
+        return 1 if report.findings else 0
+
+    if args.opds_preflight:
+        print(f"Catalog type: {report.catalog_type}")
+        print(f"Publications: {report.input_rows}")
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
 
