@@ -17,6 +17,11 @@ from .redirect_preflight import (
     preflight_redirect_map,
 )
 from .shopify_preflight import Finding, ShopifyPreflightReport, preflight_shopify_csv
+from .sitemap_preflight import (
+    SitemapFinding,
+    SitemapPreflightReport,
+    preflight_sitemap,
+)
 from .woocommerce_preflight import (
     WooCommercePreflightReport,
     preflight_woocommerce_csv,
@@ -40,6 +45,8 @@ __all__ = [
     "RedirectFinding",
     "RedirectPreflightReport",
     "ShopifyPreflightReport",
+    "SitemapFinding",
+    "SitemapPreflightReport",
     "WooCommercePreflightReport",
     "clean_csv",
     "compare_csvs",
@@ -48,6 +55,7 @@ __all__ = [
     "preflight_csv_batch",
     "preflight_redirect_map",
     "preflight_shopify_csv",
+    "preflight_sitemap",
     "preflight_ebay_csv",
     "preflight_merchant_feed",
     "preflight_woocommerce_csv",

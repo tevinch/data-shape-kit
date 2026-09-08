@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.10.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.11.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.10.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.11.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -134,6 +134,18 @@ The checks follow Google's current [product data specification](https://support.
 
 Use the [Merchant product feed preflight checklist](docs/merchant-product-feed-preflight-checklist.md) for exact scope, current sources, and preparation steps.
 
+Run supported static checks on one XML sitemap or sitemap index:
+
+```bash
+data-shape-kit --sitemap-preflight sitemap.xml preflight.md
+```
+
+The check covers UTF-8 XML up to 50 MB, the `urlset` or `sitemapindex` root and standard namespace, no more than 50,000 entries, one `loc` per entry, absolute HTTP(S) URL shape, duplicate locations, multiple origins, and supported `lastmod`, `changefreq`, and `priority` syntax. DTD and entity declarations are refused. The report contains finding codes, counts, and entry numbers only, so it does not include source URL values. It does not make network requests, access an account, or modify the input, and it does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales.
+
+The checks follow Google Search Central's current [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=en) and the [Sitemaps protocol](https://www.sitemaps.org/protocol.html). Google ignores `priority` and `changefreq`; this command checks their protocol syntax only when they are present.
+
+Use the [XML sitemap preflight checklist](docs/xml-sitemap-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
 ## Test
 
 ```bash
@@ -142,7 +154,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 ## Data privacy
 
-Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell values. Normalized field names and source row numbers are metadata and should still be treated as potentially sensitive.
+Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell or URL values. Normalized field names, source row numbers, and entry numbers are metadata and should still be treated as potentially sensitive.
 
 ## Fixed-price CSV cleanup
 
@@ -285,6 +297,18 @@ Need a tab-delimited product file checked before your team handles submission? U
 
 [Open a Merchant product feed preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=merchant-product-feed-preflight-request.yml) with the tier, file format, exact headers, a synthetic or fully redacted sample, total size and rows, deadline, and acceptance criteria. Real work accepts publicly available product catalog data only; no regulated, confidential, personal, private pricing, cost, margin, financial, medical, education, identity, credential, unpublished, or production data. No Merchant Center, Google Ads, store, or production-system access, account login, API integration, website retrieval, submission, upload, policy appeal, payment processing, infrastructure change, or security work is included. The static check does not guarantee approval, eligibility, visibility, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price XML sitemap preflight
+
+Need one public-site XML sitemap checked before your team handles deployment or submission? USD 25 Report covers up to 5,000 entries, USD 75 Correct covers up to 25,000 entries, and USD 150 Full covers up to 50,000 entries.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public-site XML sitemap or index, up to 5,000 entries and 10 MB | A value-free report covering the supported XML, root, namespace, entry, location, duplicate, origin, and optional-field checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 25,000 entries and 25 MB | The report, one corrected XML file with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 50,000 entries and 50 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open an XML sitemap preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=xml-sitemap-preflight-request.yml) with the tier, root kind, a small synthetic or public sample, entry count, size, deadline, and acceptance criteria. Real work accepts a public website sitemap only; no private, staging, regulated, confidential, personal, identity, credential, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, submission, upload, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -297,6 +321,7 @@ Need a tab-delimited product file checked before your team handles submission? U
 - Redirect-map preflight is a static file check for absolute HTTP(S) URLs and permanent 301/308 mappings. It does not access a site or verify deployed behavior.
 - Batch preflight reads immediate CSV files only, reports stable file numbers instead of names, and never combines or modifies files.
 - Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only; conditional requirements, account state, policies, live pages, and submission outcomes remain outside scope.
+- XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only; extensions, live responses, deployment state, Search Console, crawling, and indexing remain outside scope.
 
 ## License
 

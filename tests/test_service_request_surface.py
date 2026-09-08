@@ -550,6 +550,55 @@ class RepositorySurfaceTests(unittest.TestCase):
         )
         self.assertIn("does not guarantee approval", form)
 
+    def test_readme_exposes_bounded_sitemap_preflight_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price XML sitemap preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 5,000 entries", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 25,000 entries", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 50,000 entries", readme)
+        self.assertIn(
+            "issues/new?template=xml-sitemap-preflight-request.yml", readme
+        )
+        self.assertIn(
+            "No site, server, CMS, hosting, analytics, or Search Console access",
+            readme,
+        )
+
+    def test_sitemap_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root / ".github" / "ISSUE_TEMPLATE" / "xml-sitemap-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "XML sitemap issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "kind",
+            "entries",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("public website sitemap", form)
+        self.assertIn(
+            "No site, server, CMS, hosting, analytics, or Search Console access",
+            form,
+        )
+        self.assertIn("does not guarantee crawling or indexing", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -564,6 +613,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "redirect-map-preflight-request.yml",
             "csv-batch-preflight-request.yml",
             "merchant-product-feed-preflight-request.yml",
+            "xml-sitemap-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

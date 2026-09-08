@@ -283,6 +283,30 @@ class CliTests(unittest.TestCase):
             self.assertIn("invalid_availability", output)
             self.assertNotIn("private-id", output)
 
+    def test_sitemap_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "sitemap.xml"
+            target = directory / "preflight.md"
+            source.write_text(
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+                "<url><loc>private-relative-path</loc></url>"
+                "</urlset>",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--sitemap-preflight", str(source), str(target)])
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 1\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("invalid_loc", output)
+            self.assertNotIn("private-relative-path", output)
+
 
 if __name__ == "__main__":
     unittest.main()

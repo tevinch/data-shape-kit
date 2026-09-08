@@ -1,4 +1,4 @@
-"""Command-line interface for local CSV cleanup and aggregate reports."""
+"""Command-line interface for local cleanup and aggregate reports."""
 
 from __future__ import annotations
 
@@ -15,13 +15,14 @@ from .merchant_feed_preflight import preflight_merchant_feed
 from .profile import profile_csv
 from .redirect_preflight import preflight_redirect_map
 from .shopify_preflight import preflight_shopify_csv
+from .sitemap_preflight import preflight_sitemap
 from .woocommerce_preflight import preflight_woocommerce_csv
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="data-shape-kit",
-        description="Clean a CSV or write a value-free aggregate report locally.",
+        description="Clean tabular data or write a value-free report locally.",
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument(
@@ -69,11 +70,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for a tab-delimited product feed",
     )
+    mode.add_argument(
+        "--sitemap-preflight",
+        action="store_true",
+        help="write value-free local checks for one XML sitemap",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
     )
-    parser.add_argument("input", help="Path to the source CSV file")
+    parser.add_argument("input", help="Path to the source file")
     parser.add_argument("output", help="Path for the output file")
     return parser
 
@@ -101,6 +107,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_csv_batch(args.input, args.output)
         elif args.merchant_feed_preflight:
             report = preflight_merchant_feed(args.input, args.output)
+        elif args.sitemap_preflight:
+            report = preflight_sitemap(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -130,6 +138,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.ebay_preflight
         or args.redirect_preflight
         or args.merchant_feed_preflight
+        or args.sitemap_preflight
     ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0

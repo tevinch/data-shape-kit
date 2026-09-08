@@ -29,7 +29,7 @@ A parent `Add` row precedes its `Variation` child rows. The parent's `Relationsh
 Install the fixed public version, then run the report locally:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.10.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.11.0.tar.gz"
 data-shape-kit --ebay-preflight listings.csv preflight.md
 ```
 

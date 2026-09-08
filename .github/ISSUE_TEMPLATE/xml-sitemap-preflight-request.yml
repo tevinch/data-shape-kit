@@ -1,0 +1,108 @@
+name: XML sitemap preflight request
+description: Request a fixed-price offline review of one public-site XML sitemap.
+title: "[XML sitemap preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 5,000 entries and 10 MB with no file changes; USD 75 Correct covers up to 25,000 entries and 25 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 50,000 entries and 50 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        Use an invented excerpt or URLs that are already public. Real work accepts a public website sitemap only. Do not share private, staging, regulated, confidential, personal, identity, credential, unpublished, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, submission, upload, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 5,000 entries and 10 MB; supported static report only
+        - USD 75 Correct — up to 25,000 entries and 25 MB; agreed corrections, change log, and second report
+        - USD 150 Full — up to 50,000 entries and 50 MB; Correct delivery, findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: File review goal
+      description: Describe the public site and the decision the report should support.
+      placeholder: Review one public XML sitemap before our authorized site owner handles deployment or submission.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or public excerpt
+      description: Paste an invented excerpt or 2 to 10 entries whose URLs are already public. Do not attach a real file.
+      render: xml
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Root kind
+      options:
+        - urlset with url entries
+        - sitemapindex with sitemap entries
+        - Unknown or another format (outside the standard fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: entries
+    attributes:
+      label: Entry count
+      options:
+        - Up to 5,000 entries
+        - 5,001 to 25,000 entries
+        - 25,001 to 50,000 entries
+        - More than 50,000 entries (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State required checks, permitted deterministic corrections, and expected outputs.
+      placeholder: Report root, namespace, entry, location, duplicate, origin, and optional-field findings without source URL values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Uncompressed file size
+      options:
+        - No more than 10 MB
+        - More than 10 MB and no more than 25 MB
+        - More than 25 MB and no more than 50 MB
+        - More than 50 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-11, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the issue uses invented or already public URLs and that real work is a public website sitemap with none of the excluded data classes above.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the report does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales and that no account access, live URL retrieval, deployment, or submission is included.
+          required: true
