@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+Data Shape Kit is a small command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -116,6 +116,14 @@ data-shape-kit --robots-preflight robots.txt preflight.md
 
 The check covers UTF-8 text up to 500 KiB, supported fields, group association, rule-path shape, absolute HTTP(S) sitemap locations, duplicate or conflicting rules, and a full-site crawl block for the wildcard group. The report contains finding codes, counts, and line numbers only, so it does not include source directive values. It does not make network requests, access an account, or modify the input, and it does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales.
 
+Run supported static checks on one public podcast RSS file:
+
+```bash
+data-shape-kit --podcast-feed-preflight feed.xml preflight.md
+```
+
+The check covers UTF-8 XML up to 10 MB, RSS 2.0 channel structure, show artwork, episode titles, enclosure components and uniqueness, GUID presence and uniqueness, and supported date syntax. DTD and entity declarations are refused. The report contains finding codes, counts, and episode numbers only, so it does not include source feed values. It does not make network requests, access an account, download media, or modify the input, and it does not guarantee platform acceptance, listing, availability, playback, traffic, or sales.
+
 ## Data privacy
 
 Processing is local. The tool has no runtime dependencies, makes no network requests, and does not retain a copy of the input. Profile and dictionary modes hold distinct values only in process memory while counting. Preflight and comparison modes hold the values needed for supported within-file checks only in process memory. These reports do not include source cell or URL values. Normalized field names, source row numbers, and entry numbers are metadata and should still be treated as potentially sensitive.
@@ -134,6 +142,7 @@ Processing is local. The tool has no runtime dependencies, makes no network requ
 - Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only.
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only.
 - robots.txt preflight covers one UTF-8 text file and supported static rules only.
+- Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only.
 
 ## License
 

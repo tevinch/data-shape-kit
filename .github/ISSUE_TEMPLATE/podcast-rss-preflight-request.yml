@@ -1,0 +1,97 @@
+name: Podcast RSS preflight request
+description: Request a fixed-price offline review of one already-public podcast feed snapshot.
+title: "[Podcast RSS preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers up to 100 episodes and 2 MB with no file changes; USD 75 Correct covers up to 500 episodes and 5 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 2,000 episodes and 10 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        Use an invented excerpt or content that is already public. Real work accepts a public podcast RSS snapshot only, supplied by its owner or controller. Do not share private, paid-subscriber, password-protected, tokenized, personal, regulated, confidential, credential-bearing, or unpublished feeds. No Apple Podcasts, Spotify, WordPress, hosting, or server access, account login, live URL retrieval, media download, artwork inspection, deployment, upload, submission, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee platform acceptance, listing, availability, playback, traffic, or sales.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 100 episodes and 2 MB; supported static report only
+        - USD 75 Correct — up to 500 episodes and 5 MB; agreed corrections, change log, and second report
+        - USD 150 Full — up to 2,000 episodes and 10 MB; Correct delivery, findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feed review goal
+      description: Describe the public show and the decision the report should support.
+      placeholder: Review one public podcast RSS snapshot before our authorized show owner handles submission.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or public excerpt
+      description: Paste an invented excerpt or already-public content for up to two episodes. Do not attach a real file.
+      render: xml
+    validations:
+      required: true
+
+  - type: dropdown
+    id: episodes
+    attributes:
+      label: Episode count
+      options:
+        - Up to 100 episodes
+        - 101 to 500 episodes
+        - 501 to 2,000 episodes
+        - More than 2,000 episodes (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State required checks, permitted deterministic corrections, and expected outputs.
+      placeholder: Report supported XML, channel, artwork, episode, enclosure, GUID, and date findings without source feed values.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Uncompressed file size
+      options:
+        - No more than 2 MB
+        - More than 2 MB and no more than 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-11, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public content safety and authorization
+      options:
+        - label: I confirm that the issue uses invented or already-public content, that I own or control the public feed, and that neither the issue nor the eligible file contains any excluded feed type or data class above.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that the report does not guarantee platform acceptance, listing, availability, playback, traffic, or sales and that no account access, live retrieval, media download, deployment, upload, or submission is included.
+          required: true

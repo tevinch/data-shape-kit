@@ -648,6 +648,57 @@ class RepositorySurfaceTests(unittest.TestCase):
         )
         self.assertIn("does not guarantee crawling or indexing", form)
 
+    def test_readme_exposes_bounded_podcast_feed_preflight_service(self) -> None:
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("## Fixed-price podcast RSS preflight", readme)
+        self.assertIn("USD 25 Report", readme)
+        self.assertIn("up to 100 episodes and 2 MB", readme)
+        self.assertIn("USD 75 Correct", readme)
+        self.assertIn("up to 500 episodes and 5 MB", readme)
+        self.assertIn("USD 150 Full", readme)
+        self.assertIn("up to 2,000 episodes and 10 MB", readme)
+        self.assertIn(
+            "issues/new?template=podcast-rss-preflight-request.yml", readme
+        )
+        self.assertIn(
+            "No Apple Podcasts, Spotify, WordPress, hosting, or server access",
+            readme,
+        )
+
+    def test_podcast_feed_form_collects_bounded_safe_inputs(self) -> None:
+        form_path = (
+            self.root
+            / ".github"
+            / "ISSUE_TEMPLATE"
+            / "podcast-rss-preflight-request.yml"
+        )
+        self.assertTrue(form_path.is_file(), "Podcast RSS issue form is missing")
+        form = form_path.read_text(encoding="utf-8")
+
+        for field_id in (
+            "tier",
+            "summary",
+            "sample",
+            "episodes",
+            "acceptance",
+            "size",
+            "deadline",
+            "data-safety",
+            "scope",
+        ):
+            with self.subTest(field_id=field_id):
+                self.assertIn(f"id: {field_id}", form)
+        self.assertIn("USD 25 Report", form)
+        self.assertIn("USD 75 Correct", form)
+        self.assertIn("USD 150 Full", form)
+        self.assertIn("public podcast RSS", form)
+        self.assertIn(
+            "No Apple Podcasts, Spotify, WordPress, hosting, or server access",
+            form,
+        )
+        self.assertIn("does not guarantee platform acceptance", form)
+
     def test_issue_forms_are_valid_yaml(self) -> None:
         for filename in (
             "csv-cleanup-request.yml",
@@ -664,6 +715,7 @@ class RepositorySurfaceTests(unittest.TestCase):
             "merchant-product-feed-preflight-request.yml",
             "xml-sitemap-preflight-request.yml",
             "robots-txt-preflight-request.yml",
+            "podcast-rss-preflight-request.yml",
         ):
             with self.subTest(filename=filename):
                 path = self.root / ".github" / "ISSUE_TEMPLATE" / filename

@@ -326,6 +326,25 @@ class CliTests(unittest.TestCase):
             self.assertIn("rule_without_user_agent", output)
             self.assertNotIn("private-before-group", output)
 
+    def test_podcast_feed_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "feed.xml"
+            target = directory / "preflight.md"
+            source.write_text("<feed/>", encoding="utf-8")
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(
+                    ["--podcast-feed-preflight", str(source), str(target)]
+                )
+
+            self.assertEqual(exit_code, 1)
+            self.assertEqual(stdout.getvalue(), "Input rows: 0\nFindings: 1\n")
+            self.assertEqual(stderr.getvalue(), "")
+            self.assertIn("invalid_root", target.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
+A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
 
@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.12.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.13.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.12.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.13.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -157,6 +157,18 @@ The check covers UTF-8 text up to 500 KiB, supported `user-agent`, `allow`, `dis
 The checks follow Google's current [robots.txt specification](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec), [creation guidance](https://developers.google.com/crawling/docs/robots-txt/create-robots-txt), and [RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html). Fields outside the supported set are reported for review rather than interpreted.
 
 Use the [robots.txt preflight checklist](docs/robots-txt-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
+
+Run supported static checks on one public podcast RSS file:
+
+```bash
+data-shape-kit --podcast-feed-preflight feed.xml preflight.md
+```
+
+The check covers UTF-8 XML up to 10 MB, an RSS 2.0 root with one channel, required channel title/link/description, show artwork, at least one episode, episode titles, one enclosure per episode, enclosure URL/length/type components, unique enclosure URLs, GUID presence and uniqueness, and RFC 2822 date syntax when a publication date is present. DTD and entity declarations are refused. The report contains finding codes, counts, and episode numbers only, so it does not include source feed values. It does not make network requests, access an account, download media, or modify the input, and it does not guarantee platform acceptance, listing, availability, playback, traffic, or sales.
+
+The checks follow Apple's current [podcast RSS feed requirements](https://podcasters.apple.com/support/823-podcast-requirements) and the [RSS 2.0 specification](https://www.rssboard.org/rss-specification). Live-host behavior, artwork dimensions, media formats, and content review remain outside this local file check.
+
+Use the [Podcast RSS preflight checklist](docs/podcast-rss-preflight-checklist.md) for exact scope, finding explanations, and preparation steps.
 
 ## Test
 
@@ -333,6 +345,18 @@ Need one public-site rules file checked before your team handles deployment? USD
 
 [Open a robots.txt preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=robots-txt-preflight-request.yml) with the tier, crawler groups, a small synthetic or already public excerpt, line count, size, deadline, and acceptance criteria. Real work accepts a public website robots.txt file only; no private, staging, regulated, confidential, personal, identity, credential, unpublished, or production data. No site, server, CMS, hosting, analytics, or Search Console access, account login, live URL retrieval, deployment, upload, submission, indexing request, infrastructure change, payment processing, or security work is included. The static check does not guarantee crawling or indexing, search visibility, ranking, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price podcast RSS preflight
+
+Need one already-public podcast feed checked before your team handles a platform submission? USD 25 Report covers up to 100 episodes and 2 MB, USD 75 Correct covers up to 500 episodes and 5 MB, and USD 150 Full covers up to 2,000 episodes and 10 MB.
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One public podcast RSS snapshot, up to 100 episodes and 2 MB | A value-free report covering supported XML, RSS, channel, artwork, episode, enclosure, GUID, and date checks. No file changes. |
+| **USD 75 Correct** | One eligible file, up to 500 episodes and 5 MB | The report, one corrected XML file with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One eligible file, up to 2,000 episodes and 10 MB | The Correct delivery, a supported-findings review, and one in-scope revision. |
+
+[Open a podcast RSS preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=podcast-rss-preflight-request.yml) with the tier, a synthetic or already-public excerpt, episode count, size, deadline, and acceptance criteria. The requester must own or control the public feed. Private, paid-subscriber, password-protected, tokenized, personal, regulated, confidential, credential-bearing, or unpublished feeds are not accepted. No Apple Podcasts, Spotify, WordPress, hosting, or server access, account login, live URL retrieval, media download, artwork inspection, deployment, upload, submission, content review, payment processing, infrastructure change, or security work is included. The static check does not guarantee platform acceptance, listing, availability, playback, traffic, or sales. Scope, delivery, and a private file-transfer method are confirmed before any eligible file is shared.
+
 ## Limitations
 
 - Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
@@ -347,6 +371,7 @@ Need one public-site rules file checked before your team handles deployment? USD
 - Merchant feed preflight covers one UTF-8 tab-delimited file and supported static rules only; conditional requirements, account state, policies, live pages, and submission outcomes remain outside scope.
 - XML sitemap preflight covers one uncompressed UTF-8 XML file and supported static rules only; extensions, live responses, deployment state, Search Console, crawling, and indexing remain outside scope.
 - robots.txt preflight covers one UTF-8 text file and the documented static rules only; live retrieval, server state, Search Console, crawling, and indexing remain outside scope.
+- Podcast RSS preflight covers one already-public UTF-8 XML snapshot and supported static rules only; hosting behavior, media availability, artwork properties, platform review, and submission outcomes remain outside scope.
 
 ## License
 

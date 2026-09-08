@@ -11,6 +11,11 @@ from .merchant_feed_preflight import (
     preflight_merchant_feed,
 )
 from .profile import ColumnProfile, ProfileReport, profile_csv
+from .podcast_feed_preflight import (
+    PodcastFeedPreflightReport,
+    PodcastFinding,
+    preflight_podcast_feed,
+)
 from .redirect_preflight import (
     RedirectFinding,
     RedirectPreflightReport,
@@ -42,6 +47,8 @@ __all__ = [
     "Finding",
     "MerchantFeedPreflightReport",
     "MerchantFinding",
+    "PodcastFeedPreflightReport",
+    "PodcastFinding",
     "ProfileReport",
     "RedirectFinding",
     "RedirectPreflightReport",
@@ -62,6 +69,7 @@ __all__ = [
     "preflight_sitemap",
     "preflight_ebay_csv",
     "preflight_merchant_feed",
+    "preflight_podcast_feed",
     "preflight_woocommerce_csv",
     "write_dictionary",
 ]

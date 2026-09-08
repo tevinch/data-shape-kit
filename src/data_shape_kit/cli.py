@@ -13,6 +13,7 @@ from .dictionary import write_dictionary
 from .ebay_preflight import preflight_ebay_csv
 from .merchant_feed_preflight import preflight_merchant_feed
 from .profile import profile_csv
+from .podcast_feed_preflight import preflight_podcast_feed
 from .redirect_preflight import preflight_redirect_map
 from .robots_preflight import preflight_robots
 from .shopify_preflight import preflight_shopify_csv
@@ -81,6 +82,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for one robots.txt file",
     )
+    mode.add_argument(
+        "--podcast-feed-preflight",
+        action="store_true",
+        help="write value-free local checks for one public podcast RSS file",
+    )
     parser.add_argument(
         "--key",
         help="exact header used to match rows in comparison mode",
@@ -117,6 +123,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_sitemap(args.input, args.output)
         elif args.robots_preflight:
             report = preflight_robots(args.input, args.output)
+        elif args.podcast_feed_preflight:
+            report = preflight_podcast_feed(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -148,6 +156,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.merchant_feed_preflight
         or args.sitemap_preflight
         or args.robots_preflight
+        or args.podcast_feed_preflight
     ):
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
