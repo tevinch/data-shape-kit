@@ -1,0 +1,130 @@
+name: eBay listing file preflight request
+description: Request a fixed-price offline review of one Seller Hub Reports listing or draft CSV.
+title: "[eBay listing file preflight] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Choose one fixed scope: USD 25 Report covers one UTF-8 eBay listing or draft CSV up to 500 rows and 10 MB with no file changes; USD 75 Correct covers up to 5,000 rows and 10 MB with agreed deterministic corrections, a change log, and a second report; USD 150 Full covers up to 50,000 rows and 10 MB with the Correct delivery, a supported-findings review, and one in-scope revision.
+
+        This independent local file review supports `Add` and `Draft` files and does not guarantee upload acceptance because category rules, seller settings, business policies, fees, listing eligibility, image availability, and platform behavior remain outside the file. This is a public issue: share only synthetic or redacted examples with no confidential, personal, or production data. No seller account login, Seller Hub access, API credentials, production upload, actual listing action, image hosting, website retrieval, payment processing, infrastructure change, restricted-item review, or security work is included.
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Fixed-price tier
+      options:
+        - USD 25 Report — up to 500 rows; findings report; no file changes
+        - USD 75 Correct — up to 5,000 rows; agreed corrections, change log, and second report
+        - USD 150 Full — up to 50,000 rows; Correct delivery, supported-findings review, and one revision
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Review goal
+      description: Describe the file's purpose and the result you need before handling the upload.
+      placeholder: Review a current Seller Hub Reports category template before creating listings.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Synthetic or redacted sample
+      description: Paste 5 to 20 representative rows with invented or fully redacted values. Do not attach the real file.
+      render: csv
+    validations:
+      required: true
+
+  - type: dropdown
+    id: template
+    attributes:
+      label: Downloaded template source
+      options:
+        - Create new listings template by category
+        - Create new drafts template
+        - Another template (outside the standard fixed scope)
+        - Unsure; document assumptions before work starts
+    validations:
+      required: true
+
+  - type: dropdown
+    id: action
+    attributes:
+      label: Intended action
+      options:
+        - Add
+        - Draft
+        - Mixed Add and variation child rows
+        - Another action (outside the standard fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: site
+    attributes:
+      label: eBay site and template download date
+      description: State the country site and the date on which the template was downloaded.
+      placeholder: ebay.com (US), template downloaded 2026-09-08
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State the exact supported checks, permitted corrections, output files, and expected finding counts.
+      placeholder: Preserve #INFO rows and row order; report unsupported actions, required-field findings, and invalid variation relationships; return the files included in the selected tier.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: size
+    attributes:
+      label: Approximate file size
+      options:
+        - Less than 1 MB
+        - 1 MB to 5 MB
+        - More than 5 MB and no more than 10 MB
+        - More than 10 MB (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rows
+    attributes:
+      label: Approximate row count
+      options:
+        - Up to 500 rows
+        - 501 to 5,000 rows
+        - 5,001 to 50,000 rows
+        - More than 50,000 rows (outside the fixed scope)
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Requested delivery date
+      description: Provide a date and time zone. Availability is confirmed before work starts.
+      placeholder: 2026-09-10, UTC+2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: data-safety
+    attributes:
+      label: Public data safety
+      options:
+        - label: I confirm that the sample contains no confidential, personal, or production data.
+          required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fixed-scope acknowledgement
+      options:
+        - label: I understand that my selected tier covers only its fixed local file scope, does not guarantee upload acceptance, and no work begins until scope, delivery, and private file transfer are confirmed.
+          required: true

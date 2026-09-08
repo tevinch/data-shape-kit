@@ -137,6 +137,28 @@ class CliTests(unittest.TestCase):
             self.assertIn("invalid_published_value", output)
             self.assertNotIn("Private Product", output)
 
+    def test_ebay_preflight_exit_status_reflects_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source = directory / "listings.csv"
+            target = directory / "preflight.md"
+            source.write_text(
+                "Action,Category ID,Title\nAdd,not-numeric,Private Listing\n",
+                encoding="utf-8",
+            )
+            stdout = StringIO()
+            stderr = StringIO()
+
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = main(["--ebay-preflight", str(source), str(target)])
+
+            self.assertEqual(exit_code, 1)
+            self.assertRegex(stdout.getvalue(), r"Input rows: 1\nFindings: [1-9][0-9]*\n")
+            self.assertEqual(stderr.getvalue(), "")
+            output = target.read_text(encoding="utf-8")
+            self.assertIn("invalid_category_id", output)
+            self.assertNotIn("Private Listing", output)
+
 
 if __name__ == "__main__":
     unittest.main()

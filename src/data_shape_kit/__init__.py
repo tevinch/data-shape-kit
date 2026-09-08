@@ -2,6 +2,7 @@
 
 from .clean import CleanReport, CsvShapeError, clean_csv, normalize_headers
 from .dictionary import ColumnDictionary, DictionaryReport, write_dictionary
+from .ebay_preflight import EbayPreflightReport, preflight_ebay_csv
 from .profile import ColumnProfile, ProfileReport, profile_csv
 from .shopify_preflight import Finding, ShopifyPreflightReport, preflight_shopify_csv
 from .woocommerce_preflight import (
@@ -15,6 +16,7 @@ __all__ = [
     "ColumnDictionary",
     "CsvShapeError",
     "DictionaryReport",
+    "EbayPreflightReport",
     "Finding",
     "ProfileReport",
     "ShopifyPreflightReport",
@@ -23,6 +25,7 @@ __all__ = [
     "normalize_headers",
     "profile_csv",
     "preflight_shopify_csv",
+    "preflight_ebay_csv",
     "preflight_woocommerce_csv",
     "write_dictionary",
 ]

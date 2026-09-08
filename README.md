@@ -17,10 +17,10 @@ python -m pip install --no-deps -e .
 Install the verified public version directly from its fixed Git tag:
 
 ```bash
-python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.5.0.tar.gz"
+python -m pip install "data-shape-kit @ https://github.com/tevinch/data-shape-kit/archive/refs/tags/v0.6.0.tar.gz"
 ```
 
-The tag keeps the installed source pinned to version 0.5.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
+The tag keeps the installed source pinned to version 0.6.0. This method needs network access during installation but does not require Git; the installed tool itself has no runtime dependencies or network requests.
 
 ## Use
 
@@ -77,6 +77,18 @@ The preflight checks the exact `Name` header, documented `Type` and `Published` 
 The checks follow WooCommerce's current [built-in product CSV schema](https://woocommerce.com/document/product-csv-importer-exporter/). Because the importer's mapping screen can map custom headers, a missing exact `Name` header is a warning rather than proof that an import will fail.
 
 Use the [WooCommerce product CSV preflight checklist](docs/woocommerce-product-csv-preflight-checklist.md) for a backup-first review sequence, finding explanations, and the official reference.
+
+Run supported local checks on an eBay Seller Hub Reports listing or draft CSV before reviewing an upload:
+
+```bash
+data-shape-kit --ebay-preflight listings.csv preflight.md
+```
+
+The preflight preserves leading `#INFO` rows while locating the exact header row, then checks supported `Action`, `Category ID`, `Title`, `Start price`, `Quantity`, `Item photo URL`, `Condition ID`, `Description`, `Format`, `Duration`, `Schedule Time`, SKU, and `Relationship details` rules. It supports `Add` and `Draft` files; other action types are reported as outside the current check. The report contains only issue codes, severity, counts, and source row numbers, so it does not include source cell values. An exit status of 1 means findings were reported. The result covers supported local checks only and does not guarantee upload acceptance.
+
+The checks follow eBay's current [Seller Hub Reports help](https://www.ebay.com/help/selling/selling-tools/seller-hub-reports?id=4096) and [inventory onboarding guide](https://pages.ebay.com/sh/reports/help/create-listings-bulk/). Category-specific item requirements, seller settings, business policies, fees, listing eligibility, and the upload results remain outside the local file check.
+
+Use the [eBay listing file preflight checklist](docs/ebay-listing-file-preflight-checklist.md) for a backup-first review sequence, finding explanations, and official references.
 
 ## Test
 
@@ -169,13 +181,26 @@ Need a built-in-importer product file reviewed before you handle an import? Choo
 
 [Open a WooCommerce product CSV preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=woocommerce-product-csv-preflight-request.yml) with the tier, intended import action, mapping assumptions, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review for the built-in importer. Every tier covers only the supported checks and does not guarantee import acceptance because store state, extensions, custom mappings, remote files, and platform behavior remain outside the file. No store login, WordPress access, plugin installation, admin access, API credentials, production upload, actual import, website retrieval, payment processing, infrastructure change, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
 
+## Fixed-price eBay listing file preflight
+
+Need a Seller Hub Reports `Add` or `Draft` CSV reviewed before you handle an upload? Choose one fixed scope:
+
+| Tier | File limit | Delivery |
+| --- | --- | --- |
+| **USD 25 Report** | One UTF-8 eBay listing or draft CSV, up to 500 rows and 10 MB | A local report covering the supported headers, actions, required listing fields, formats, image URLs, schedules, SKUs, and variation relationships. The source file is not changed. |
+| **USD 75 Correct** | One UTF-8 eBay listing or draft CSV, up to 5,000 rows and 10 MB | The report, one corrected CSV with agreed deterministic corrections, a change log, and a second report. |
+| **USD 150 Full** | One UTF-8 eBay listing or draft CSV, up to 50,000 rows and 10 MB | The Correct delivery plus a review of supported findings and one revision limited to the agreed checks and corrections. |
+
+[Open an eBay listing file preflight request](https://github.com/tevinch/data-shape-kit/issues/new?template=ebay-listing-file-preflight-request.yml) with the tier, template source, intended action, eBay site, a small synthetic or redacted sample, a deadline, and exact acceptance criteria. This service is an independent local file review for supported `Add` and `Draft` files. Every tier covers only the documented checks and does not guarantee upload acceptance because category rules, seller settings, business policies, fees, listing eligibility, image availability, and later platform behavior remain outside the file. No seller account login, Seller Hub access, API credentials, production upload, actual listing action, image hosting, website retrieval, payment processing, infrastructure change, restricted-item review, or security work is included. Do not attach confidential, personal, or production data to a public issue. Scope, delivery, and a private file-transfer method are confirmed before any real file is shared.
+
 ## Limitations
 
-- Input must be UTF-8 CSV with one header row.
+- Input must be UTF-8 CSV with one header row; the eBay mode also accepts leading `#INFO` rows.
 - Every data row must contain the same number of columns as the header.
 - Duplicate detection is exact after trimming surrounding whitespace; it does not perform fuzzy matching.
 - Shopify preflight is not an exhaustive validator and does not access store state.
 - WooCommerce preflight is not an exhaustive validator and does not access store state, extensions, or custom mappings.
+- eBay preflight supports listing and draft files with `Add` or `Draft` actions only; it does not access Seller Hub, category state, seller settings, business policies, fees, or upload results.
 
 ## License
 

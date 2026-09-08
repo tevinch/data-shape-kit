@@ -8,6 +8,7 @@ from collections.abc import Sequence
 
 from .clean import CsvShapeError, clean_csv
 from .dictionary import write_dictionary
+from .ebay_preflight import preflight_ebay_csv
 from .profile import profile_csv
 from .shopify_preflight import preflight_shopify_csv
 from .woocommerce_preflight import preflight_woocommerce_csv
@@ -39,6 +40,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write value-free local checks for a WooCommerce product CSV",
     )
+    mode.add_argument(
+        "--ebay-preflight",
+        action="store_true",
+        help="write value-free local checks for an eBay listing or draft CSV",
+    )
     parser.add_argument("input", help="Path to the source CSV file")
     parser.add_argument("output", help="Path for the output file")
     return parser
@@ -55,6 +61,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             report = preflight_shopify_csv(args.input, args.output)
         elif args.woocommerce_preflight:
             report = preflight_woocommerce_csv(args.input, args.output)
+        elif args.ebay_preflight:
+            report = preflight_ebay_csv(args.input, args.output)
         else:
             report = clean_csv(args.input, args.output)
     except (CsvShapeError, OSError) as error:
@@ -66,7 +74,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Columns profiled: {report.input_columns}")
     elif args.dictionary:
         print(f"Columns documented: {report.input_columns}")
-    elif args.shopify_preflight or args.woocommerce_preflight:
+    elif args.shopify_preflight or args.woocommerce_preflight or args.ebay_preflight:
         print(f"Findings: {len(report.findings)}")
         return 1 if report.findings else 0
     else:

@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 
 
-class WooCommerceDocumentationTests(unittest.TestCase):
+class EbayDocumentationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(__file__).resolve().parents[1]
 
@@ -11,46 +11,49 @@ class WooCommerceDocumentationTests(unittest.TestCase):
             with self.subTest(filename=filename):
                 text = (self.root / filename).read_text(encoding="utf-8")
                 self.assertIn(
-                    "data-shape-kit --woocommerce-preflight products.csv preflight.md",
+                    "data-shape-kit --ebay-preflight listings.csv preflight.md",
                     text,
                 )
                 self.assertIn("does not include source cell values", text)
-                self.assertIn("does not guarantee import acceptance", text)
-                self.assertIn("Published", text)
-                self.assertIn("Parent", text)
+                self.assertIn("does not guarantee upload acceptance", text)
+                self.assertIn("Action", text)
+                self.assertIn("Relationship details", text)
 
-    def test_readme_links_to_current_official_woocommerce_guidance(self) -> None:
+    def test_readme_links_to_current_official_ebay_guidance(self) -> None:
         readme = (self.root / "README.md").read_text(encoding="utf-8")
         self.assertIn(
-            "https://woocommerce.com/document/product-csv-importer-exporter/",
+            "https://www.ebay.com/help/selling/selling-tools/seller-hub-reports?id=4096",
+            readme,
+        )
+        self.assertIn(
+            "https://pages.ebay.com/sh/reports/help/create-listings-bulk/",
             readme,
         )
 
     def test_guide_has_sources_checks_safety_and_service_path(self) -> None:
-        guide_path = (
-            self.root / "docs" / "woocommerce-product-csv-preflight-checklist.md"
-        )
-        self.assertTrue(guide_path.is_file(), "WooCommerce preflight guide is missing")
+        guide_path = self.root / "docs" / "ebay-listing-file-preflight-checklist.md"
+        self.assertTrue(guide_path.is_file(), "eBay preflight guide is missing")
         guide = guide_path.read_text(encoding="utf-8")
         for required_text in (
-            "# WooCommerce Product CSV Preflight Checklist",
-            "Last verified: 2026-09-04",
-            "independent and is not endorsed by WooCommerce",
-            "data-shape-kit --woocommerce-preflight products.csv preflight.md",
+            "# eBay Listing File Preflight Checklist",
+            "Last verified: 2026-09-08",
+            "independent and is not endorsed by eBay",
+            "data-shape-kit --ebay-preflight listings.csv preflight.md",
             "does not include source cell values",
-            "does not guarantee import acceptance",
+            "does not guarantee upload acceptance",
             "synthetic or fully redacted sample",
             "USD 25",
             "USD 75",
             "USD 150",
-            "issues/new?template=woocommerce-product-csv-preflight-request.yml",
-            "https://woocommerce.com/document/product-csv-importer-exporter/",
+            "issues/new?template=ebay-listing-file-preflight-request.yml",
+            "https://www.ebay.com/help/selling/selling-tools/seller-hub-reports?id=4096",
+            "https://pages.ebay.com/sh/reports/help/create-listings-bulk/",
         ):
             with self.subTest(required_text=required_text):
                 self.assertIn(required_text, guide)
 
         readme = (self.root / "README.md").read_text(encoding="utf-8")
-        self.assertIn("docs/woocommerce-product-csv-preflight-checklist.md", readme)
+        self.assertIn("docs/ebay-listing-file-preflight-checklist.md", readme)
 
     def test_github_install_command_is_pinned_to_new_version(self) -> None:
         readme = (self.root / "README.md").read_text(encoding="utf-8")
