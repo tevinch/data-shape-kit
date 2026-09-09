@@ -4,6 +4,8 @@
 
 **Try it locally:** Download the [Clipboard Table browser playground](downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html`. Paste tab-separated text, preview the table and export JSON without installing a tool or uploading your data.
 
+**Streamlit example:** [Keep decimal commas intact](examples/streamlit-decimal-paste) with a native text column and a copyable Python `Decimal` helper. Choose the source separators explicitly and review invalid rows before using the values.
+
 A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, OPDS 2.0 catalog checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
