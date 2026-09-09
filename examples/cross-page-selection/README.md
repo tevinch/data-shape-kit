@@ -146,7 +146,7 @@ The module supports flat sets of eligible string IDs, explicit choices, all-matc
 
 `npm test` runs behavior and actual-library/HTTP integration checks; `npm run typecheck` checks the TSX integration. Run the **built** page to check browser interaction as well. A passing fixture suite does not establish production database correctness or every browser/framework combination.
 
-Verified on September 10, 2026 with Node.js 24.19.0: all 29 Node checks, strict type checking and a production build passed. A fresh ZIP extraction installed and rebuilt successfully, producing the same four build files byte for byte. Desktop Chrome checks covered cross-page choices, all-matching exclusions, disabled rows, page-header mixed state, sorting, filter resets and server preview. Delayed-response checks confirmed that changing a row, selecting all or clearing selection discards an old preview before a fresh preview is shown.
+Verified on September 10, 2026 with Node.js 24.19.0: all 30 Node checks, strict type checking and a production build passed. A fresh ZIP extraction installed and rebuilt successfully, producing the same four build files byte for byte. Desktop Chrome checks covered cross-page choices, all-matching exclusions, disabled rows, page-header mixed state, sorting, filter resets and server preview. Delayed-response checks confirmed that changing a row, selecting all or clearing selection discards an old preview before a fresh preview is shown.
 
 Original code is [MIT licensed](LICENSE). Keep the license when copying it. Builds include `THIRD_PARTY_NOTICES.md` for bundled dependency notices; retain that file when sharing built output.
 
