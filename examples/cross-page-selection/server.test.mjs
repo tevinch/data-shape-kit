@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
+import {chmod, mkdir, mkdtemp, open, rm, writeFile} from 'node:fs/promises';
 import test from 'node:test';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -192,6 +192,39 @@ test('serves files only from the configured built output directory', async () =>
       assert.equal(typeof (await readJson(outside)).error, 'string');
     }, {distDirectory});
   } finally {
+    await rm(root, {recursive: true, force: true});
+  }
+});
+
+test('returns 404 for an unreadable built file and keeps serving requests', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'cross-page-selection-unreadable-'));
+  const distDirectory = join(root, 'dist');
+  const blockedPath = join(distDirectory, 'blocked.txt');
+  await mkdir(distDirectory);
+  await writeFile(blockedPath, 'blocked');
+  await chmod(blockedPath, 0o000);
+
+  try {
+    try {
+      const handle = await open(blockedPath, 'r');
+      await handle.close();
+      t.skip('this environment allows reads despite mode 000');
+      return;
+    } catch (error) {
+      if (error?.code !== 'EACCES') throw error;
+    }
+
+    await withServer(async (baseUrl) => {
+      const blocked = await fetch(`${baseUrl}/blocked.txt`);
+      assert.equal(blocked.status, 404);
+      assert.deepEqual(await readJson(blocked), {error: 'not found'});
+
+      const page = await fetch(`${baseUrl}/api/page`);
+      assert.equal(page.status, 200);
+      assert.equal((await readJson(page)).rowCount, 23);
+    }, {distDirectory});
+  } finally {
+    await chmod(blockedPath, 0o600);
     await rm(root, {recursive: true, force: true});
   }
 });

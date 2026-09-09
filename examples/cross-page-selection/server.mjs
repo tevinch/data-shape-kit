@@ -1,7 +1,7 @@
-import {createReadStream} from 'node:fs';
-import {stat} from 'node:fs/promises';
+import {open, stat} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {extname, resolve, sep} from 'node:path';
+import {pipeline} from 'node:stream/promises';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 import {demoRows} from './demo-data.mjs';
@@ -161,13 +161,18 @@ async function handleStatic(response, url, distDirectory) {
   try {
     const details = await stat(filePath);
     if (!details.isFile()) throw new Error('not a file');
+    const file = await open(filePath, 'r');
     response.writeHead(200, {
       'content-type': CONTENT_TYPES.get(extname(filePath)) ?? 'application/octet-stream',
       'content-length': details.size,
     });
-    createReadStream(filePath).pipe(response);
+    await pipeline(file.createReadStream(), response);
   } catch {
-    sendJson(response, 404, {error: 'not found'});
+    if (response.headersSent) {
+      response.destroy();
+    } else {
+      sendJson(response, 404, {error: 'not found'});
+    }
   }
 }
 

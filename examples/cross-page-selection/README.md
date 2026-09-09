@@ -38,7 +38,7 @@ Try these flows:
 2. Clear the selection, select every eligible match, then uncheck a row. It stays excluded across pages and sorting changes.
 3. Compare the page checkbox with the overall count. A page may be fully selected while another page has an exclusion.
 4. Preview the server result, then change the category. Selection resets because the matching set changed.
-5. Choose the empty category. No rows are selected and selection controls are unavailable.
+5. Choose the empty category. Selection-changing controls are unavailable, while Preview remains available and resolves zero matches.
 
 ## Reuse the module
 
