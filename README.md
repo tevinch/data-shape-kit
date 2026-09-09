@@ -11,6 +11,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 | Add a table generator to a React application | [React component and DevKit adapter](examples/react-markdown-table) | React 18+; Tailwind CSS 4 or your own styles |
 | Keep decimal commas when pasting into Streamlit | [Decimal paste example](examples/streamlit-decimal-paste) | Python helper plus an optional Streamlit app |
 | Read the current plain-text paste event in a Glide grid | [Glide paste adapter](examples/glide-plain-text-paste) | Copyable adapter; your application owns validation and writes |
+| Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
