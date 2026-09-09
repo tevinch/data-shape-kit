@@ -1,0 +1,17 @@
+{
+  "name": "streaming-csv-consumer-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test consume-csv.test.mjs demo.test.mjs",
+    "demo": "node demo.mjs"
+  },
+  "dependencies": {
+    "csv-parse": "7.0.2"
+  }
+}
