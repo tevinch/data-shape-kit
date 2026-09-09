@@ -5,14 +5,18 @@ const byId = id => document.getElementById(id);
 const source = byId('source');
 const headers = byId('headers');
 const format = byId('output-format');
+const inputFormat = byId('input-format');
 let rawText = '';
 let result = null;
 let revision = 0;
 let copying = false;
-const example = 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n';
+const examples = {
+  tsv: 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n',
+  csv: 'SKU,Quantity,Notes\r\n00123,2,"First line\nSecond line"\r\n00456,,"Says ""hello"", then leaves"\r\n',
+};
 const messages = {
   UNCLOSED_QUOTE: 'Close the quoted cell',
-  UNEXPECTED_CHARACTER: 'Only a tab or row separator may follow a closing quote',
+  UNEXPECTED_QUOTE: 'Enclose the whole cell in double quotes and double any quote inside it',
   EMPTY_HEADER: 'A JSON key is blank; give it a name or turn off the first-row option',
   DUPLICATE_HEADER: 'JSON keys must be unique; rename this key or turn off the first-row option',
 };
@@ -28,12 +32,14 @@ function updateMode() {
   byId('limits').textContent = `${label}: up to ${markdown ? '100,000 UTF-16 code units, 1,000 rows and 64 columns' : '1,000,000 UTF-16 code units, 10,000 rows and 256 columns'}. Files are saved only when you choose Download.`;
   byId('format-note').hidden = !markdown;
   byId('output-details').open = markdown;
+  byId('input-help').textContent = `Choose ${inputFormat.value === 'csv' ? 'CSV for comma-separated text' : 'TSV for tab-separated spreadsheet text'}. Pasting replaces this box and parses it. After editing, choose Parse.`;
 }
 
 function errorMessage(error) {
   const markdown = format.value === 'markdown';
   const limits = markdown ? ['100,000', '1,000', '64'] : ['1,000,000', '10,000', '256'];
   const modeMessages = {
+    UNEXPECTED_CHARACTER: `Only a ${inputFormat.value === 'csv' ? 'comma' : 'tab'} or row separator may follow a closing quote`,
     MAX_CHARS: `The input exceeds ${limits[0]} UTF-16 code units`,
     MAX_ROWS: `The input exceeds ${limits[1]} rows`,
     MAX_COLUMNS: `A row exceeds ${limits[2]} columns`,
@@ -64,7 +70,7 @@ function parse() {
   clearOutput('');
   if (rawText === '') return;
   try {
-    result = buildPlaygroundOutput(rawText, format.value, headers.checked);
+    result = buildPlaygroundOutput(rawText, format.value, headers.checked, inputFormat.value);
     if (!result) return;
     const { data, headings, content, label } = result;
     const width = headings.length;
@@ -131,9 +137,10 @@ source.addEventListener('paste', event => {
 byId('parse').addEventListener('click', parse);
 headers.addEventListener('change', parse);
 format.addEventListener('change', () => { updateMode(); parse(); });
+inputFormat.addEventListener('change', () => { updateMode(); parse(); });
 byId('example').addEventListener('click', () => {
   headers.checked = true;
-  rawText = example;
+  rawText = examples[inputFormat.value];
   source.value = rawText;
   parse();
 });

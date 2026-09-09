@@ -87,3 +87,24 @@ test('formatted matrix uses the same size bounds as pasted text', () => {
   assert.throws(() => formatMarkdown(Array.from({ length: 1001 }, () => ['x'])), /MAX_ROWS/);
   assert.throws(() => formatMarkdown([Array(65).fill('x')]), /MAX_COLUMNS/);
 });
+
+test('parser limit overrides reject at the chosen boundary without changing defaults', () => {
+  const limits = Object.freeze({ maxChars: 7, maxRows: 2, maxColumns: 2 });
+  assert.deepEqual(parseDelimited('a,b\nc,d', ',', limits), [['a', 'b'], ['c', 'd']]);
+  assert.throws(() => parseDelimited('a,b\nc,dd', ',', limits), { code: 'MAX_CHARS' });
+  assert.throws(() => parseDelimited('a\nb\nc', ',', limits), { code: 'MAX_ROWS' });
+  assert.throws(() => parseDelimited('a,b,c', ',', limits), { code: 'MAX_COLUMNS' });
+  assert.equal(parseDelimited('a,b,c', ',')[0].length, 3);
+});
+test('parser can serve larger JSON limits while Markdown formatting remains bounded', () => {
+  const input = Array(65).fill('x').join(',');
+  const rows = parseDelimited(input, ',', { maxColumns: 256 });
+  assert.equal(rows[0].length, 65);
+  assert.throws(() => formatMarkdown(rows), { code: 'MAX_COLUMNS' });
+  assert.throws(() => parseDelimited(input, ','), { code: 'MAX_COLUMNS' });
+});
+test('invalid parser limits cannot disable bounds', () => {
+  for (const limits of [null, [], 1, { maxRows: 0 }, { maxColumns: -1 }, { maxChars: 1.5 }, { maxRows: Infinity }, { maxChars: Number.MAX_SAFE_INTEGER + 1 }, { unknown: 1 }, { maxChars: undefined }]) {
+    assert.throws(() => parseDelimited('x', ',', limits), TypeError);
+  }
+});

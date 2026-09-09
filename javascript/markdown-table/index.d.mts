@@ -1,6 +1,11 @@
 // Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
 export type Delimiter = ',' | '\t';
 export type Alignment = 'none' | 'left' | 'center' | 'right';
+export interface ParseLimits {
+  maxChars?: number;
+  maxRows?: number;
+  maxColumns?: number;
+}
 export interface FormatOptions {
   firstRowHeaders?: boolean;
   alignments?: readonly Alignment[];
@@ -17,6 +22,6 @@ export class TableTextError extends Error {
   column: number;
   constructor(code: string, row: number, column: number);
 }
-export function parseDelimited(text: string, delimiter: Delimiter): string[][];
+export function parseDelimited(text: string, delimiter: Delimiter, limits?: ParseLimits): string[][];
 export function formatMarkdown(rows: readonly (readonly string[])[], options?: FormatOptions): TableResult;
 export function buildMarkdownTable(text: string, options: FormatOptions & { delimiter: Delimiter }): TableResult;

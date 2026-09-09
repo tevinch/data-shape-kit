@@ -1,11 +1,15 @@
 // Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
 import { parseClipboard, toRecords } from './index.mjs';
-import { formatMarkdown, TABLE_LIMITS } from '../markdown-table/index.mjs';
+import { parseDelimited, formatMarkdown, TABLE_LIMITS } from '../markdown-table/index.mjs';
 
-export function buildPlaygroundOutput(text, format = 'json', firstRowHeaders = true) {
+const jsonLimits = Object.freeze({ maxChars: 1_000_000, maxRows: 10_000, maxColumns: 256 });
+
+export function buildPlaygroundOutput(text, format = 'json', firstRowHeaders = true, inputFormat = 'tsv') {
   if (format !== 'json' && format !== 'markdown') throw new TypeError('Choose JSON or Markdown');
   if (typeof firstRowHeaders !== 'boolean') throw new TypeError('Expected a heading option');
-  const rows = parseClipboard(text, format === 'markdown' ? TABLE_LIMITS : {});
+  if (inputFormat !== 'tsv' && inputFormat !== 'csv') throw new TypeError('Choose TSV or CSV');
+  const limits = format === 'markdown' ? TABLE_LIMITS : jsonLimits;
+  const rows = inputFormat === 'csv' ? parseDelimited(text, ',', limits) : parseClipboard(text, limits);
   if (!rows.length) return null;
   const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
   const markdown = format === 'markdown' ? formatMarkdown(rows, { firstRowHeaders }) : null;

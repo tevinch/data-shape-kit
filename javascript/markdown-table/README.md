@@ -1,6 +1,6 @@
 # Markdown Table
 
-Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Includes a [React component and DevKit integration guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
+Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Try the [free browser converter](https://tevinch.github.io/data-shape-kit/): choose CSV or TSV input and Markdown table output. Includes a [React component and DevKit integration guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
 
 ## Install version 0.1.0
 
@@ -70,6 +70,8 @@ Adjust the source path relative to your stylesheet. Without Tailwind, the contro
 
 `parseDelimited(text, delimiter)` returns a string matrix. `formatMarkdown(matrix, options?)` returns `{ headers, rows, markdown }` without mutating the input. `buildMarkdownTable(text, options)` combines both steps. `TableTextError` provides `code`, `row`, and `column`; its message does not include input values. Invalid API argument types throw `TypeError`.
 
+The current repository source also accepts `parseDelimited(text, delimiter, limits)`, where `limits` may override `maxChars`, `maxRows` and `maxColumns` with positive safe integers. Omitted limits keep the defaults above. This lets the browser converter parse larger JSON inputs; Markdown formatting and `buildMarkdownTable` retain their fixed bounds. This optional third argument is not included in the version 0.1.0 package. Copy the current `index.mjs`, `index.d.mts` and `LICENSE` together to use it.
+
 ## Literal text and rendering
 
 This is a text-table generator. Markdown punctuation is escaped, HTML and entity starts are encoded, and URLs remain literal text rather than generated links. Newlines inside cells become `<br>`. Unicode line and paragraph separators are encoded as numeric references to keep them inside their cells.
@@ -86,7 +88,7 @@ From `javascript/markdown-table` in a [repository checkout](https://github.com/t
 node --test test.mjs
 ```
 
-The 16 core tests cover quoted CSV and TSV, string preservation, structural errors, limits, headers, alignment, escaping and Unicode separators. An optional check renders 110 literal-cell cases with Marked, including subsequent rows to detect broken table structure:
+The version 0.1.0 checkout has 16 core tests; the current source has 19, adding parser-limit validation and checking that overrides do not relax Markdown formatting bounds. They cover quoted CSV and TSV, string preservation, structural errors, limits, headers, alignment, escaping and Unicode separators. An optional check renders 110 literal-cell cases with Marked, including subsequent rows to detect broken table structure:
 
 ```sh
 table_check_dir=$(mktemp -d)

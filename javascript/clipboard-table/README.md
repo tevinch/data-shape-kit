@@ -8,11 +8,13 @@ For identifier columns in CSV or XLSX files, [Identifier Column](../../examples/
 
 ## Try it
 
-Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Paste quoted TSV or choose **Load example**, then select **JSON** or **Markdown table**. Copy the complete output or download a `.json` or `.md` file. If automatic copying is unavailable, the page selects the complete output for manual copying. The preview shows up to 30 data rows and 8 columns; output, copy and download include the complete result. Everything runs in the page with no uploads or external runtime assets.
+Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Choose **TSV (tabs)** for spreadsheet clipboard text or **CSV (commas)**, then paste text or choose **Load example**. Select **JSON** or **Markdown table**, and copy the complete output or download a `.json` or `.md` file. Changing either format reparses the current input; it does not rewrite it. Delimiters are explicit, never guessed. If automatic copying is unavailable, the page selects the complete output for manual copying. The preview shows up to 30 data rows and 8 columns; output, copy and download include the complete result. Everything runs in the page with no uploads or external runtime assets.
+
+CSV uses commas and requires double quotes around cells containing commas, line breaks or quotes; double any quote inside a quoted cell. Malformed quoting reports the row and column. Semicolon-separated CSV and file uploads are not supported by this page; paste the file's text instead.
 
 JSON accepts up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. Its first-row option produces objects with unique, nonblank keys; turning it off produces arrays and permits ragged rows. Markdown accepts up to 100,000 UTF-16 code units, 1,000 rows and 64 columns, including input delimiters and quotes. Markdown always requires equal-width rows; headings may be blank or repeated. Turning headings off generates `Column 1`, `Column 2`, and so on while retaining every input row as data. Markdown escapes punctuation and represents cell line breaks as `<br>`; rendered whitespace and HTML line-break support depend on the Markdown renderer.
 
-For offline use, download the [local browser playground v0.2.0](../../downloads/clipboard-table-playground-v0.2.0.zip?raw=true), extract it and open `index.html` in a modern browser. Clipboard permissions can vary for local files; manual copying and file downloads remain available.
+For offline use, download the [local browser playground v0.3.0](../../downloads/clipboard-table-playground-v0.3.0.zip?raw=true), extract it and open `index.html` in a modern browser. Clipboard permissions can vary for local files; manual copying and file downloads remain available.
 
 For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
 
@@ -36,9 +38,9 @@ node --test javascript/clipboard-table/test.mjs
 
 The module uses standard modern JavaScript features including `Object.hasOwn` and `String.replaceAll`.
 
-The playground source lives in [`playground.html`](playground.html), [`playground.mjs`](playground.mjs) and the pure [`output adapter`](playground-output.mjs), which reuses this TSV parser and the [Markdown formatter](../markdown-table). To rebuild the self-contained HTML from these source modules, run `node javascript/clipboard-table/build-playground.mjs` from the repository root. The result is [`downloads/clipboard-table-playground.html`](../../downloads/clipboard-table-playground.html). Pasting retains line endings in the received text; editing the text box uses the browser's normalized line endings. The playground accepts TSV only; the separate Markdown module also supports CSV.
+The playground source lives in [`playground.html`](playground.html), [`playground.mjs`](playground.mjs) and the pure [`output adapter`](playground-output.mjs), which reuses this TSV parser and the [CSV parser and Markdown formatter](../markdown-table). To rebuild the self-contained HTML from these source modules, run `node javascript/clipboard-table/build-playground.mjs` from the repository root. The result is [`downloads/clipboard-table-playground.html`](../../downloads/clipboard-table-playground.html). Pasting retains line endings in the received text; editing the text box uses the browser's normalized line endings. The standalone `parseClipboard` module remains TSV-only.
 
-Run the output adapter's 12 checks with `node --test javascript/clipboard-table/playground-output.test.mjs`. They cover both output modes, header behavior, limits and complete results. These checks supplement the parser suite; they do not establish clipboard-permission behavior in every browser.
+Run the output adapter's 19 checks with `node --test javascript/clipboard-table/playground-output.test.mjs`. They cover both input and output modes, quoted cells, header behavior, limits and complete results. These checks supplement the parser suite; they do not establish clipboard-permission behavior in every browser.
 
 ## Connect a paste field
 

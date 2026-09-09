@@ -13,21 +13,29 @@ export class TableTextError extends Error {
 }
 
 /** Strict comma- or tab-delimited text. Quoted cells may contain line endings. */
-export function parseDelimited(text, delimiter) {
+export function parseDelimited(text, delimiter, options = {}) {
   if (typeof text !== 'string') throw new TypeError('Expected text');
   if (delimiter !== ',' && delimiter !== '\t') throw new TypeError('Choose comma or tab');
-  if (text.length > TABLE_LIMITS.maxChars) throw new TableTextError('MAX_CHARS', 1, 1);
+  if (!options || typeof options !== 'object' || Array.isArray(options)) throw new TypeError('Expected a limits object');
+  const limits = { ...TABLE_LIMITS };
+  for (const key of Object.keys(options)) {
+    if (!Object.hasOwn(TABLE_LIMITS, key) || !Number.isSafeInteger(options[key]) || options[key] < 1) {
+      throw new TypeError('Limits must be known positive safe integers');
+    }
+    limits[key] = options[key];
+  }
+  if (text.length > limits.maxChars) throw new TableTextError('MAX_CHARS', 1, 1);
   let offset = text.startsWith('\uFEFF') ? 1 : 0;
   if (offset === text.length) return [];
   const rows = [];
   let row = [], field = '', state = 'start';
   const fail = code => { throw new TableTextError(code, rows.length + 1, row.length + 1); };
   const endField = () => {
-    if (row.length === TABLE_LIMITS.maxColumns) fail('MAX_COLUMNS');
+    if (row.length === limits.maxColumns) fail('MAX_COLUMNS');
     row.push(field); field = ''; state = 'start';
   };
   const endRow = () => {
-    if (rows.length === TABLE_LIMITS.maxRows) fail('MAX_ROWS');
+    if (rows.length === limits.maxRows) fail('MAX_ROWS');
     rows.push(row); row = [];
   };
   for (; offset < text.length; offset++) {

@@ -19,10 +19,10 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 ## Try spreadsheet paste without installing a tool
 
 1. Open the [free browser playground](https://tevinch.github.io/data-shape-kit/).
-2. Choose **Load example**, or paste tab-separated text.
+2. Choose TSV (tabs) or CSV (commas), then **Load example** or paste your table text.
 3. Choose JSON or Markdown table, then copy or download the complete result.
 
-For offline use, download the [browser playground v0.2.0 ZIP](downloads/clipboard-table-playground-v0.2.0.zip?raw=true), extract it and open `index.html` in a modern browser. If automatic copying is unavailable, copy the selected output manually.
+For offline use, download the [browser playground v0.3.0 ZIP](downloads/clipboard-table-playground-v0.3.0.zip?raw=true), extract it and open `index.html` in a modern browser. If automatic copying is unavailable, copy the selected output manually.
 
 The page processes text locally with no uploads or external runtime assets. The [clipboard guide](javascript/clipboard-table#try-it) explains preview limits and includes a separate source-and-tests download. The [community examples](docs/spreadsheet-clipboard-pitfalls.md) show why splitting on every newline loses multiline cells.
 
