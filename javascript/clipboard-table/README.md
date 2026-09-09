@@ -4,6 +4,8 @@ Copyable JavaScript functions for spreadsheet paste fields. Keep multiline cells
 
 Using Python and Streamlit? The separate [decimal paste example](../../examples/streamlit-decimal-paste) keeps numeric input as text, then converts it with explicit decimal and grouping marks.
 
+For identifier columns in CSV or XLSX files, [Identifier Column](../../examples/identifier-import) preserves literal text and reports empty, missing or nontext entries before further processing.
+
 ## Try it
 
 Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Paste quoted TSV or choose **Load example**, then select **JSON** or **Markdown table**. Copy the complete output or download a `.json` or `.md` file. If automatic copying is unavailable, the page selects the complete output for manual copying. The preview shows up to 30 data rows and 8 columns; output, copy and download include the complete result. Everything runs in the page with no uploads or external runtime assets.

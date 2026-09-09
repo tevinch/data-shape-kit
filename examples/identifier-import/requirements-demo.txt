@@ -1,0 +1,3 @@
+# Optional XLSX and in-memory QR example dependencies, verified versions.
+openpyxl==3.1.5
+qrcode==8.2

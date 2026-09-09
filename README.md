@@ -13,6 +13,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 | Read the current plain-text paste event in a Glide grid | [Glide paste adapter](examples/glide-plain-text-paste) | Copyable adapter; your application owns validation and writes |
 | Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
+| Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
