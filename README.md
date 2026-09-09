@@ -8,6 +8,8 @@
 
 **Markdown tables:** [Convert CSV or spreadsheet text](javascript/markdown-table) into a literal GFM table with headers and column alignment. Includes a [React component and DevKit adapter](examples/react-markdown-table) and a [versioned GitHub package with one-command installation](javascript/markdown-table#install-version-010). The conversion module has no runtime dependencies.
 
+**Glide plain-text paste:** [Use native paste event text](examples/glide-plain-text-paste) with quoted TSV parsing, input limits, and an application-owned batch callback.
+
 A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, OPDS 2.0 catalog checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
