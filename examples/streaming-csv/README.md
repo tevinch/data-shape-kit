@@ -126,7 +126,7 @@ This package is an independent solution using csv-parse. It does not patch PapaP
 
 ## Verification
 
-The source download includes behavior tests using actual Node streams and temporary files. They exercise Unicode and CSV boundaries, sequential callback completion, a blocked consumer, stream/callback failures, malformed input, header validation and cancellation. The file demo is also run as a child process for success and failure cases. On Node.js 24.19.0, all 47 tests passed in both the source checkout and a fresh extraction of the download. The bundled demo produced the same three-row result and two sample records in both locations.
+The source download includes behavior tests using actual Node streams and temporary files. They exercise Unicode and CSV boundaries, sequential callback completion, a blocked consumer, stream/callback failures, malformed input, header validation and cancellation. The file demo is also run as a child process for success and failure cases. On Node.js 24.19.0, all 49 tests passed in both the source checkout and a fresh extraction of the download. The bundled demo produced the same three-row result and two sample records in both locations.
 
 ## Buy me a coffee, if this helped
 
