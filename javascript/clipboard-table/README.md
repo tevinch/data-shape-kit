@@ -4,6 +4,8 @@ Copyable JavaScript functions for spreadsheet paste fields. Keep multiline cells
 
 ## Try it
 
+To try it without installing anything, download the [local browser playground](../../downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html` in a modern browser. Paste quoted TSV or choose **Load example**, switch between header-based JSON objects and arrays, then use **Download JSON** to save the complete result. The preview shows up to 30 data rows and 8 columns; parsing retains the limits below. Everything runs in the page with no uploads or external runtime assets.
+
 For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
 
 Copy [`index.mjs`](index.mjs) and [`LICENSE`](LICENSE) into your project. TypeScript projects can also copy [`index.d.mts`](index.d.mts) beside it. This module runs independently of the Python tools in this repository. It is distributed as source here, not as an npm package.
@@ -25,6 +27,8 @@ node --test javascript/clipboard-table/test.mjs
 ```
 
 The module uses standard modern JavaScript features including `Object.hasOwn` and `String.replaceAll`.
+
+The playground source lives in [`playground.html`](playground.html) and [`playground.mjs`](playground.mjs). To rebuild the self-contained HTML from the canonical parser, run `node javascript/clipboard-table/build-playground.mjs` from the repository root. The result is [`downloads/clipboard-table-playground.html`](../../downloads/clipboard-table-playground.html). Pasting retains line endings in the received text; editing the text box uses the browser's normalized line endings.
 
 ## Connect a paste field
 
