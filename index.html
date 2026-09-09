@@ -26,9 +26,9 @@ SOFTWARE.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Convert spreadsheet clipboard text into JSON or Markdown tables locally. Preview quoted TSV, copy the result or download a file.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-4Sj07hcvTsdogBdSGaGIuMDD+yJP5Ee+H0ZHi0p57i4='; style-src 'sha256-NATbsL8OdGkwLIWjqJp49zLtBTR/6fIw6xPGLr4R7ME='; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
-  <title>Clipboard Table — local TSV playground</title>
+  <meta name="description" content="Convert CSV or spreadsheet clipboard text into JSON or Markdown tables locally. Preview quoted CSV or TSV, copy the result or download a file.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-mnzmPLRy9zEiMICR7O5Uh096oKKgQcHMhPrDGz8m3SA='; style-src 'sha256-NATbsL8OdGkwLIWjqJp49zLtBTR/6fIw6xPGLr4R7ME='; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>Clipboard Table — local CSV and TSV converter</title>
   <style>
     :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; color: #17243b; background: #edf1f7; }
     * { box-sizing: border-box; }
@@ -92,12 +92,13 @@ SOFTWARE.
     <div class="heading"><span class="brand">Clipboard Table</span><span class="tag">Free · MIT</span></div>
     <nav aria-label="Project"><a href="https://github.com/tevinch/data-shape-kit/tree/main/javascript/clipboard-table">Source &amp; guide</a><a href="https://github.com/tevinch/data-shape-kit/issues">Report a case</a></nav>
   </header>
-  <h1>Spreadsheet text → JSON or Markdown</h1>
-  <p class="intro">Try quoted, tab-separated clipboard text. Every cell stays text. Nothing is uploaded.</p>
+  <h1>CSV or spreadsheet text → JSON or Markdown</h1>
+  <p class="intro">Choose comma-separated CSV or tab-separated TSV. Every cell stays text. Nothing is uploaded.</p>
   <div class="workspace">
     <section class="panel" aria-labelledby="input-label">
       <label id="input-label" for="source">Paste or edit table text</label>
-      <p id="input-help" class="hint">Pasting replaces this box with the new selection and parses it. After editing, choose Parse.</p>
+      <label class="options" for="input-format">Input <select id="input-format"><option value="tsv">TSV (tabs)</option><option value="csv">CSV (commas)</option></select></label>
+      <p id="input-help" class="hint">Choose TSV for tab-separated spreadsheet text. Pasting replaces this box and parses it. After editing, choose Parse.</p>
       <textarea id="source" aria-describedby="input-help limits" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
       <label class="options" for="output-format">Output <select id="output-format"><option value="json">JSON</option><option value="markdown">Markdown table</option></select></label>
       <label class="options"><input id="headers" type="checkbox" checked><span id="header-label">Use the first row as JSON keys</span></label>
@@ -115,7 +116,7 @@ SOFTWARE.
       <p id="format-note" class="hint" hidden>Markdown escapes punctuation and uses &lt;br&gt; for cell line breaks. Rendered whitespace may differ; HTML line breaks depend on your Markdown renderer.</p>
     </section>
   </div>
-  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON. Markdown requires rows of equal width.</p>
+  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. Choose the delimiter explicitly; CSV here uses commas, with double quotes around cells containing commas, line breaks or quotes. Double a quote inside a quoted cell. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON. Markdown requires rows of equal width.</p>
   <footer>
     <h2>Buy me a coffee, if this helped</h2>
     <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the tool stays free, and feedback is appreciated too.</p>
@@ -253,21 +254,29 @@ export class TableTextError extends Error {
 }
 
 /** Strict comma- or tab-delimited text. Quoted cells may contain line endings. */
-export function parseDelimited(text, delimiter) {
+export function parseDelimited(text, delimiter, options = {}) {
   if (typeof text !== 'string') throw new TypeError('Expected text');
   if (delimiter !== ',' && delimiter !== '\t') throw new TypeError('Choose comma or tab');
-  if (text.length > TABLE_LIMITS.maxChars) throw new TableTextError('MAX_CHARS', 1, 1);
+  if (!options || typeof options !== 'object' || Array.isArray(options)) throw new TypeError('Expected a limits object');
+  const limits = { ...TABLE_LIMITS };
+  for (const key of Object.keys(options)) {
+    if (!Object.hasOwn(TABLE_LIMITS, key) || !Number.isSafeInteger(options[key]) || options[key] < 1) {
+      throw new TypeError('Limits must be known positive safe integers');
+    }
+    limits[key] = options[key];
+  }
+  if (text.length > limits.maxChars) throw new TableTextError('MAX_CHARS', 1, 1);
   let offset = text.startsWith('\uFEFF') ? 1 : 0;
   if (offset === text.length) return [];
   const rows = [];
   let row = [], field = '', state = 'start';
   const fail = code => { throw new TableTextError(code, rows.length + 1, row.length + 1); };
   const endField = () => {
-    if (row.length === TABLE_LIMITS.maxColumns) fail('MAX_COLUMNS');
+    if (row.length === limits.maxColumns) fail('MAX_COLUMNS');
     row.push(field); field = ''; state = 'start';
   };
   const endRow = () => {
-    if (rows.length === TABLE_LIMITS.maxRows) fail('MAX_ROWS');
+    if (rows.length === limits.maxRows) fail('MAX_ROWS');
     rows.push(row); row = [];
   };
   for (; offset < text.length; offset++) {
@@ -354,10 +363,14 @@ export function buildMarkdownTable(text, options) {
 
 // Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
 
-export function buildPlaygroundOutput(text, format = 'json', firstRowHeaders = true) {
+const jsonLimits = Object.freeze({ maxChars: 1_000_000, maxRows: 10_000, maxColumns: 256 });
+
+export function buildPlaygroundOutput(text, format = 'json', firstRowHeaders = true, inputFormat = 'tsv') {
   if (format !== 'json' && format !== 'markdown') throw new TypeError('Choose JSON or Markdown');
   if (typeof firstRowHeaders !== 'boolean') throw new TypeError('Expected a heading option');
-  const rows = parseClipboard(text, format === 'markdown' ? TABLE_LIMITS : {});
+  if (inputFormat !== 'tsv' && inputFormat !== 'csv') throw new TypeError('Choose TSV or CSV');
+  const limits = format === 'markdown' ? TABLE_LIMITS : jsonLimits;
+  const rows = inputFormat === 'csv' ? parseDelimited(text, ',', limits) : parseClipboard(text, limits);
   if (!rows.length) return null;
   const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
   const markdown = format === 'markdown' ? formatMarkdown(rows, { firstRowHeaders }) : null;
@@ -378,14 +391,18 @@ const byId = id => document.getElementById(id);
 const source = byId('source');
 const headers = byId('headers');
 const format = byId('output-format');
+const inputFormat = byId('input-format');
 let rawText = '';
 let result = null;
 let revision = 0;
 let copying = false;
-const example = 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n';
+const examples = {
+  tsv: 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n',
+  csv: 'SKU,Quantity,Notes\r\n00123,2,"First line\nSecond line"\r\n00456,,"Says ""hello"", then leaves"\r\n',
+};
 const messages = {
   UNCLOSED_QUOTE: 'Close the quoted cell',
-  UNEXPECTED_CHARACTER: 'Only a tab or row separator may follow a closing quote',
+  UNEXPECTED_QUOTE: 'Enclose the whole cell in double quotes and double any quote inside it',
   EMPTY_HEADER: 'A JSON key is blank; give it a name or turn off the first-row option',
   DUPLICATE_HEADER: 'JSON keys must be unique; rename this key or turn off the first-row option',
 };
@@ -401,12 +418,14 @@ function updateMode() {
   byId('limits').textContent = `${label}: up to ${markdown ? '100,000 UTF-16 code units, 1,000 rows and 64 columns' : '1,000,000 UTF-16 code units, 10,000 rows and 256 columns'}. Files are saved only when you choose Download.`;
   byId('format-note').hidden = !markdown;
   byId('output-details').open = markdown;
+  byId('input-help').textContent = `Choose ${inputFormat.value === 'csv' ? 'CSV for comma-separated text' : 'TSV for tab-separated spreadsheet text'}. Pasting replaces this box and parses it. After editing, choose Parse.`;
 }
 
 function errorMessage(error) {
   const markdown = format.value === 'markdown';
   const limits = markdown ? ['100,000', '1,000', '64'] : ['1,000,000', '10,000', '256'];
   const modeMessages = {
+    UNEXPECTED_CHARACTER: `Only a ${inputFormat.value === 'csv' ? 'comma' : 'tab'} or row separator may follow a closing quote`,
     MAX_CHARS: `The input exceeds ${limits[0]} UTF-16 code units`,
     MAX_ROWS: `The input exceeds ${limits[1]} rows`,
     MAX_COLUMNS: `A row exceeds ${limits[2]} columns`,
@@ -437,7 +456,7 @@ function parse() {
   clearOutput('');
   if (rawText === '') return;
   try {
-    result = buildPlaygroundOutput(rawText, format.value, headers.checked);
+    result = buildPlaygroundOutput(rawText, format.value, headers.checked, inputFormat.value);
     if (!result) return;
     const { data, headings, content, label } = result;
     const width = headings.length;
@@ -504,9 +523,10 @@ source.addEventListener('paste', event => {
 byId('parse').addEventListener('click', parse);
 headers.addEventListener('change', parse);
 format.addEventListener('change', () => { updateMode(); parse(); });
+inputFormat.addEventListener('change', () => { updateMode(); parse(); });
 byId('example').addEventListener('click', () => {
   headers.checked = true;
-  rawText = example;
+  rawText = examples[inputFormat.value];
   source.value = rawText;
   parse();
 });
