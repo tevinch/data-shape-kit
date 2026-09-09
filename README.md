@@ -6,6 +6,8 @@
 
 **Streamlit example:** [Keep decimal commas intact](examples/streamlit-decimal-paste) with a native text column and a copyable Python `Decimal` helper. Choose the source separators explicitly and review invalid rows before using the values.
 
+**Markdown tables:** [Convert CSV or spreadsheet text](javascript/markdown-table) into a literal GFM table with headers and column alignment. Includes a [React component and DevKit adapter](examples/react-markdown-table), with no conversion service or additional runtime packages.
+
 A small Python command-line tool for deterministic CSV cleanup, privacy-preserving profile summaries, value-free Markdown data dictionaries, exact-key comparisons, batch structure checks, OPDS 2.0 catalog checks, RSS and Atom feed checks, public event calendar file checks, JSON-LD checks, social card metadata checks, podcast RSS checks, robots.txt checks, XML sitemap checks, tab-delimited product feed checks, redirect-map checks, and offline product import preflight reports. It normalizes headers, trims surrounding cell whitespace, removes exact duplicate rows, and reports aggregate checks locally.
 
 ## Requirements
