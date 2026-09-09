@@ -60,6 +60,9 @@ function assertSameScope(selection, page) {
 
 function readRowMap(value) {
   const map = requireRecord(value, 'row map');
+  if (Object.prototype.toString.call(map) !== '[object Object]') {
+    throw new TypeError('row map must be a plain record');
+  }
   for (const key of Object.getOwnPropertyNames(map)) {
     if (typeof map[key] !== 'boolean') {
       throw new TypeError('row map values must be boolean');

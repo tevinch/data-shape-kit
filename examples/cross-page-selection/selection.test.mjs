@@ -251,6 +251,7 @@ test('rejects invalid page updater values and outputs', () => {
   }
   assert.throws(() => applyPageUpdate(selection, page, () => null), TypeError);
   assert.throws(() => applyPageUpdate(selection, page, () => ({a: 'yes'})), TypeError);
+  assert.throws(() => applyPageUpdate(selection, page, async () => ({a: true})), TypeError);
 });
 
 test('matches a separate explicit Set through a deterministic sequence', () => {
