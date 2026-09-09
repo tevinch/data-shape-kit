@@ -1,13 +1,21 @@
 # Markdown Table
 
-Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Includes a [React component and DevKit integration guide](../../examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
+Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Includes a [React component and DevKit integration guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
+
+## Install version 0.1.0
+
+Using Node.js 20 or newer, install the versioned package directly from this GitHub repository:
+
+```sh
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+```
+
+This package is distributed through GitHub, not published to the npm registry. Use the complete URL above; installing by its package name alone will not retrieve this release. The package has no install scripts. React is an optional peer dependency and is not installed for core-only use. Commit your application's lockfile to retain the resolved URL and integrity hash.
 
 ## Use the module
 
-Copy `index.mjs`, `index.d.mts` and `LICENSE` into your project. Keep the declaration beside the module for TypeScript.
-
 ```js
-import { buildMarkdownTable } from './index.mjs';
+import { buildMarkdownTable } from '@tevinch/markdown-table';
 
 const result = buildMarkdownTable('ID,Note\n001,"a|b"', {
   delimiter: ',',
@@ -26,6 +34,29 @@ Output:
 ```
 
 Choose `delimiter: '\t'` for spreadsheet clipboard text. Delimiters are explicit; the module does not guess whether a comma is data or a separator.
+
+ES modules and TypeScript declarations are included. For TypeScript, use modern `node16`, `nodenext`, or `bundler` module resolution. CommonJS callers can use dynamic `import()`. Alternatively, copy `index.mjs`, `index.d.mts`, and `LICENSE` into your project, keep the declaration beside the module, and import from `./index.mjs`.
+
+## Optional React component
+
+Use the React entry in a project with React 18 or newer already installed:
+
+```tsx
+import MarkdownTableGenerator from '@tevinch/markdown-table/react';
+
+export default function Example() {
+  return <MarkdownTableGenerator />;
+}
+```
+
+The compiled entry includes TypeScript declarations and the `"use client"` directive. It has native controls by default and accepts optional shared controls through its `controls` prop. The component's classes target Tailwind CSS 4. Tailwind ignores `node_modules` by default, so register the installed files in your Tailwind stylesheet. For example, if the stylesheet is `src/styles.css` and `node_modules` is at the project root:
+
+```css
+@import "tailwindcss";
+@source "../node_modules/@tevinch/markdown-table/react";
+```
+
+Adjust the source path relative to your stylesheet. Without Tailwind, the controls work but require your own layout styles. Clipboard copying needs a suitable browser context and permission; **Select output** provides a manual fallback. The [React guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table) covers preview limits, behavior, and the DevKit adapter.
 
 ## Behavior
 
@@ -49,7 +80,7 @@ See the official [GFM table syntax](https://github.github.com/gfm/#tables-extens
 
 ## Check it
 
-From this directory, using Node.js 20 or newer:
+From `javascript/markdown-table` in a [repository checkout](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0), using Node.js 20 or newer (test files are not included in the installed package):
 
 ```sh
 node --test test.mjs
@@ -64,6 +95,19 @@ node render.test.mjs "$table_check_dir/node_modules/marked/lib/marked.esm.js"
 ```
 
 Marked is a test dependency only. It is not imported by the module or React example.
+
+## Rebuild the package
+
+The React entry is generated from `examples/react-markdown-table/markdown-table-generator.tsx`. From this directory in a repository checkout, install build tools in a temporary directory and compile:
+
+```sh
+table_build_dir=$(mktemp -d)
+npm install --prefix "$table_build_dir" --ignore-scripts --no-audit --no-fund typescript@5.9.3 @types/react@19.2.18
+node build-react.mjs "$table_build_dir/node_modules"
+npm pack --ignore-scripts --pack-destination ../../downloads
+```
+
+The compiler checks the original TSX, preserves the client directive, and rewrites only its conversion-module import for the package layout. Build tools, tests, source maps, and the DevKit-specific adapter are excluded from the package. The `private` package flag prevents accidental registry publication; it does not restrict installation or the MIT license.
 
 ## Optional coffee
 

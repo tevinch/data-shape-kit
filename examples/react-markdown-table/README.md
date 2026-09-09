@@ -6,6 +6,24 @@ All conversion runs in the browser. The component makes no network requests and 
 
 ## Use in a React project
 
+Install the versioned GitHub package in a project with React 18 or newer:
+
+```sh
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+```
+
+```tsx
+import MarkdownTableGenerator from '@tevinch/markdown-table/react';
+
+export default function Example() {
+  return <MarkdownTableGenerator />;
+}
+```
+
+This is a GitHub-distributed package, not an npm registry listing. See the [package guide](../../javascript/markdown-table#optional-react-component) for Tailwind CSS 4 source registration, TypeScript, and the core-only import.
+
+### Copy the source instead
+
 Copy this component and the [conversion module](../../javascript/markdown-table), keeping the relative directory structure or updating the two module import paths. Keep `index.d.mts` beside `index.mjs` and retain the MIT license. Import the component in your page:
 
 ```tsx
