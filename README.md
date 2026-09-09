@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks and form validation. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
+Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation and table selection. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
 
 ## Choose a tool
 
@@ -17,6 +17,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
 | Debounce remote validation while keeping form input and submission current | [Remote field check](examples/remote-field-check) | Copyable JavaScript core; React / React Hook Form example and offline demo |
 | Keep PapaParse Worker results correct in tested Vite 8 production builds | [Vite Worker configuration and checks](examples/papaparse-vite-worker) | Copyable minifier configuration; runnable browser comparison |
+| Select all eligible query results across server-paginated pages, with exclusions | [Cross-page selection](examples/cross-page-selection) | Dependency-free selection module; TanStack Table 9 example with a local read-only server |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
