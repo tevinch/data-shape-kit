@@ -23,15 +23,19 @@ const messages = {
 
 function updateMode() {
   const markdown = format.value === 'markdown';
-  const label = markdown ? 'Markdown' : 'JSON';
+  const csv = format.value === 'csv';
+  const label = csv ? 'CSV' : markdown ? 'Markdown' : 'JSON';
   byId('copy').textContent = `Copy ${label}`;
   byId('download').textContent = `Download ${label}`;
   byId('output-summary').textContent = `View ${label}`;
   byId('output-label').textContent = `Complete ${label} output`;
-  byId('header-label').textContent = `Use the first row as ${markdown ? 'table headings' : 'JSON keys'}`;
+  byId('header-label').textContent = `Use the first row as ${csv ? 'preview headings' : markdown ? 'table headings' : 'JSON keys'}`;
   byId('limits').textContent = `${label}: up to ${markdown ? '100,000 UTF-16 code units, 1,000 rows and 64 columns' : '1,000,000 UTF-16 code units, 10,000 rows and 256 columns'}. Files are saved only when you choose Download.`;
-  byId('format-note').hidden = !markdown;
-  byId('output-details').open = markdown;
+  byId('format-note').hidden = !markdown && !csv;
+  byId('format-note').textContent = csv
+    ? 'CSV includes every input row. The heading option affects only the preview. Receiving applications may infer types. Use Download CSV to retain serialized line endings; manual copying from the text box may normalize them.'
+    : 'Markdown escapes punctuation and uses <br> for cell line breaks. Rendered whitespace may differ; HTML line breaks depend on your Markdown renderer.';
+  byId('output-details').open = markdown || csv;
   byId('input-help').textContent = `Choose ${inputFormat.value === 'csv' ? 'CSV for comma-separated text' : 'TSV for tab-separated spreadsheet text'}. Pasting replaces this box and parses it. After editing, choose Parse.`;
 }
 
@@ -112,7 +116,9 @@ function parse() {
     byId('output-details').hidden = false;
     byId('download').disabled = false;
     byId('copy').disabled = copying;
-    byId('status').textContent = format.value === 'markdown' ? 'Markdown ready. Cell text is escaped for a table.' : 'Parsed. All values remain strings.';
+    byId('status').textContent = format.value === 'csv'
+      ? 'CSV ready. Every input row is included.'
+      : format.value === 'markdown' ? 'Markdown ready. Cell text is escaped for a table.' : 'Parsed. All values remain strings.';
     byId('preview-note').textContent = data.length > 30 || width > 8
       ? `Preview shows at most 30 data rows and 8 columns. The ${label} output, copy and download include the complete result.`
       : `The ${label} output, copy and download include the complete result.`;
@@ -152,7 +158,7 @@ byId('clear').addEventListener('click', () => {
 });
 byId('download').addEventListener('click', () => {
   if (!result) return;
-  const url = URL.createObjectURL(new Blob([`${result.content}\n`], { type: result.mimeType }));
+  const url = URL.createObjectURL(new Blob([result.downloadContent], { type: result.mimeType }));
   const link = document.createElement('a');
   link.href = url;
   link.download = result.fileName;

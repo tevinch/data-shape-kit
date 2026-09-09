@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Convert CSV or spreadsheet clipboard text into JSON or Markdown tables locally. Preview quoted CSV or TSV, copy the result or download a file.">
+  <meta name="description" content="Convert CSV or spreadsheet clipboard text into CSV, JSON or Markdown tables locally. Preview quoted CSV or TSV, copy the result or download a file.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src '__SCRIPT_CSP__'; style-src '__STYLE_CSP__'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <title>Clipboard Table — local CSV and TSV converter</title>
   <style>
@@ -69,7 +69,7 @@
     <div class="heading"><span class="brand">Clipboard Table</span><span class="tag">Free · MIT</span></div>
     <nav aria-label="Project"><a href="https://github.com/tevinch/data-shape-kit/tree/main/javascript/clipboard-table">Source &amp; guide</a><a href="https://github.com/tevinch/data-shape-kit/issues">Report a case</a></nav>
   </header>
-  <h1>CSV or spreadsheet text → JSON or Markdown</h1>
+  <h1>Spreadsheet text → CSV, JSON or Markdown</h1>
   <p class="intro">Choose comma-separated CSV or tab-separated TSV. Every cell stays text. Nothing is uploaded.</p>
   <div class="workspace">
     <section class="panel" aria-labelledby="input-label">
@@ -77,7 +77,7 @@
       <label class="options" for="input-format">Input <select id="input-format"><option value="tsv">TSV (tabs)</option><option value="csv">CSV (commas)</option></select></label>
       <p id="input-help" class="hint">Choose TSV for tab-separated spreadsheet text. Pasting replaces this box and parses it. After editing, choose Parse.</p>
       <textarea id="source" aria-describedby="input-help limits" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
-      <label class="options" for="output-format">Output <select id="output-format"><option value="json">JSON</option><option value="markdown">Markdown table</option></select></label>
+      <label class="options" for="output-format">Output <select id="output-format"><option value="json">JSON</option><option value="markdown">Markdown table</option><option value="csv">CSV (commas)</option></select></label>
       <label class="options"><input id="headers" type="checkbox" checked><span id="header-label">Use the first row as JSON keys</span></label>
       <div class="actions"><button id="parse" class="primary">Parse</button><button id="example">Load example</button><button id="clear">Clear</button></div>
       <p id="status" role="status" aria-live="polite"></p>
@@ -93,7 +93,7 @@
       <p id="format-note" class="hint" hidden>Markdown escapes punctuation and uses &lt;br&gt; for cell line breaks. Rendered whitespace may differ; HTML line breaks depend on your Markdown renderer.</p>
     </section>
   </div>
-  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. Choose the delimiter explicitly; CSV here uses commas, with double quotes around cells containing commas, line breaks or quotes. Double a quote inside a quoted cell. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON. Markdown requires rows of equal width.</p>
+  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. Choose the input delimiter explicitly; CSV here uses commas, with double quotes around cells containing commas, line breaks or quotes. Double a quote inside a quoted cell. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON and CSV. CSV output quotes every cell and keeps each row’s width. Markdown requires rows of equal width.</p>
   <footer>
     <h2>Buy me a coffee, if this helped</h2>
     <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the tool stays free, and feedback is appreciated too.</p>
