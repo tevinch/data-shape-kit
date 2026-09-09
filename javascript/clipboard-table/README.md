@@ -81,6 +81,8 @@ export function PasteField() {
 
 Browser event behavior is documented in MDN's [clipboardData](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData) and [paste event](https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event) references. These are integration examples; test a real copy/paste on the spreadsheet and browser versions your application supports.
 
+For Sanity's `_key`/`_type`/`cells` row shape, the separate [grid update helper and worked example](sanity-rows.md) preserve existing row keys and surrounding cells while growing a pasted rectangle. This source-only companion does not send Studio patches and is not included in the v0.1.0 parser archive or browser playground.
+
 ## API
 
 ### `parseClipboard(text, limits?) → string[][]`
