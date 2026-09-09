@@ -16,9 +16,11 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 
 ## Try spreadsheet paste without installing a tool
 
-1. Download the [browser playground ZIP](downloads/clipboard-table-playground-v0.1.0.zip?raw=true).
-2. Extract it and open `index.html` in a modern browser.
-3. Choose **Load example**, or paste tab-separated text, then download the result as JSON.
+1. Open the [free browser playground](https://tevinch.github.io/data-shape-kit/).
+2. Choose **Load example**, or paste tab-separated text.
+3. Download the result as JSON.
+
+For offline use, download the [browser playground ZIP](downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html` in a modern browser.
 
 The page processes text locally with no uploads or external runtime assets. The [clipboard guide](javascript/clipboard-table#try-it) explains preview limits and includes a separate source-and-tests download. The [community examples](docs/spreadsheet-clipboard-pitfalls.md) show why splitting on every newline loses multiline cells.
 

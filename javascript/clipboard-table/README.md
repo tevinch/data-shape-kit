@@ -6,7 +6,9 @@ Using Python and Streamlit? The separate [decimal paste example](../../examples/
 
 ## Try it
 
-To try it without installing anything, download the [local browser playground](../../downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html` in a modern browser. Paste quoted TSV or choose **Load example**, switch between header-based JSON objects and arrays, then use **Download JSON** to save the complete result. The preview shows up to 30 data rows and 8 columns; parsing retains the limits below. Everything runs in the page with no uploads or external runtime assets.
+Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Paste quoted TSV or choose **Load example**, switch between header-based JSON objects and arrays, then use **Download JSON** to save the complete result. The preview shows up to 30 data rows and 8 columns; parsing retains the limits below. Everything runs in the page with no uploads or external runtime assets.
+
+For offline use, download the [local browser playground](../../downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html` in a modern browser.
 
 For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
 
