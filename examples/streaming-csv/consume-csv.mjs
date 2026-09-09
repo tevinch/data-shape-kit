@@ -32,12 +32,14 @@ function validateArguments(source, onRow, options) {
     }
   }
 
-  const delimiter = options.delimiter ?? ',';
+  const delimiter = options.delimiter === undefined ? ',' : options.delimiter;
   if (typeof delimiter !== 'string' || delimiter.length === 0 || /[\r\n"]/.test(delimiter)) {
     throw new TypeError('delimiter must be a nonempty string without CR, LF, or double quotes');
   }
 
-  const maxRecordSize = options.maxRecordSize ?? DEFAULT_MAX_RECORD_SIZE;
+  const maxRecordSize = options.maxRecordSize === undefined
+    ? DEFAULT_MAX_RECORD_SIZE
+    : options.maxRecordSize;
   if (!Number.isSafeInteger(maxRecordSize) || maxRecordSize <= 0) {
     throw new TypeError('maxRecordSize must be a positive safe integer');
   }

@@ -307,9 +307,11 @@ test('validates every argument before pulling from the source', async (t) => {
     { name: 'array options', source: byteStream('id\n'), callback: () => {}, options: [] },
     { name: 'unknown option', source: byteStream('id\n'), callback: () => {}, options: { columns: true } },
     { name: 'empty delimiter', source: byteStream('id\n'), callback: () => {}, options: { delimiter: '' } },
+    { name: 'null delimiter', source: byteStream('id\n'), callback: () => {}, options: { delimiter: null } },
     { name: 'newline delimiter', source: byteStream('id\n'), callback: () => {}, options: { delimiter: '\n' } },
     { name: 'quote delimiter', source: byteStream('id\n'), callback: () => {}, options: { delimiter: '"' } },
     { name: 'zero record size', source: byteStream('id\n'), callback: () => {}, options: { maxRecordSize: 0 } },
+    { name: 'null record size', source: byteStream('id\n'), callback: () => {}, options: { maxRecordSize: null } },
     { name: 'unsafe record size', source: byteStream('id\n'), callback: () => {}, options: { maxRecordSize: Number.MAX_SAFE_INTEGER + 1 } },
     { name: 'non-native signal', source: byteStream('id\n'), callback: () => {}, options: { signal: { aborted: false } } },
   ];
