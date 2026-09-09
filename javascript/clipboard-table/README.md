@@ -6,9 +6,11 @@ Using Python and Streamlit? The separate [decimal paste example](../../examples/
 
 ## Try it
 
-Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Paste quoted TSV or choose **Load example**, switch between header-based JSON objects and arrays, then use **Download JSON** to save the complete result. The preview shows up to 30 data rows and 8 columns; parsing retains the limits below. Everything runs in the page with no uploads or external runtime assets.
+Open the [free browser playground](https://tevinch.github.io/data-shape-kit/) to try it immediately. Paste quoted TSV or choose **Load example**, then select **JSON** or **Markdown table**. Copy the complete output or download a `.json` or `.md` file. If automatic copying is unavailable, the page selects the complete output for manual copying. The preview shows up to 30 data rows and 8 columns; output, copy and download include the complete result. Everything runs in the page with no uploads or external runtime assets.
 
-For offline use, download the [local browser playground](../../downloads/clipboard-table-playground-v0.1.0.zip?raw=true), extract it and open `index.html` in a modern browser.
+JSON accepts up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. Its first-row option produces objects with unique, nonblank keys; turning it off produces arrays and permits ragged rows. Markdown accepts up to 100,000 UTF-16 code units, 1,000 rows and 64 columns, including input delimiters and quotes. Markdown always requires equal-width rows; headings may be blank or repeated. Turning headings off generates `Column 1`, `Column 2`, and so on while retaining every input row as data. Markdown escapes punctuation and represents cell line breaks as `<br>`; rendered whitespace and HTML line-break support depend on the Markdown renderer.
+
+For offline use, download the [local browser playground v0.2.0](../../downloads/clipboard-table-playground-v0.2.0.zip?raw=true), extract it and open `index.html` in a modern browser. Clipboard permissions can vary for local files; manual copying and file downloads remain available.
 
 For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
 
@@ -32,7 +34,9 @@ node --test javascript/clipboard-table/test.mjs
 
 The module uses standard modern JavaScript features including `Object.hasOwn` and `String.replaceAll`.
 
-The playground source lives in [`playground.html`](playground.html) and [`playground.mjs`](playground.mjs). To rebuild the self-contained HTML from the canonical parser, run `node javascript/clipboard-table/build-playground.mjs` from the repository root. The result is [`downloads/clipboard-table-playground.html`](../../downloads/clipboard-table-playground.html). Pasting retains line endings in the received text; editing the text box uses the browser's normalized line endings.
+The playground source lives in [`playground.html`](playground.html), [`playground.mjs`](playground.mjs) and the pure [`output adapter`](playground-output.mjs), which reuses this TSV parser and the [Markdown formatter](../markdown-table). To rebuild the self-contained HTML from these source modules, run `node javascript/clipboard-table/build-playground.mjs` from the repository root. The result is [`downloads/clipboard-table-playground.html`](../../downloads/clipboard-table-playground.html). Pasting retains line endings in the received text; editing the text box uses the browser's normalized line endings. The playground accepts TSV only; the separate Markdown module also supports CSV.
+
+Run the output adapter's 12 checks with `node --test javascript/clipboard-table/playground-output.test.mjs`. They cover both output modes, header behavior, limits and complete results. These checks supplement the parser suite; they do not establish clipboard-permission behavior in every browser.
 
 ## Connect a paste field
 

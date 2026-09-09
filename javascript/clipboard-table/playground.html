@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Try spreadsheet clipboard text locally. Preview quoted TSV and export JSON while keeping cell values as text.">
+  <meta name="description" content="Convert spreadsheet clipboard text into JSON or Markdown tables locally. Preview quoted TSV, copy the result or download a file.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src '__SCRIPT_CSP__'; style-src '__STYLE_CSP__'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <title>Clipboard Table — local TSV playground</title>
   <style>
@@ -29,6 +29,7 @@
     textarea { width: 100%; resize: vertical; min-height: 270px; border: 1px solid #a5b3c7; border-radius: 5px; padding: 14px; background: #f8faff; color: #17243b; font: 14px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 4; }
     :focus-visible { outline: 3px solid #6489f1; outline-offset: 3px; }
     .options { display: flex; align-items: center; gap: 9px; margin: 14px 0; font-size: 14px; font-weight: 500; }
+    select { min-height: 42px; padding: 8px 12px; border: 1px solid #a5b3c7; border-radius: 5px; background: white; color: #17243b; font: inherit; }
     input[type=checkbox] { width: 18px; height: 18px; accent-color: #1647b8; }
     button { border: 1px solid #a5b3c7; border-radius: 5px; background: white; color: #17243b; font: 600 14px/1.4 system-ui, sans-serif; padding: 10px 14px; cursor: pointer; min-height: 42px; }
     button:hover { background: #edf2ff; }
@@ -50,7 +51,7 @@
     .empty-state { color: #61718b; padding: 30px 0; }
     details { margin-top: 16px; }
     summary { cursor: pointer; font-size: 14px; font-weight: 650; padding: 5px 0; }
-    #json { min-height: 170px; margin-top: 8px; }
+    #output { min-height: 170px; margin-top: 8px; }
     .boundary { margin-top: 20px; font-size: 14px; color: #52617a; }
     footer { border-top: 1px solid #c9d3e2; margin-top: 28px; padding-top: 24px; }
     footer h2 { font-size: 17px; }
@@ -68,28 +69,30 @@
     <div class="heading"><span class="brand">Clipboard Table</span><span class="tag">Free · MIT</span></div>
     <nav aria-label="Project"><a href="https://github.com/tevinch/data-shape-kit/tree/main/javascript/clipboard-table">Source &amp; guide</a><a href="https://github.com/tevinch/data-shape-kit/issues">Report a case</a></nav>
   </header>
-  <h1>Spreadsheet text → JSON</h1>
+  <h1>Spreadsheet text → JSON or Markdown</h1>
   <p class="intro">Try quoted, tab-separated clipboard text. Every cell stays text. Nothing is uploaded.</p>
   <div class="workspace">
     <section class="panel" aria-labelledby="input-label">
       <label id="input-label" for="source">Paste or edit table text</label>
       <p id="input-help" class="hint">Pasting replaces this box with the new selection and parses it. After editing, choose Parse.</p>
       <textarea id="source" aria-describedby="input-help limits" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
-      <label class="options"><input id="headers" type="checkbox" checked>Use the first row as JSON keys</label>
+      <label class="options" for="output-format">Output <select id="output-format"><option value="json">JSON</option><option value="markdown">Markdown table</option></select></label>
+      <label class="options"><input id="headers" type="checkbox" checked><span id="header-label">Use the first row as JSON keys</span></label>
       <div class="actions"><button id="parse" class="primary">Parse</button><button id="example">Load example</button><button id="clear">Clear</button></div>
       <p id="status" role="status" aria-live="polite"></p>
       <div id="error" role="alert" hidden></div>
-      <p id="limits" class="hint">Up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. A file is saved only when you choose Download JSON.</p>
+      <p id="limits" class="hint">JSON: up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. Files are saved only when you choose Download.</p>
     </section>
     <section class="panel" aria-labelledby="preview-heading">
-      <div class="result-heading"><h2 id="preview-heading">Preview</h2><button id="download" disabled>Download JSON</button></div>
+      <div class="result-heading"><h2 id="preview-heading">Preview</h2><div class="actions"><button id="copy" disabled>Copy JSON</button><button id="download" disabled>Download JSON</button></div></div>
       <p id="empty-state" class="empty-state">Paste a table or load the example to see the result.</p>
       <div id="table-scroll" class="table-scroll" tabindex="0" role="region" aria-label="Table preview" hidden><table id="table"></table></div>
       <p id="preview-note" class="hint"></p>
-      <details id="json-details" hidden><summary>View JSON</summary><label for="json" class="hint">Complete JSON output</label><textarea id="json" readonly spellcheck="false"></textarea></details>
+      <details id="output-details" hidden><summary id="output-summary">View JSON</summary><label id="output-label" for="output" class="hint">Complete JSON output</label><textarea id="output" readonly spellcheck="false"></textarea></details>
+      <p id="format-note" class="hint" hidden>Markdown escapes punctuation and uses &lt;br&gt; for cell line breaks. Rendered whitespace may differ; HTML line breaks depend on your Markdown renderer.</p>
     </section>
   </div>
-  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and remain empty strings in JSON.</p>
+  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON. Markdown requires rows of equal width.</p>
   <footer>
     <h2>Buy me a coffee, if this helped</h2>
     <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the tool stays free, and feedback is appreciated too.</p>

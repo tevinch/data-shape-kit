@@ -1,32 +1,60 @@
 // Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
-import { parseClipboard, toRecords } from './index.mjs';
+import { buildPlaygroundOutput } from './playground-output.mjs';
 
 const byId = id => document.getElementById(id);
 const source = byId('source');
 const headers = byId('headers');
+const format = byId('output-format');
 let rawText = '';
-let json = '';
+let result = null;
+let revision = 0;
+let copying = false;
 const example = 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n';
 const messages = {
   UNCLOSED_QUOTE: 'Close the quoted cell',
   UNEXPECTED_CHARACTER: 'Only a tab or row separator may follow a closing quote',
   EMPTY_HEADER: 'A JSON key is blank; give it a name or turn off the first-row option',
   DUPLICATE_HEADER: 'JSON keys must be unique; rename this key or turn off the first-row option',
-  RAGGED_ROW: 'This row has a different number of cells from the header; fix it or turn off the first-row option',
-  MAX_CHARS: 'The input exceeds 1,000,000 UTF-16 code units',
-  MAX_ROWS: 'The input exceeds 10,000 rows',
-  MAX_COLUMNS: 'A row exceeds 256 columns',
 };
 
+function updateMode() {
+  const markdown = format.value === 'markdown';
+  const label = markdown ? 'Markdown' : 'JSON';
+  byId('copy').textContent = `Copy ${label}`;
+  byId('download').textContent = `Download ${label}`;
+  byId('output-summary').textContent = `View ${label}`;
+  byId('output-label').textContent = `Complete ${label} output`;
+  byId('header-label').textContent = `Use the first row as ${markdown ? 'table headings' : 'JSON keys'}`;
+  byId('limits').textContent = `${label}: up to ${markdown ? '100,000 UTF-16 code units, 1,000 rows and 64 columns' : '1,000,000 UTF-16 code units, 10,000 rows and 256 columns'}. Files are saved only when you choose Download.`;
+  byId('format-note').hidden = !markdown;
+  byId('output-details').open = markdown;
+}
+
+function errorMessage(error) {
+  const markdown = format.value === 'markdown';
+  const limits = markdown ? ['100,000', '1,000', '64'] : ['1,000,000', '10,000', '256'];
+  const modeMessages = {
+    MAX_CHARS: `The input exceeds ${limits[0]} UTF-16 code units`,
+    MAX_ROWS: `The input exceeds ${limits[1]} rows`,
+    MAX_COLUMNS: `A row exceeds ${limits[2]} columns`,
+    RAGGED_ROW: markdown
+      ? 'Every Markdown row must have the same number of cells; fill or remove the extra cells'
+      : 'This row has a different number of cells from the header; fix it or turn off the first-row option',
+  };
+  return `${modeMessages[error.code] || messages[error.code] || 'The text could not be parsed'}${error.row ? ` (row ${error.row}, column ${error.column})` : ''}.`;
+}
+
 function clearOutput(message) {
-  json = '';
-  byId('json').value = '';
+  revision++;
+  result = null;
+  byId('output').value = '';
   byId('table').replaceChildren();
   byId('table-scroll').hidden = true;
-  byId('json-details').hidden = true;
+  byId('output-details').hidden = true;
   byId('empty-state').hidden = false;
   byId('preview-note').textContent = '';
   byId('download').disabled = true;
+  byId('copy').disabled = true;
   byId('error').hidden = true;
   byId('error').textContent = '';
   byId('status').textContent = message;
@@ -36,12 +64,11 @@ function parse() {
   clearOutput('');
   if (rawText === '') return;
   try {
-    const rows = parseClipboard(rawText);
-    const output = headers.checked ? toRecords(rows) : rows;
-    const data = headers.checked ? rows.slice(1) : rows;
-    const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
-    json = JSON.stringify(output, null, 2);
-    byId('json').value = json;
+    result = buildPlaygroundOutput(rawText, format.value, headers.checked);
+    if (!result) return;
+    const { data, headings, content, label } = result;
+    const width = headings.length;
+    byId('output').value = content;
     const table = byId('table');
     const caption = document.createElement('caption');
     caption.textContent = `${data.length} data ${data.length === 1 ? 'row' : 'rows'} · ${width} ${width === 1 ? 'column' : 'columns'}`;
@@ -52,7 +79,7 @@ function parse() {
     for (let col = 0; col < visibleColumns; col++) {
       const th = document.createElement('th');
       th.scope = 'col';
-      th.textContent = headers.checked ? rows[0][col] : `Column ${col + 1}`;
+      th.textContent = headings[col];
       heading.append(th);
     }
     head.append(heading);
@@ -76,15 +103,16 @@ function parse() {
     table.append(body);
     byId('empty-state').hidden = true;
     byId('table-scroll').hidden = false;
-    byId('json-details').hidden = false;
+    byId('output-details').hidden = false;
     byId('download').disabled = false;
-    byId('status').textContent = 'Parsed. All values remain strings.';
+    byId('copy').disabled = copying;
+    byId('status').textContent = format.value === 'markdown' ? 'Markdown ready. Cell text is escaped for a table.' : 'Parsed. All values remain strings.';
     byId('preview-note').textContent = data.length > 30 || width > 8
-      ? 'Preview shows at most 30 data rows and 8 columns. The JSON download includes the complete result.'
-      : 'The JSON download includes the complete result.';
+      ? `Preview shows at most 30 data rows and 8 columns. The ${label} output, copy and download include the complete result.`
+      : `The ${label} output, copy and download include the complete result.`;
   } catch (error) {
     clearOutput('No result was exported.');
-    byId('error').textContent = `${messages[error.code] || 'The text could not be parsed'}${error.row ? ` (row ${error.row}, column ${error.column})` : ''}.`;
+    byId('error').textContent = errorMessage(error);
     byId('error').hidden = false;
   }
 }
@@ -102,6 +130,7 @@ source.addEventListener('paste', event => {
 });
 byId('parse').addEventListener('click', parse);
 headers.addEventListener('change', parse);
+format.addEventListener('change', () => { updateMode(); parse(); });
 byId('example').addEventListener('click', () => {
   headers.checked = true;
   rawText = example;
@@ -115,14 +144,37 @@ byId('clear').addEventListener('click', () => {
   source.focus();
 });
 byId('download').addEventListener('click', () => {
-  if (!json) return;
-  const url = URL.createObjectURL(new Blob([`${json}\n`], { type: 'application/json;charset=utf-8' }));
+  if (!result) return;
+  const url = URL.createObjectURL(new Blob([`${result.content}\n`], { type: result.mimeType }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'clipboard-table.json';
+  link.download = result.fileName;
   document.body.append(link);
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
+byId('copy').addEventListener('click', async () => {
+  if (!result || copying) return;
+  const current = revision;
+  const { content, label } = result;
+  copying = true;
+  byId('copy').disabled = true;
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(content);
+    if (current === revision) byId('status').textContent = `${label} copied.`;
+  } catch {
+    if (current === revision) {
+      byId('output-details').open = true;
+      byId('output').focus();
+      byId('output').select();
+      byId('status').textContent = 'Automatic copy is unavailable. The complete output is selected; copy it manually.';
+    }
+  } finally {
+    copying = false;
+    byId('copy').disabled = !result;
+  }
+});
+updateMode();
 clearOutput('Ready. Paste a table or load the example.');
