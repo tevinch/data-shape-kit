@@ -1,19 +1,74 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildPlaygroundOutput } from './playground-output.mjs';
+import { parseDelimited } from '../markdown-table/index.mjs';
 
 const sample = 'ID\tNote\r\n001\t"a|b\nnext"\r\n';
 test('JSON keeps leading zeros and quoted newlines', () => {
   const result = buildPlaygroundOutput(sample, 'json', true);
   assert.deepEqual(JSON.parse(result.content), [{ ID: '001', Note: 'a|b\nnext' }]);
+  assert.equal(result.downloadContent, `${result.content}\n`);
   assert.equal(result.fileName, 'clipboard-table.json');
   assert.equal(result.mimeType, 'application/json;charset=utf-8');
+  assert.equal(result.label, 'JSON');
 });
 test('Markdown produces an escaped complete table', () => {
   const result = buildPlaygroundOutput(sample, 'markdown', true);
   assert.equal(result.content, '| ID | Note |\n| --- | --- |\n| 001 | a\\|b<br>next |');
+  assert.equal(result.downloadContent, `${result.content}\n`);
   assert.equal(result.fileName, 'clipboard-table.md');
   assert.equal(result.mimeType, 'text/markdown;charset=utf-8');
+  assert.equal(result.label, 'Markdown');
+});
+test('CSV quotes every field and preserves literal field text', () => {
+  const result = buildPlaygroundOutput('ID\tNote\tEmpty\r\n001\t"comma, quote ""yes""\nnext"\t', 'csv', true);
+  assert.equal(result.content, '"ID","Note","Empty"\r\n"001","comma, quote ""yes""\nnext",""');
+  assert.deepEqual(result.rows, [
+    ['ID', 'Note', 'Empty'],
+    ['001', 'comma, quote "yes"\nnext', ''],
+  ]);
+  assert.equal(result.fileName, 'clipboard-table.csv');
+  assert.equal(result.mimeType, 'text/csv;charset=utf-8');
+  assert.equal(result.label, 'CSV');
+});
+test('CSV headings affect preview only while every ragged and blank row is serialized', () => {
+  const input = '\tA\tA\r\n001\t\r\n2\r\n""\r\n';
+  const expectedRows = [['', 'A', 'A'], ['001', ''], ['2'], ['']];
+  const expectedCsv = '"","A","A"\r\n"001",""\r\n"2"\r\n""';
+  const withHeadings = buildPlaygroundOutput(input, 'csv', true);
+  const withoutHeadings = buildPlaygroundOutput(input, 'csv', false);
+
+  assert.deepEqual(withHeadings.rows, expectedRows);
+  assert.deepEqual(withHeadings.headings, ['', 'A', 'A']);
+  assert.deepEqual(withHeadings.data, [['001', ''], ['2'], ['']]);
+  assert.deepEqual(withoutHeadings.headings, ['Column 1', 'Column 2', 'Column 3']);
+  assert.deepEqual(withoutHeadings.data, expectedRows);
+  assert.equal(withHeadings.content, expectedCsv);
+  assert.equal(withoutHeadings.content, expectedCsv);
+});
+test('CSV preview generates headings for data wider than the header row', () => {
+  const result = buildPlaygroundOutput('A\tB\r\n1\t2\t3', 'csv', true);
+  assert.deepEqual(result.headings, ['A', 'B', 'Column 3']);
+  assert.deepEqual(result.data, [['1', '2', '3']]);
+  assert.equal(result.content, '"A","B"\r\n"1","2","3"');
+});
+test('CSV input preserves exact string fields and download parses without an extra row', () => {
+  const input = '\uFEFFCode,Long,Missing,Bool,Date,Unicode,Space,Special\r\n'
+    + '001,12345678901234567890,NA,true,2026-09-09,雪,"  padded  ",'
+    + '"tab\tcomma, cr\r\nline and BOM \uFEFF and ""quote"""\r\n';
+  const expectedRows = [
+    ['Code', 'Long', 'Missing', 'Bool', 'Date', 'Unicode', 'Space', 'Special'],
+    ['001', '12345678901234567890', 'NA', 'true', '2026-09-09', '雪', '  padded  ', 'tab\tcomma, cr\r\nline and BOM \uFEFF and "quote"'],
+  ];
+  const expectedCsv = '"Code","Long","Missing","Bool","Date","Unicode","Space","Special"\r\n'
+    + '"001","12345678901234567890","NA","true","2026-09-09","雪","  padded  ",'
+    + '"tab\tcomma, cr\r\nline and BOM \uFEFF and ""quote"""';
+  const result = buildPlaygroundOutput(input, 'csv', true, 'csv');
+
+  assert.deepEqual(result.rows, expectedRows);
+  assert.equal(result.content, expectedCsv);
+  assert.equal(result.downloadContent, `${expectedCsv}\r\n`);
+  assert.deepEqual(parseDelimited(result.downloadContent, ','), expectedRows);
 });
 test('turning headings off retains every input row', () => {
   const result = buildPlaygroundOutput('001\t\n002\tend', 'markdown', false);
@@ -54,7 +109,7 @@ test('exports keep data past the thirty-row visual preview', () => {
   assert.ok(result.content.endsWith('| 34 |'));
 });
 test('empty and BOM-only inputs have no downloadable output', () => {
-  for (const input of ['', '\uFEFF']) for (const mode of ['json', 'markdown']) {
+  for (const input of ['', '\uFEFF']) for (const mode of ['json', 'markdown', 'csv']) {
     assert.equal(buildPlaygroundOutput(input, mode), null);
   }
 });
@@ -84,7 +139,7 @@ test('input format is explicit; TSV leaves commas and CSV leaves tabs in cells',
 });
 test('CSV quoting errors expose coordinates without echoing input', () => {
   for (const [input, code] of [['a,"private', 'UNCLOSED_QUOTE'], ['a,"private"x', 'UNEXPECTED_CHARACTER'], ['a,pri"vate', 'UNEXPECTED_QUOTE']]) {
-    assert.throws(() => buildPlaygroundOutput(input, 'json', false, 'csv'), error =>
+    assert.throws(() => buildPlaygroundOutput(input, 'csv', false, 'csv'), error =>
       error.code === code && error.row === 1 && error.column === 2 && !error.message.includes('private'));
   }
 });
@@ -95,22 +150,26 @@ test('CSV follows existing JSON header and row-width rules', () => {
   assert.deepEqual(JSON.parse(buildPlaygroundOutput('A,B\n1', 'json', false, 'csv').content), [['A', 'B'], ['1']]);
   assert.throws(() => buildPlaygroundOutput('A,B\n1', 'markdown', false, 'csv'), { code: 'RAGGED_ROW' });
 });
-test('CSV uses unchanged output limits, including raw separators and quotes', () => {
+test('CSV output uses JSON-sized limits, including raw separators and quotes', () => {
   for (const [input, code] of [
     [`"${'x'.repeat(99_998)}"\n`, 'MAX_CHARS'],
     [Array(1001).fill('x').join('\n'), 'MAX_ROWS'],
     [Array(65).fill('x').join(','), 'MAX_COLUMNS'],
   ]) {
     assert.throws(() => buildPlaygroundOutput(input, 'markdown', false, 'csv'), { code });
-    assert.ok(buildPlaygroundOutput(input, 'json', false, 'csv').content);
+    assert.ok(buildPlaygroundOutput(input, 'csv', false, 'csv').content);
   }
   for (const [input, code] of [
     ['x'.repeat(1_000_001), 'MAX_CHARS'],
     [Array(10_001).fill('x').join('\n'), 'MAX_ROWS'],
     [Array(257).fill('x').join(','), 'MAX_COLUMNS'],
-  ]) assert.throws(() => buildPlaygroundOutput(input, 'json', false, 'csv'), { code });
+  ]) assert.throws(() => buildPlaygroundOutput(input, 'csv', false, 'csv'), { code });
 });
 test('CSV empty input and additional final blank records stay distinct', () => {
-  for (const input of ['', '\uFEFF']) assert.equal(buildPlaygroundOutput(input, 'json', false, 'csv'), null);
-  assert.deepEqual(JSON.parse(buildPlaygroundOutput('""\r\n\r\n', 'json', false, 'csv').content), [[''], ['']]);
+  for (const input of ['', '\uFEFF']) assert.equal(buildPlaygroundOutput(input, 'csv', false, 'csv'), null);
+  const result = buildPlaygroundOutput('""\r\n\r\n', 'csv', false, 'csv');
+  assert.deepEqual(result.rows, [[''], ['']]);
+  assert.equal(result.content, '""\r\n""');
+  assert.equal(result.downloadContent, '""\r\n""\r\n');
+  assert.deepEqual(parseDelimited(result.downloadContent, ','), [[''], ['']]);
 });
