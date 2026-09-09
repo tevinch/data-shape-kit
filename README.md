@@ -20,6 +20,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks
 | Select all eligible query results across server-paginated pages, with exclusions | [Cross-page selection](examples/cross-page-selection) | Dependency-free selection module; TanStack Table 9 example with a local read-only server |
 | Process UTF-8 CSV records sequentially with asynchronous callbacks and cancellation | [Streaming CSV](examples/streaming-csv) | Node.js 20+; csv-parse integration with strict decoding and header checks |
 | Keep blank numeric fields distinct from zero, with typed form inputs and submissions | [Number Input](examples/number-input) | Copyable Zod 4 schemas; React Hook Form example and type checks |
+| Replace declared CSV missing markers in selected columns while preserving identifiers and notes | [Missing Tokens](examples/missing-tokens) | Copyable Python module; standard library only |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
