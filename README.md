@@ -22,7 +22,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 2. Choose TSV (tabs) or CSV (commas), then **Load example** or paste your table text.
 3. Choose JSON or Markdown table, then copy or download the complete result.
 
-For offline use, download the [browser playground v0.3.0 ZIP](downloads/clipboard-table-playground-v0.3.0.zip?raw=true), extract it and open `index.html` in a modern browser. If automatic copying is unavailable, copy the selected output manually.
+For offline use, download the [browser playground v0.3.1 ZIP](downloads/clipboard-table-playground-v0.3.1.zip?raw=true), extract it and open `index.html` in a modern browser. If automatic copying is unavailable, copy the selected output manually.
 
 The page processes text locally with no uploads or external runtime assets. The [clipboard guide](javascript/clipboard-table#try-it) explains preview limits and includes a separate source-and-tests download. The [community examples](docs/spreadsheet-clipboard-pitfalls.md) show why splitting on every newline loses multiline cells.
 
@@ -31,7 +31,7 @@ The page processes text locally with no uploads or external runtime assets. The 
 Install the fixed GitHub release with Node.js 20 or newer:
 
 ```sh
-npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.1/downloads/tevinch-markdown-table-0.1.1.tgz
 ```
 
 In an ES module:

@@ -9,7 +9,7 @@ All conversion runs in the browser. The component makes no network requests and 
 Install the versioned GitHub package in a project with React 18 or newer:
 
 ```sh
-npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.1/downloads/tevinch-markdown-table-0.1.1.tgz
 ```
 
 ```tsx
@@ -82,7 +82,8 @@ The `controls` prop accepts optional `Panel`, `Textarea`, `Select`, and `Button`
 
 The component and adapter are free under the MIT license. If they save you some time and you feel like buying me a coffee, thank you — no contribution is expected.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Transfer and withdrawal fees depend on your wallet or exchange.

@@ -9,7 +9,7 @@ This is an application workaround. The Windows desktop Excel round trip from tha
 Copy `paste-event.mjs`, `paste-event.d.mts`, and `LICENSE` into your project. Keep the declaration beside the module. The adapter uses the [Markdown Table module's TSV parser](../../javascript/markdown-table), without formatting any Markdown. Either keep the repository directory layout or install the versioned module:
 
 ```sh
-npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.1/downloads/tevinch-markdown-table-0.1.1.tgz
 ```
 
 For that installation, change the adapter's import to:
@@ -87,7 +87,8 @@ The tests cover event consumption, plain-text-only reads, quoted cells, editable
 
 This solution is free under the MIT license. If it saves you some time and you feel like buying me a coffee, thank you — it is entirely optional.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Transfer and withdrawal fees depend on your wallet or exchange.

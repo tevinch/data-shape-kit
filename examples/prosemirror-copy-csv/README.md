@@ -87,7 +87,8 @@ A local Chrome check also exercised an editable ProseMirror table with synthetic
 
 This solution is free under the MIT license. If it saves you some time and you feel like buying me a coffee, thank you — it is entirely optional.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Transfer and withdrawal fees depend on your wallet or exchange.

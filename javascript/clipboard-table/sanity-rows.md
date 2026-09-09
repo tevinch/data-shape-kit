@@ -52,7 +52,8 @@ The helper's 16 tests cover offsets, growth, row metadata, parser integration, e
 
 If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the code stays free, and a useful test case is appreciated too.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch

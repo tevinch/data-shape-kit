@@ -55,7 +55,8 @@ st.divider()
 st.markdown('**Buy me a coffee, if this helped**')
 st.write("If this saved you a little time, you're welcome to buy me a coffee. Please don't feel "
          'obliged — feedback or sharing the example is appreciated too.')
-st.markdown('- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`\n'
-            '- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`')
+st.markdown('- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`\n'
+            '- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`\n'
+            '- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`')
 st.caption('Please match the asset and network exactly. Fees depend on your wallet or exchange. '
            'Thank you! — Tevinch')

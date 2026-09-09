@@ -1,6 +1,6 @@
 {
   "name": "@tevinch/markdown-table",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Convert pasted CSV or spreadsheet text to literal Markdown tables, with an optional React component.",
   "type": "module",
@@ -30,7 +30,7 @@
     "url": "git+https://github.com/tevinch/data-shape-kit.git",
     "directory": "javascript/markdown-table"
   },
-  "homepage": "https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/javascript/markdown-table",
+  "homepage": "https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.1/javascript/markdown-table",
   "bugs": { "url": "https://github.com/tevinch/data-shape-kit/issues" },
   "keywords": ["csv", "tsv", "markdown", "table", "react", "clipboard"]
 }

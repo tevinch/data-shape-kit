@@ -14,9 +14,9 @@ CSV uses commas and requires double quotes around cells containing commas, line 
 
 JSON accepts up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. Its first-row option produces objects with unique, nonblank keys; turning it off produces arrays and permits ragged rows. Markdown accepts up to 100,000 UTF-16 code units, 1,000 rows and 64 columns, including input delimiters and quotes. Markdown always requires equal-width rows; headings may be blank or repeated. Turning headings off generates `Column 1`, `Column 2`, and so on while retaining every input row as data. Markdown escapes punctuation and represents cell line breaks as `<br>`; rendered whitespace and HTML line-break support depend on the Markdown renderer.
 
-For offline use, download the [local browser playground v0.3.0](../../downloads/clipboard-table-playground-v0.3.0.zip?raw=true), extract it and open `index.html` in a modern browser. Clipboard permissions can vary for local files; manual copying and file downloads remain available.
+For offline use, download the [local browser playground v0.3.1](../../downloads/clipboard-table-playground-v0.3.1.zip?raw=true), extract it and open `index.html` in a modern browser. Clipboard permissions can vary for local files; manual copying and file downloads remain available.
 
-For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
+For the module, examples and tests in one download, get the [standalone v0.1.1 archive](../../downloads/clipboard-table-v0.1.1.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
 
 Copy [`index.mjs`](index.mjs) and [`LICENSE`](LICENSE) into your project. TypeScript projects can also copy [`index.d.mts`](index.d.mts) beside it. This module runs independently of the Python tools in this repository. It is distributed as source here, not as an npm package.
 
@@ -93,7 +93,7 @@ export function PasteField() {
 
 Browser event behavior is documented in MDN's [clipboardData](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData) and [paste event](https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event) references. These are integration examples; test a real copy/paste on the spreadsheet and browser versions your application supports.
 
-For Sanity's `_key`/`_type`/`cells` row shape, the separate [grid update helper and worked example](sanity-rows.md) preserve existing row keys and surrounding cells while growing a pasted rectangle. This source-only companion does not send Studio patches and is not included in the v0.1.0 parser archive or browser playground.
+For Sanity's `_key`/`_type`/`cells` row shape, the separate [grid update helper and worked example](sanity-rows.md) preserve existing row keys and surrounding cells while growing a pasted rectangle. This source-only companion does not send Studio patches and is not included in the v0.1.1 parser archive or browser playground.
 
 ## API
 
@@ -139,7 +139,8 @@ The [design notes and seven community examples](../../docs/spreadsheet-clipboard
 
 If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — using the code, reporting an issue, or sharing it is appreciated too.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch

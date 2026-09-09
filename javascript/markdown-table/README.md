@@ -1,13 +1,13 @@
 # Markdown Table
 
-Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Try the [free browser converter](https://tevinch.github.io/data-shape-kit/): choose CSV or TSV input and Markdown table output. Includes a [React component and DevKit integration guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
+Generate a GitHub Flavored Markdown table from CSV or spreadsheet clipboard text. Try the [free browser converter](https://tevinch.github.io/data-shape-kit/): choose CSV or TSV input and Markdown table output. Includes a [React component and DevKit integration guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.1/examples/react-markdown-table). The conversion module has no runtime dependencies, uploads, storage or network calls.
 
-## Install version 0.1.0
+## Install version 0.1.1
 
 Using Node.js 20 or newer, install the versioned package directly from this GitHub repository:
 
 ```sh
-npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.0/downloads/tevinch-markdown-table-0.1.0.tgz
+npm install https://raw.githubusercontent.com/tevinch/data-shape-kit/markdown-table-v0.1.1/downloads/tevinch-markdown-table-0.1.1.tgz
 ```
 
 This package is distributed through GitHub, not published to the npm registry. Use the complete URL above; installing by its package name alone will not retrieve this release. The package has no install scripts. React is an optional peer dependency and is not installed for core-only use. Commit your application's lockfile to retain the resolved URL and integrity hash.
@@ -56,7 +56,7 @@ The compiled entry includes TypeScript declarations and the `"use client"` direc
 @source "../node_modules/@tevinch/markdown-table/react";
 ```
 
-Adjust the source path relative to your stylesheet. Without Tailwind, the controls work but require your own layout styles. Clipboard copying needs a suitable browser context and permission; **Select output** provides a manual fallback. The [React guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0/examples/react-markdown-table) covers preview limits, behavior, and the DevKit adapter.
+Adjust the source path relative to your stylesheet. Without Tailwind, the controls work but require your own layout styles. Clipboard copying needs a suitable browser context and permission; **Select output** provides a manual fallback. The [React guide](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.1/examples/react-markdown-table) covers preview limits, behavior, and the DevKit adapter.
 
 ## Behavior
 
@@ -70,7 +70,7 @@ Adjust the source path relative to your stylesheet. Without Tailwind, the contro
 
 `parseDelimited(text, delimiter)` returns a string matrix. `formatMarkdown(matrix, options?)` returns `{ headers, rows, markdown }` without mutating the input. `buildMarkdownTable(text, options)` combines both steps. `TableTextError` provides `code`, `row`, and `column`; its message does not include input values. Invalid API argument types throw `TypeError`.
 
-The current repository source also accepts `parseDelimited(text, delimiter, limits)`, where `limits` may override `maxChars`, `maxRows` and `maxColumns` with positive safe integers. Omitted limits keep the defaults above. This lets the browser converter parse larger JSON inputs; Markdown formatting and `buildMarkdownTable` retain their fixed bounds. This optional third argument is not included in the version 0.1.0 package. Copy the current `index.mjs`, `index.d.mts` and `LICENSE` together to use it.
+Version 0.1.1 also accepts `parseDelimited(text, delimiter, limits)`, where `limits` may override `maxChars`, `maxRows` and `maxColumns` with positive safe integers. Omitted limits keep the defaults above. This lets the browser converter parse larger JSON inputs; Markdown formatting and `buildMarkdownTable` retain their fixed bounds.
 
 ## Literal text and rendering
 
@@ -82,13 +82,13 @@ See the official [GFM table syntax](https://github.github.com/gfm/#tables-extens
 
 ## Check it
 
-From `javascript/markdown-table` in a [repository checkout](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.0), using Node.js 20 or newer (test files are not included in the installed package):
+From `javascript/markdown-table` in a [repository checkout](https://github.com/tevinch/data-shape-kit/tree/markdown-table-v0.1.1), using Node.js 20 or newer (test files are not included in the installed package):
 
 ```sh
 node --test test.mjs
 ```
 
-The version 0.1.0 checkout has 16 core tests; the current source has 19, adding parser-limit validation and checking that overrides do not relax Markdown formatting bounds. They cover quoted CSV and TSV, string preservation, structural errors, limits, headers, alignment, escaping and Unicode separators. An optional check renders 110 literal-cell cases with Marked, including subsequent rows to detect broken table structure:
+The version 0.1.1 checkout has 19 core tests, including parser-limit validation and checks that overrides do not relax Markdown formatting bounds. They cover quoted CSV and TSV, string preservation, structural errors, limits, headers, alignment, escaping and Unicode separators. An optional check renders 110 literal-cell cases with Marked, including subsequent rows to detect broken table structure:
 
 ```sh
 table_check_dir=$(mktemp -d)
@@ -115,7 +115,8 @@ The compiler checks the original TSX, preserves the client directive, and rewrit
 
 This component is free under the MIT license. If it saves you some time and you feel like buying me a coffee, thank you — it is entirely optional.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Transfer and withdrawal fees depend on your wallet or exchange.

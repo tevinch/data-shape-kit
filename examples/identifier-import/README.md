@@ -8,7 +8,7 @@ This is a **text identifier contract**. It preserves text already stored in the 
 
 Copy [`identifier_import.py`](identifier_import.py) and [`LICENSE`](LICENSE) into your project. Python 3.11 or newer is required. CSV uses only the standard library; installing pandas does not change the parsing path or its results.
 
-The [standalone v0.1.0 ZIP](https://raw.githubusercontent.com/tevinch/data-shape-kit/main/downloads/identifier-column-v0.1.0.zip) includes the module, guide, synthetic tests and optional QR example. Extract it and run the commands below from its directory.
+The [standalone v0.1.1 ZIP](https://raw.githubusercontent.com/tevinch/data-shape-kit/main/downloads/identifier-column-v0.1.1.zip) includes the module, guide, synthetic tests and optional QR example. Extract it and run the commands below from its directory.
 
 ```python
 from identifier_import import read_csv_identifiers
@@ -102,7 +102,8 @@ For that project's future consolidated base, wire the report into the import/col
 
 If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the code stays free, and feedback with a small synthetic case is appreciated too.
 
-- **USDC on Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
-- **USDC on Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDC / SOL · Solana:** `9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy`
+- **USDC / ETH · Base:** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
+- **USDT · BNB Smart Chain (BEP20):** `0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA`
 
 Please match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch

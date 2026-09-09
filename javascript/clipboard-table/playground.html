@@ -56,7 +56,7 @@
     footer { border-top: 1px solid #c9d3e2; margin-top: 28px; padding-top: 24px; }
     footer h2 { font-size: 17px; }
     footer p { font-size: 14px; color: #52617a; max-width: 850px; }
-    .wallets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .wallets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
     .wallet { padding: 13px 16px; border: 1px solid #c9d3e2; border-radius: 5px; background: #f8faff; }
     .wallet strong { display: block; font-size: 14px; margin-bottom: 5px; }
     .wallet code { font-size: 13px; overflow-wrap: anywhere; user-select: all; }
@@ -98,8 +98,9 @@
     <h2>Buy me a coffee, if this helped</h2>
     <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the tool stays free, and feedback is appreciated too.</p>
     <div class="wallets">
-      <div class="wallet"><strong>USDC on Solana</strong><code>9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy</code></div>
-      <div class="wallet"><strong>USDC on Base</strong><code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></div>
+      <div class="wallet"><strong>USDC / SOL · Solana</strong><code>9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy</code></div>
+      <div class="wallet"><strong>USDC / ETH · Base</strong><code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></div>
+      <div class="wallet"><strong>USDT · BNB Smart Chain (BEP20)</strong><code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></div>
     </div>
     <p>Match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch</p>
   </footer>
