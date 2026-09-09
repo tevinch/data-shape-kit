@@ -165,6 +165,15 @@ function App() {
     return pageSelection(selection, {scope: page.scope, ids: eligiblePageIds});
   }, [eligiblePageIds, page, selection]);
 
+  const invalidatePreview = () => {
+    previewAbort.current?.abort();
+    previewAbort.current = null;
+    previewRequest.current += 1;
+    setPreview(null);
+    setPreviewLoading(false);
+    setError(null);
+  };
+
   const table = useTable({
     features,
     columns,
@@ -190,7 +199,7 @@ function App() {
       });
     },
     onRowSelectionChange: (updater) => {
-      setPreview(null);
+      invalidatePreview();
       setSelection((previous) => {
         if (!page || previous.scope !== page.scope) return previous;
         return applyPageUpdate(previous, {scope: page.scope, ids: eligiblePageIds}, updater);
@@ -200,15 +209,11 @@ function App() {
 
   const changeCategory = (nextCategory: Category) => {
     pageAbort.current?.abort();
-    previewAbort.current?.abort();
-    previewRequest.current += 1;
+    invalidatePreview();
     setCategory(nextCategory);
     setPageIndex(0);
     setPage(null);
-    setPreview(null);
-    setPreviewLoading(false);
     setLoading(true);
-    setError(null);
     setSelection(emptySelection(`catalog-v1:${nextCategory}`));
     setResetNotice(`Selection reset for ${nextCategory}.`);
   };
@@ -302,8 +307,8 @@ function App() {
               disabled={!page || page.eligibleCount === 0 || selection.mode === 'exclude' && selection.ids.length === 0}
               onClick={() => {
                 if (!page) return;
+                invalidatePreview();
                 setSelection(selectAllMatching(page.scope));
-                setPreview(null);
               }}
             >
               Select all {page?.eligibleCount ?? 0} eligible matches
@@ -313,8 +318,8 @@ function App() {
               disabled={!page || currentSelectedCount === 0}
               onClick={() => {
                 if (!page) return;
+                invalidatePreview();
                 setSelection(emptySelection(page.scope));
-                setPreview(null);
               }}
             >
               Clear selection
