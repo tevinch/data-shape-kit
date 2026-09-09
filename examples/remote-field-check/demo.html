@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Try a local remote-field validation simulation with immediate input updates, debouncing, cancellation and submit checks.">
+  <title>Remote field check — local demo</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.55 system-ui, sans-serif; color: #182a31; background: #f1f5f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1100px; margin: auto; padding: 52px 24px 32px; }
+    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #376856; }
+    h1 { margin: 10px 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.12; letter-spacing: -.045em; }
+    .intro { max-width: 720px; color: #46616a; font-size: 1.1rem; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; margin: 32px 0; align-items: start; }
+    .card { background: white; border: 1px solid #d5e0dc; border-radius: 16px; padding: 28px; }
+    h2, legend { font-size: 1.1rem; font-weight: 700; margin: 0 0 14px; }
+    fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+    label { display: block; font-weight: 600; margin: 14px 0 5px; }
+    input { width: 100%; font: inherit; padding: 11px 12px; border: 1px solid #8da59b; border-radius: 7px; background: #fff; color: inherit; }
+    input[aria-invalid="true"] { border-color: #ac3c32; }
+    :focus-visible { outline: 3px solid #80b7ef; outline-offset: 3px; }
+    #remote-slug-status { min-height: 3.2em; margin: 8px 0 0; font-size: .9rem; color: #425e55; }
+    input[aria-invalid="true"] + #remote-slug-status, [role="alert"] { color: #a52e24; }
+    button { font: inherit; font-weight: 600; padding: 11px 16px; margin: 22px 8px 0 0; border-radius: 7px; border: 1px solid #235b47; cursor: pointer; color: #fff; background: #235b47; }
+    button[type="button"] { color: #235b47; background: #fff; }
+    fieldset:disabled { opacity: .65; }
+    fieldset:disabled button { cursor: wait; }
+    .result { border-top: 1px solid #dde6e2; margin-top: 25px; padding-top: 22px; }
+    .result p, aside p { color: #52696e; font-size: .92rem; }
+    pre { margin-bottom: 0; padding: 14px; background: #f1f5f4; border-radius: 7px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
+    dl { margin: 0; }
+    dt { margin-top: 16px; font-weight: 600; }
+    dd { margin: 3px 0 0; color: #52696e; font-size: .92rem; }
+    code { font-family: ui-monospace, monospace; font-size: .9em; background: #eef3f1; padding: .1em .25em; border-radius: 3px; }
+    a { color: #235b47; text-underline-offset: 3px; }
+    footer { border-top: 1px solid #cfdbd5; padding-top: 24px; color: #52696e; font-size: .85rem; }
+    footer p { max-width: 760px; }
+    footer li { margin: 9px 0; overflow-wrap: anywhere; }
+    summary { cursor: pointer; color: #235b47; font-weight: 600; }
+    @media (max-width: 760px) { main { padding: 28px 16px; } .layout { grid-template-columns: 1fr; } .card { padding: 22px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Data Shape Kit / form components</div>
+    <h1>Keep typing.<br>Check only what changed.</h1>
+    <p class="intro">A remote field check that keeps input immediate, ignores stale results, and checks the current value before accepting a form.</p>
+  </header>
+  <div class="layout">
+    <div class="card" id="demo-root"><noscript>Enable JavaScript to try the local demo.</noscript></div>
+    <aside class="card">
+      <h2>Try the edge cases</h2>
+      <p>This demo simulates a service locally. It makes no network requests. Use 3–32 lowercase letters, digits or hyphens; start and end with a letter or digit.</p>
+      <dl>
+        <dt><code>available</code></dt><dd>A successful check after 400 ms.</dd>
+        <dt><code>taken</code></dt><dd>A validation message blocks acceptance.</dd>
+        <dt><code>slow</code></dt><dd>A 1.4-second check. Change it while checking to cancel the old result.</dd>
+        <dt><code>offline</code></dt><dd>A simulated service error. Retry with a different value.</dd>
+        <dt><code>timeout</code></dt><dd>A stalled check expires after 1.8 seconds.</dd>
+      </dl>
+      <p>Typing waits 350 ms before checking. Submit immediately to skip that delay. Editing <strong>Note</strong> starts no checks. Reset clears the form; the last accepted values remain below it.</p>
+      <p><a href="README.md">Read the integration guide</a> · <a href="LICENSE">MIT license</a></p>
+    </aside>
+  </div>
+  <footer>
+    <p>Remote field check v0.1.0 · Free source and a React Hook Form example. A real application must validate again on the server when it performs the operation. Bundled dependencies are listed in <a href="THIRD_PARTY_NOTICES.txt">third-party notices</a>.</p>
+    <details>
+      <summary>Buy me a coffee, if this helped</summary>
+      <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the code stays free, and useful feedback is appreciated too.</p>
+      <ul>
+        <li><strong>USDC / SOL · Solana:</strong> <code>9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy</code></li>
+        <li><strong>USDC / ETH · Base:</strong> <code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></li>
+        <li><strong>USDT · BNB Smart Chain (BEP20):</strong> <code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></li>
+      </ul>
+      <p>Please match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch</p>
+    </details>
+  </footer>
+</main>
+<script src="demo.js"></script>
+</body>
+</html>

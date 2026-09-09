@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Free MIT-licensed tools for spreadsheet text, Markdown tables and local file checks. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
+Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks and form validation. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
 
 ## Choose a tool
 
@@ -15,6 +15,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables and local file che
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
+| Debounce remote validation while keeping form input and submission current | [Remote field check](examples/remote-field-check) | Copyable JavaScript core; React / React Hook Form example and offline demo |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool

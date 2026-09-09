@@ -1,0 +1,25 @@
+{
+  "name": "remote-field-check-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test.mjs test-ui.mjs test-demo.mjs",
+    "typecheck": "tsc --noEmit --strict --jsx react-jsx --target es2022 --module nodenext --moduleResolution nodenext --lib es2022,dom use-remote-check.ts slug-form-example.tsx demo.tsx",
+    "build:demo": "node build-demo.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "esbuild": "0.25.5",
+    "jsdom": "25.0.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.87.0",
+    "typescript": "5.9.3"
+  }
+}
