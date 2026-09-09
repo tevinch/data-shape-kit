@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Check PapaParse worker results against complete expected CSV data in a Vite production build.">
+  <title>PapaParse Worker checks for Vite 8</title>
+  <style>
+    :root { font: 16px/1.55 system-ui, sans-serif; color: #203239; background: #f2f5f5; color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1050px; margin: auto; padding: 44px 22px; }
+    .eyebrow { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: #38675b; }
+    h1 { font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.04em; line-height: 1.16; margin: 12px 0 20px; max-width: 750px; }
+    h2 { font-size: 1.2rem; margin: 0 0 14px; }
+    p { max-width: 780px; color: #526870; }
+    .card { padding: 26px; border: 1px solid #d4dfdc; border-radius: 14px; background: white; margin: 26px 0; }
+    button { font: inherit; font-weight: 600; color: white; background: #265f50; border: 1px solid #265f50; border-radius: 7px; padding: 11px 18px; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
+    :focus-visible { outline: 3px solid #6cacf2; outline-offset: 3px; }
+    #status { font-weight: 600; color: #244f43; }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #dde5e2; }
+    th { background: #f3f7f5; font-size: .82rem; }
+    tr[data-status="pass"] td:last-child { color: #236040; font-weight: 700; }
+    tr:not([data-status="pass"]) td:last-child { color: #a8392d; font-weight: 700; }
+    details { margin-top: 22px; }
+    summary { cursor: pointer; color: #265f50; font-weight: 600; }
+    pre { padding: 16px; background: #f0f5f3; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; border-radius: 7px; max-height: 500px; overflow-y: auto; }
+    code { font-family: ui-monospace, monospace; font-size: .9em; background: #eaf0ed; padding: .1em .25em; border-radius: 3px; }
+    a { color: #265f50; text-underline-offset: 3px; }
+    footer { font-size: .85rem; padding-top: 18px; border-top: 1px solid #cedad5; }
+    footer li { overflow-wrap: anywhere; margin: 9px 0; }
+    @media (max-width: 600px) { main { padding: 26px 16px; } .card { padding: 18px; } th, td { padding: 9px 7px; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Data Shape Kit / CSV integration</div>
+  <h1>Check the data.<br>Then trust the build.</h1>
+  <p>PapaParse Worker checks for Vite 8. These eight checks compare complete synthetic rows, parse errors and expected header fields. Matching the row count alone is not enough.</p>
+  <div class="card">
+    <h2>Production Worker comparison</h2>
+    <p>Run this page from the built output over HTTP. The supplied configuration uses Terser; the guide includes commands for comparing the default and unminified builds. One fixture loads <code>sample.csv</code> from this same server; the rest are in memory.</p>
+    <button id="run" type="button">Run 8 checks</button>
+    <p id="status" role="status" aria-live="polite">Ready. No checks have run.</p>
+    <div class="scroll">
+      <table><thead><tr><th scope="col">Fixture</th><th scope="col">Execution</th><th scope="col">Result</th></tr></thead><tbody id="results"></tbody></table>
+    </div>
+    <details><summary>Inspect complete results</summary><pre id="details">Run the checks to see the results.</pre></details>
+  </div>
+  <p>All data is invented. This page has no upload, account or storage feature. A timeout is a failed check; reload before retrying to discard any remaining Worker. A passing run covers these fixtures in this browser, not every CSV or deployment.</p>
+  <p><a href="https://github.com/tevinch/data-shape-kit/tree/main/examples/papaparse-vite-worker">Read the free configuration guide</a></p>
+  <footer>
+    <p>Free MIT example v0.1.0 · Built dependencies: <a href="THIRD_PARTY_NOTICES.md">license notices</a>.</p>
+    <details>
+      <summary>Buy me a coffee, if this helped</summary>
+      <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the solution stays free, and a useful reproduction is appreciated too.</p>
+      <ul>
+        <li><strong>USDC / SOL · Solana:</strong> <code>9tY6D9mwcFaJwwzEHvw2v7nhSpdjqjNBYtuooyBN6rYy</code></li>
+        <li><strong>USDC / ETH · Base:</strong> <code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></li>
+        <li><strong>USDT · BNB Smart Chain (BEP20):</strong> <code>0x568Ab98578d682FB0B0b45619BE73EbFfbf5a6eA</code></li>
+      </ul>
+      <p>Please match the asset and network exactly. Fees depend on your wallet or exchange. Thank you! — Tevinch</p>
+    </details>
+  </footer>
+</main>
+<script type="module" src="/main.js"></script>
+</body>
+</html>
