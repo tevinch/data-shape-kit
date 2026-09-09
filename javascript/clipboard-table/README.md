@@ -4,6 +4,8 @@ Copyable JavaScript functions for spreadsheet paste fields. Keep multiline cells
 
 ## Try it
 
+For the module, examples and tests in one download, get the [standalone v0.1.0 archive](../../downloads/clipboard-table-v0.1.0.zip?raw=true). After extracting it, run `node example.mjs` or `node --test test.mjs` from its directory.
+
 Copy [`index.mjs`](index.mjs) and [`LICENSE`](LICENSE) into your project. TypeScript projects can also copy [`index.d.mts`](index.d.mts) beside it. This module runs independently of the Python tools in this repository. It is distributed as source here, not as an npm package.
 
 ```js
