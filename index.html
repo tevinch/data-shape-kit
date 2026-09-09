@@ -26,8 +26,8 @@ SOFTWARE.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Try spreadsheet clipboard text locally. Preview quoted TSV and export JSON while keeping cell values as text.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-RCvBIUy2W86AyMwH5rDs/JtREl9JS274tARLNVeCYPo='; style-src 'sha256-dgL0SytK66+N2Ic2FnF3BJ1QqqSEEy4mo45ZRzaccz8='; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="description" content="Convert spreadsheet clipboard text into JSON or Markdown tables locally. Preview quoted TSV, copy the result or download a file.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-4Sj07hcvTsdogBdSGaGIuMDD+yJP5Ee+H0ZHi0p57i4='; style-src 'sha256-NATbsL8OdGkwLIWjqJp49zLtBTR/6fIw6xPGLr4R7ME='; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <title>Clipboard Table — local TSV playground</title>
   <style>
     :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; color: #17243b; background: #edf1f7; }
@@ -52,6 +52,7 @@ SOFTWARE.
     textarea { width: 100%; resize: vertical; min-height: 270px; border: 1px solid #a5b3c7; border-radius: 5px; padding: 14px; background: #f8faff; color: #17243b; font: 14px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 4; }
     :focus-visible { outline: 3px solid #6489f1; outline-offset: 3px; }
     .options { display: flex; align-items: center; gap: 9px; margin: 14px 0; font-size: 14px; font-weight: 500; }
+    select { min-height: 42px; padding: 8px 12px; border: 1px solid #a5b3c7; border-radius: 5px; background: white; color: #17243b; font: inherit; }
     input[type=checkbox] { width: 18px; height: 18px; accent-color: #1647b8; }
     button { border: 1px solid #a5b3c7; border-radius: 5px; background: white; color: #17243b; font: 600 14px/1.4 system-ui, sans-serif; padding: 10px 14px; cursor: pointer; min-height: 42px; }
     button:hover { background: #edf2ff; }
@@ -73,7 +74,7 @@ SOFTWARE.
     .empty-state { color: #61718b; padding: 30px 0; }
     details { margin-top: 16px; }
     summary { cursor: pointer; font-size: 14px; font-weight: 650; padding: 5px 0; }
-    #json { min-height: 170px; margin-top: 8px; }
+    #output { min-height: 170px; margin-top: 8px; }
     .boundary { margin-top: 20px; font-size: 14px; color: #52617a; }
     footer { border-top: 1px solid #c9d3e2; margin-top: 28px; padding-top: 24px; }
     footer h2 { font-size: 17px; }
@@ -91,28 +92,30 @@ SOFTWARE.
     <div class="heading"><span class="brand">Clipboard Table</span><span class="tag">Free · MIT</span></div>
     <nav aria-label="Project"><a href="https://github.com/tevinch/data-shape-kit/tree/main/javascript/clipboard-table">Source &amp; guide</a><a href="https://github.com/tevinch/data-shape-kit/issues">Report a case</a></nav>
   </header>
-  <h1>Spreadsheet text → JSON</h1>
+  <h1>Spreadsheet text → JSON or Markdown</h1>
   <p class="intro">Try quoted, tab-separated clipboard text. Every cell stays text. Nothing is uploaded.</p>
   <div class="workspace">
     <section class="panel" aria-labelledby="input-label">
       <label id="input-label" for="source">Paste or edit table text</label>
       <p id="input-help" class="hint">Pasting replaces this box with the new selection and parses it. After editing, choose Parse.</p>
       <textarea id="source" aria-describedby="input-help limits" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
-      <label class="options"><input id="headers" type="checkbox" checked>Use the first row as JSON keys</label>
+      <label class="options" for="output-format">Output <select id="output-format"><option value="json">JSON</option><option value="markdown">Markdown table</option></select></label>
+      <label class="options"><input id="headers" type="checkbox" checked><span id="header-label">Use the first row as JSON keys</span></label>
       <div class="actions"><button id="parse" class="primary">Parse</button><button id="example">Load example</button><button id="clear">Clear</button></div>
       <p id="status" role="status" aria-live="polite"></p>
       <div id="error" role="alert" hidden></div>
-      <p id="limits" class="hint">Up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. A file is saved only when you choose Download JSON.</p>
+      <p id="limits" class="hint">JSON: up to 1,000,000 UTF-16 code units, 10,000 rows and 256 columns. Files are saved only when you choose Download.</p>
     </section>
     <section class="panel" aria-labelledby="preview-heading">
-      <div class="result-heading"><h2 id="preview-heading">Preview</h2><button id="download" disabled>Download JSON</button></div>
+      <div class="result-heading"><h2 id="preview-heading">Preview</h2><div class="actions"><button id="copy" disabled>Copy JSON</button><button id="download" disabled>Download JSON</button></div></div>
       <p id="empty-state" class="empty-state">Paste a table or load the example to see the result.</p>
       <div id="table-scroll" class="table-scroll" tabindex="0" role="region" aria-label="Table preview" hidden><table id="table"></table></div>
       <p id="preview-note" class="hint"></p>
-      <details id="json-details" hidden><summary>View JSON</summary><label for="json" class="hint">Complete JSON output</label><textarea id="json" readonly spellcheck="false"></textarea></details>
+      <details id="output-details" hidden><summary id="output-summary">View JSON</summary><label id="output-label" for="output" class="hint">Complete JSON output</label><textarea id="output" readonly spellcheck="false"></textarea></details>
+      <p id="format-note" class="hint" hidden>Markdown escapes punctuation and uses &lt;br&gt; for cell line breaks. Rendered whitespace may differ; HTML line breaks depend on your Markdown renderer.</p>
     </section>
   </div>
-  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and remain empty strings in JSON.</p>
+  <p class="boundary">Plain text only: no XLSX, HTML tables, merged cells or formatting. One final row separator ends the last row; additional blank rows remain. Pasted line endings are kept; editing the box uses the browser’s normalized line endings. Empty cells are marked “empty” in the preview and stay blank in Markdown or empty strings in JSON. Markdown requires rows of equal width.</p>
   <footer>
     <h2>Buy me a coffee, if this helped</h2>
     <p>If this saved you a little time, you're welcome to buy me a coffee. Please don't feel obliged — the tool stays free, and feedback is appreciated too.</p>
@@ -236,33 +239,195 @@ export function toRecords(rows) {
 }
 
 // Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
+export const TABLE_LIMITS = Object.freeze({ maxChars: 100_000, maxRows: 1000, maxColumns: 64 });
+
+/** One-based cell coordinates; messages never include input values. */
+export class TableTextError extends Error {
+  constructor(code, row, column) {
+    super(`${code} at row ${row}, column ${column}`);
+    this.name = 'TableTextError';
+    this.code = code;
+    this.row = row;
+    this.column = column;
+  }
+}
+
+/** Strict comma- or tab-delimited text. Quoted cells may contain line endings. */
+export function parseDelimited(text, delimiter) {
+  if (typeof text !== 'string') throw new TypeError('Expected text');
+  if (delimiter !== ',' && delimiter !== '\t') throw new TypeError('Choose comma or tab');
+  if (text.length > TABLE_LIMITS.maxChars) throw new TableTextError('MAX_CHARS', 1, 1);
+  let offset = text.startsWith('\uFEFF') ? 1 : 0;
+  if (offset === text.length) return [];
+  const rows = [];
+  let row = [], field = '', state = 'start';
+  const fail = code => { throw new TableTextError(code, rows.length + 1, row.length + 1); };
+  const endField = () => {
+    if (row.length === TABLE_LIMITS.maxColumns) fail('MAX_COLUMNS');
+    row.push(field); field = ''; state = 'start';
+  };
+  const endRow = () => {
+    if (rows.length === TABLE_LIMITS.maxRows) fail('MAX_ROWS');
+    rows.push(row); row = [];
+  };
+  for (; offset < text.length; offset++) {
+    const ch = text[offset];
+    if (state === 'quoted') {
+      if (ch === '"') {
+        if (text[offset + 1] === '"') { field += '"'; offset++; }
+        else state = 'closed';
+      } else field += ch;
+      continue;
+    }
+    if (ch === delimiter) { endField(); continue; }
+    if (ch === '\r' || ch === '\n') {
+      endField(); endRow();
+      if (ch === '\r' && text[offset + 1] === '\n') offset++;
+      continue;
+    }
+    if (state === 'closed') fail('UNEXPECTED_CHARACTER');
+    if (ch === '"') {
+      if (state !== 'start') fail('UNEXPECTED_QUOTE');
+      state = 'quoted';
+    } else { field += ch; state = 'unquoted'; }
+  }
+  if (state === 'quoted') fail('UNCLOSED_QUOTE');
+  if (row.length || field.length || state !== 'start') { endField(); endRow(); }
+  return rows;
+}
+
+function literalCell(text) {
+  // Escape in one pass so generated entities/backslashes are not escaped again.
+  return text.replace(/\r\n|[\r\n\u2028\u2029]|[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/gu, ch => {
+    if (ch === '\n' || ch === '\r' || ch === '\r\n') return '<br>';
+    if (ch === '\u2028') return '&#8232;';
+    if (ch === '\u2029') return '&#8233;';
+    if (ch === '&') return '&amp;';
+    if (ch === '<') return '&lt;';
+    if (ch === '>') return '&gt;';
+    return `\\${ch}`;
+  });
+}
+
+const alignmentRules = Object.freeze({ none: '---', left: ':---', center: ':---:', right: '---:' });
+
+/** Format literal text as GFM. Rendering may collapse spaces/tabs within cells. */
+export function formatMarkdown(matrix, options = {}) {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) throw new TypeError('Expected options');
+  for (const key of Object.keys(options)) {
+    if (key !== 'firstRowHeaders' && key !== 'alignments') throw new TypeError('Unknown format option');
+  }
+  const { firstRowHeaders = true, alignments = [] } = options;
+  if (typeof firstRowHeaders !== 'boolean' || !Array.isArray(alignments)) throw new TypeError('Invalid options');
+  if (!Array.isArray(matrix)) throw new TypeError('Expected rows');
+  if (matrix.length > TABLE_LIMITS.maxRows) throw new TableTextError('MAX_ROWS', TABLE_LIMITS.maxRows + 1, 1);
+  let chars = 0;
+  for (let r = 0; r < matrix.length; r++) {
+    const row = matrix[r];
+    if (!Array.isArray(row) || !row.length) throw new TypeError('Each row must contain cells');
+    if (row.length > TABLE_LIMITS.maxColumns) throw new TableTextError('MAX_COLUMNS', r + 1, TABLE_LIMITS.maxColumns + 1);
+    for (let c = 0; c < row.length; c++) {
+      if (typeof row[c] !== 'string') throw new TypeError('Every cell must be a string');
+      chars += row[c].length;
+      if (chars > TABLE_LIMITS.maxChars) throw new TableTextError('MAX_CHARS', r + 1, c + 1);
+    }
+    if (row.length !== matrix[0].length) throw new TableTextError('RAGGED_ROW', r + 1, Math.min(row.length, matrix[0].length) + 1);
+  }
+  const width = matrix[0]?.length ?? 0;
+  if (alignments.length > width) throw new TypeError('Too many alignments');
+  for (const align of alignments) {
+    if (typeof align !== 'string' || !Object.hasOwn(alignmentRules, align)) throw new TypeError('Invalid alignment');
+  }
+  if (!width) return { headers: [], rows: [], markdown: '' };
+  const headers = firstRowHeaders ? [...matrix[0]] : Array.from({ length: width }, (_, i) => `Column ${i + 1}`);
+  const rows = matrix.slice(firstRowHeaders ? 1 : 0).map(row => [...row]);
+  const line = row => `| ${row.map(literalCell).join(' | ')} |`;
+  const separator = `| ${headers.map((_, i) => alignmentRules[alignments[i] ?? 'none']).join(' | ')} |`;
+  return { headers, rows, markdown: [line(headers), separator, ...rows.map(line)].join('\n') };
+}
+
+export function buildMarkdownTable(text, options) {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) throw new TypeError('Expected options with delimiter');
+  const { delimiter, ...formatOptions } = options;
+  return formatMarkdown(parseDelimited(text, delimiter), formatOptions);
+}
+
+// Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
+
+export function buildPlaygroundOutput(text, format = 'json', firstRowHeaders = true) {
+  if (format !== 'json' && format !== 'markdown') throw new TypeError('Choose JSON or Markdown');
+  if (typeof firstRowHeaders !== 'boolean') throw new TypeError('Expected a heading option');
+  const rows = parseClipboard(text, format === 'markdown' ? TABLE_LIMITS : {});
+  if (!rows.length) return null;
+  const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
+  const markdown = format === 'markdown' ? formatMarkdown(rows, { firstRowHeaders }) : null;
+  return {
+    rows,
+    data: firstRowHeaders ? rows.slice(1) : rows,
+    headings: firstRowHeaders ? rows[0] : Array.from({ length: width }, (_, i) => `Column ${i + 1}`),
+    content: markdown ? markdown.markdown : JSON.stringify(firstRowHeaders ? toRecords(rows) : rows, null, 2),
+    fileName: format === 'markdown' ? 'clipboard-table.md' : 'clipboard-table.json',
+    mimeType: format === 'markdown' ? 'text/markdown;charset=utf-8' : 'application/json;charset=utf-8',
+    label: format === 'markdown' ? 'Markdown' : 'JSON',
+  };
+}
+
+// Copyright (c) 2026 Tevinch. SPDX-License-Identifier: MIT
 
 const byId = id => document.getElementById(id);
 const source = byId('source');
 const headers = byId('headers');
+const format = byId('output-format');
 let rawText = '';
-let json = '';
+let result = null;
+let revision = 0;
+let copying = false;
 const example = 'SKU\tQuantity\tNotes\r\n00123\t2\t"First line\nSecond line"\r\n00456\t\t"Says ""hello"""\r\n';
 const messages = {
   UNCLOSED_QUOTE: 'Close the quoted cell',
   UNEXPECTED_CHARACTER: 'Only a tab or row separator may follow a closing quote',
   EMPTY_HEADER: 'A JSON key is blank; give it a name or turn off the first-row option',
   DUPLICATE_HEADER: 'JSON keys must be unique; rename this key or turn off the first-row option',
-  RAGGED_ROW: 'This row has a different number of cells from the header; fix it or turn off the first-row option',
-  MAX_CHARS: 'The input exceeds 1,000,000 UTF-16 code units',
-  MAX_ROWS: 'The input exceeds 10,000 rows',
-  MAX_COLUMNS: 'A row exceeds 256 columns',
 };
 
+function updateMode() {
+  const markdown = format.value === 'markdown';
+  const label = markdown ? 'Markdown' : 'JSON';
+  byId('copy').textContent = `Copy ${label}`;
+  byId('download').textContent = `Download ${label}`;
+  byId('output-summary').textContent = `View ${label}`;
+  byId('output-label').textContent = `Complete ${label} output`;
+  byId('header-label').textContent = `Use the first row as ${markdown ? 'table headings' : 'JSON keys'}`;
+  byId('limits').textContent = `${label}: up to ${markdown ? '100,000 UTF-16 code units, 1,000 rows and 64 columns' : '1,000,000 UTF-16 code units, 10,000 rows and 256 columns'}. Files are saved only when you choose Download.`;
+  byId('format-note').hidden = !markdown;
+  byId('output-details').open = markdown;
+}
+
+function errorMessage(error) {
+  const markdown = format.value === 'markdown';
+  const limits = markdown ? ['100,000', '1,000', '64'] : ['1,000,000', '10,000', '256'];
+  const modeMessages = {
+    MAX_CHARS: `The input exceeds ${limits[0]} UTF-16 code units`,
+    MAX_ROWS: `The input exceeds ${limits[1]} rows`,
+    MAX_COLUMNS: `A row exceeds ${limits[2]} columns`,
+    RAGGED_ROW: markdown
+      ? 'Every Markdown row must have the same number of cells; fill or remove the extra cells'
+      : 'This row has a different number of cells from the header; fix it or turn off the first-row option',
+  };
+  return `${modeMessages[error.code] || messages[error.code] || 'The text could not be parsed'}${error.row ? ` (row ${error.row}, column ${error.column})` : ''}.`;
+}
+
 function clearOutput(message) {
-  json = '';
-  byId('json').value = '';
+  revision++;
+  result = null;
+  byId('output').value = '';
   byId('table').replaceChildren();
   byId('table-scroll').hidden = true;
-  byId('json-details').hidden = true;
+  byId('output-details').hidden = true;
   byId('empty-state').hidden = false;
   byId('preview-note').textContent = '';
   byId('download').disabled = true;
+  byId('copy').disabled = true;
   byId('error').hidden = true;
   byId('error').textContent = '';
   byId('status').textContent = message;
@@ -272,12 +437,11 @@ function parse() {
   clearOutput('');
   if (rawText === '') return;
   try {
-    const rows = parseClipboard(rawText);
-    const output = headers.checked ? toRecords(rows) : rows;
-    const data = headers.checked ? rows.slice(1) : rows;
-    const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
-    json = JSON.stringify(output, null, 2);
-    byId('json').value = json;
+    result = buildPlaygroundOutput(rawText, format.value, headers.checked);
+    if (!result) return;
+    const { data, headings, content, label } = result;
+    const width = headings.length;
+    byId('output').value = content;
     const table = byId('table');
     const caption = document.createElement('caption');
     caption.textContent = `${data.length} data ${data.length === 1 ? 'row' : 'rows'} · ${width} ${width === 1 ? 'column' : 'columns'}`;
@@ -288,7 +452,7 @@ function parse() {
     for (let col = 0; col < visibleColumns; col++) {
       const th = document.createElement('th');
       th.scope = 'col';
-      th.textContent = headers.checked ? rows[0][col] : `Column ${col + 1}`;
+      th.textContent = headings[col];
       heading.append(th);
     }
     head.append(heading);
@@ -312,15 +476,16 @@ function parse() {
     table.append(body);
     byId('empty-state').hidden = true;
     byId('table-scroll').hidden = false;
-    byId('json-details').hidden = false;
+    byId('output-details').hidden = false;
     byId('download').disabled = false;
-    byId('status').textContent = 'Parsed. All values remain strings.';
+    byId('copy').disabled = copying;
+    byId('status').textContent = format.value === 'markdown' ? 'Markdown ready. Cell text is escaped for a table.' : 'Parsed. All values remain strings.';
     byId('preview-note').textContent = data.length > 30 || width > 8
-      ? 'Preview shows at most 30 data rows and 8 columns. The JSON download includes the complete result.'
-      : 'The JSON download includes the complete result.';
+      ? `Preview shows at most 30 data rows and 8 columns. The ${label} output, copy and download include the complete result.`
+      : `The ${label} output, copy and download include the complete result.`;
   } catch (error) {
     clearOutput('No result was exported.');
-    byId('error').textContent = `${messages[error.code] || 'The text could not be parsed'}${error.row ? ` (row ${error.row}, column ${error.column})` : ''}.`;
+    byId('error').textContent = errorMessage(error);
     byId('error').hidden = false;
   }
 }
@@ -338,6 +503,7 @@ source.addEventListener('paste', event => {
 });
 byId('parse').addEventListener('click', parse);
 headers.addEventListener('change', parse);
+format.addEventListener('change', () => { updateMode(); parse(); });
 byId('example').addEventListener('click', () => {
   headers.checked = true;
   rawText = example;
@@ -351,16 +517,39 @@ byId('clear').addEventListener('click', () => {
   source.focus();
 });
 byId('download').addEventListener('click', () => {
-  if (!json) return;
-  const url = URL.createObjectURL(new Blob([`${json}\n`], { type: 'application/json;charset=utf-8' }));
+  if (!result) return;
+  const url = URL.createObjectURL(new Blob([`${result.content}\n`], { type: result.mimeType }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'clipboard-table.json';
+  link.download = result.fileName;
   document.body.append(link);
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
+byId('copy').addEventListener('click', async () => {
+  if (!result || copying) return;
+  const current = revision;
+  const { content, label } = result;
+  copying = true;
+  byId('copy').disabled = true;
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(content);
+    if (current === revision) byId('status').textContent = `${label} copied.`;
+  } catch {
+    if (current === revision) {
+      byId('output-details').open = true;
+      byId('output').focus();
+      byId('output').select();
+      byId('status').textContent = 'Automatic copy is unavailable. The complete output is selected; copy it manually.';
+    }
+  } finally {
+    copying = false;
+    byId('copy').disabled = !result;
+  }
+});
+updateMode();
 clearOutput('Ready. Paste a table or load the example.');
 
 </script>
