@@ -20,6 +20,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
 | Debounce remote validation while keeping form input and submission current | [Remote field check](examples/remote-field-check) | Copyable JavaScript core; React / React Hook Form example and offline demo |
+| Correct an existing text tag without deleting it | [Editable text tags](examples/editable-tags) | Copyable React-Select component; stable IDs, save/cancel and conflicting-update checks |
 | Highlight a phrase across PDF text fragments and explicit line endings | [PDF fragment highlights](examples/pdf-fragment-highlight) | Copyable module and React-PDF component; repeated and overlapping literal matches |
 | Acknowledge a saved dynamic form without losing focus or edits made during the request | [Saved field array](examples/saved-field-array) | Copyable React Hook Form component; local slow-save and failure example |
 | Show Ant Design local-rule errors immediately while debouncing remote validation | [Ant Design rule example](examples/antd-remote-rule) | Copyable rule bridge and React form with cancellation and immediate submit |
