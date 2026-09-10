@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   View,
+  renderToBuffer,
 } from '@react-pdf/renderer';
 import {
   PDFArray,
@@ -182,6 +183,41 @@ async function inspectPdf(buffer) {
 
   return { pdf, destinationPages, linkTargets, pageTexts };
 }
+
+test('keeps the contents title with an entire long first row', async () => {
+  const firstTitle = 'A deliberately long first entry whose words wrap across several lines at this narrow width so the complete row needs more than the title presence hint';
+  const buffer = await renderToBuffer(h(
+    Document,
+    null,
+    h(
+      Page,
+      { size: 'A4', style: styles.page },
+      h(View, { style: { height: 680 } }, text('Preceding content')),
+      h(
+        View,
+        { style: { width: 240 } },
+        h(Contents, {
+          entries: [{
+            id: 'long-first-row',
+            title: firstTitle,
+            level: 1,
+            pageNumber: 12,
+          }],
+        }),
+      ),
+      text('Destination', { id: 'long-first-row' }),
+    ),
+  ));
+  const { pageTexts } = await inspectPdf(buffer);
+  const titlePage = pageTexts.findIndex((pageText) => pageText.includes('Contents'));
+  const firstRowPage = pageTexts.findIndex((pageText) => (
+    pageText.includes('A deliberately long first entry')
+  ));
+
+  assert.notEqual(titlePage, -1);
+  assert.notEqual(firstRowPage, -1);
+  assert.equal(titlePage, firstRowPage);
+});
 
 test('resolves actual destinations, preserves metadata and links, and freezes values', async () => {
   const headings = [

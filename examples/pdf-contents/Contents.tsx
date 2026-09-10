@@ -56,23 +56,33 @@ export function Contents({
   entries,
   title = 'Contents',
 }: ContentsProps) {
+  const renderRow = (entry: ContentsEntry) => (
+    <View
+      key={entry.id}
+      style={[styles.row, { paddingLeft: (entry.level - 1) * 14 }]}
+      wrap={false}
+    >
+      <Link src={`#${entry.id}`} style={styles.label}>
+        {entry.title}
+      </Link>
+      <Text style={styles.pageNumber}>
+        {entry.pageNumber === null ? '...' : String(entry.pageNumber)}
+      </Text>
+    </View>
+  );
+  const [firstEntry, ...remainingEntries] = entries;
+
   return (
     <View style={styles.contents}>
-      <Text minPresenceAhead={34} style={styles.title}>{title}</Text>
-      {entries.map((entry) => (
-        <View
-          key={entry.id}
-          style={[styles.row, { paddingLeft: (entry.level - 1) * 14 }]}
-          wrap={false}
-        >
-          <Link src={`#${entry.id}`} style={styles.label}>
-            {entry.title}
-          </Link>
-          <Text style={styles.pageNumber}>
-            {entry.pageNumber === null ? '...' : String(entry.pageNumber)}
-          </Text>
+      {firstEntry === undefined ? (
+        <Text style={styles.title}>{title}</Text>
+      ) : (
+        <View wrap={false}>
+          <Text style={styles.title}>{title}</Text>
+          {renderRow(firstEntry)}
         </View>
-      ))}
+      )}
+      {remainingEntries.map(renderRow)}
     </View>
   );
 }
