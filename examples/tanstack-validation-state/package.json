@@ -1,0 +1,13 @@
+{
+  "name": "tanstack-validation-state-workaround",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "reproduce": "node verify.mjs --original",
+    "test": "node verify.mjs --patched"
+  },
+  "dependencies": {
+    "@tanstack/form-core": "1.33.5"
+  }
+}

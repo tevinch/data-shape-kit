@@ -1,0 +1,128 @@
+diff --git a/node_modules/@tanstack/form-core/src/FieldApi.ts b/node_modules/@tanstack/form-core/src/FieldApi.ts
+index 80770f8..a57ebca 100644
+--- a/node_modules/@tanstack/form-core/src/FieldApi.ts
++++ b/node_modules/@tanstack/form-core/src/FieldApi.ts
+@@ -1513,6 +1513,7 @@ export class FieldApi<
+-
++
+               field.timeoutIds.validations[validateObj.cause] = setTimeout(
+                 async () => {
++                  field.timeoutIds.validations[validateObj.cause] = null
+                   if (controller.signal.aborted) return rawResolve(undefined)
+                   try {
+                     rawResolve(
+diff --git a/node_modules/@tanstack/form-core/src/FormApi.ts b/node_modules/@tanstack/form-core/src/FormApi.ts
+index 4400017..35fd173 100644
+--- a/node_modules/@tanstack/form-core/src/FormApi.ts
++++ b/node_modules/@tanstack/form-core/src/FormApi.ts
+@@ -1517,7 +1517,13 @@ export class FormApi<
+         fieldMetaValues.some((f) => f?.errorMap?.onMount),
+       )
+-
++
+-      const isValidating = !!isFieldsValidating
++      const isValidating =
++        !!isFieldsValidating ||
++        !!(
++          currBaseStore as typeof currBaseStore & {
++            isFormValidating?: boolean
++          }
++        ).isFormValidating
+-
++
+       // As `errors` is not a primitive, we need to aggressively persist the same referencial value for performance reasons
+       let errors = prevVal?.errors ?? []
+@@ -1596,6 +1602,7 @@ export class FormApi<
+         isFieldsValid,
+         isFormValid,
+         isValid,
++        isValidating,
+         canSubmit,
+         isTouched,
+         isBlurred,
+diff --git a/node_modules/@tanstack/form-core/dist/esm/FieldApi.js b/node_modules/@tanstack/form-core/dist/esm/FieldApi.js
+index 6066942..fc23caf 100644
+--- a/node_modules/@tanstack/form-core/dist/esm/FieldApi.js
++++ b/node_modules/@tanstack/form-core/dist/esm/FieldApi.js
+@@ -379,6 +379,7 @@ class FieldApi {
+                 }
+                 field.timeoutIds.validations[validateObj.cause] = setTimeout(
+                   async () => {
++                    field.timeoutIds.validations[validateObj.cause] = null;
+                     if (controller.signal.aborted) return rawResolve(void 0);
+                     try {
+                       rawResolve(
+@@ -744,4 +745,3 @@ function getErrorMapKey(cause) {
+ export {
+   FieldApi
+ };
+-//# sourceMappingURL=FieldApi.js.map
+diff --git a/node_modules/@tanstack/form-core/dist/esm/FormApi.js b/node_modules/@tanstack/form-core/dist/esm/FormApi.js
+index b2852f3..ff2cb45 100644
+--- a/node_modules/@tanstack/form-core/dist/esm/FormApi.js
++++ b/node_modules/@tanstack/form-core/dist/esm/FormApi.js
+@@ -1128,7 +1128,7 @@ class FormApi {
+         currBaseStore.errorMap?.onMount || // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+         fieldMetaValues.some((f) => f?.errorMap?.onMount)
+       );
+-      const isValidating = !!isFieldsValidating;
++      const isValidating = !!isFieldsValidating || !!currBaseStore.isFormValidating;
+       let errors = prevVal?.errors ?? [];
+       if (!prevBaseStoreForStore || currBaseStore.errorMap !== prevBaseStoreForStore.errorMap) {
+         errors = Object.values(currBaseStore.errorMap).reduce((prev, curr) => {
+@@ -1162,6 +1162,7 @@ class FormApi {
+         isFieldsValid,
+         isFormValid,
+         isValid,
++        isValidating,
+         canSubmit,
+         isTouched,
+         isBlurred,
+@@ -1228,4 +1229,3 @@ function getErrorMapKey(cause) {
+ export {
+   FormApi
+ };
+-//# sourceMappingURL=FormApi.js.map
+diff --git a/node_modules/@tanstack/form-core/dist/cjs/FieldApi.cjs b/node_modules/@tanstack/form-core/dist/cjs/FieldApi.cjs
+index b0a0013..52484d7 100644
+--- a/node_modules/@tanstack/form-core/dist/cjs/FieldApi.cjs
++++ b/node_modules/@tanstack/form-core/dist/cjs/FieldApi.cjs
+@@ -381,6 +381,7 @@ class FieldApi {
+                 }
+                 field.timeoutIds.validations[validateObj.cause] = setTimeout(
+                   async () => {
++                    field.timeoutIds.validations[validateObj.cause] = null;
+                     if (controller.signal.aborted) return rawResolve(void 0);
+                     try {
+                       rawResolve(
+@@ -744,4 +745,3 @@ function getErrorMapKey(cause) {
+   }
+ }
+ exports.FieldApi = FieldApi;
+-//# sourceMappingURL=FieldApi.cjs.map
+diff --git a/node_modules/@tanstack/form-core/dist/cjs/FormApi.cjs b/node_modules/@tanstack/form-core/dist/cjs/FormApi.cjs
+index a9eb8be..6d03e66 100644
+--- a/node_modules/@tanstack/form-core/dist/cjs/FormApi.cjs
++++ b/node_modules/@tanstack/form-core/dist/cjs/FormApi.cjs
+@@ -1130,7 +1130,7 @@ class FormApi {
+         currBaseStore.errorMap?.onMount || // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+         fieldMetaValues.some((f) => f?.errorMap?.onMount)
+       );
+-      const isValidating = !!isFieldsValidating;
++      const isValidating = !!isFieldsValidating || !!currBaseStore.isFormValidating;
+       let errors = prevVal?.errors ?? [];
+       if (!prevBaseStoreForStore || currBaseStore.errorMap !== prevBaseStoreForStore.errorMap) {
+         errors = Object.values(currBaseStore.errorMap).reduce((prev, curr) => {
+@@ -1164,6 +1164,7 @@ class FormApi {
+         isFieldsValid,
+         isFormValid,
+         isValid,
++        isValidating,
+         canSubmit,
+         isTouched,
+         isBlurred,
+@@ -1228,4 +1229,3 @@ function getErrorMapKey(cause) {
+   }
+ }
+ exports.FormApi = FormApi;
+-//# sourceMappingURL=FormApi.cjs.map
