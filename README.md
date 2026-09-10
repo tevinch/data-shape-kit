@@ -2,6 +2,8 @@
 
 Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps, line sampling, JSONL imports and PDF contents. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
 
+Start with [three free components for spreadsheet paste, remote field checks and JSONL imports](docs/component-collection.md), each with a fixed download and a short runnable example.
+
 ## Choose a tool
 
 | What you need | Start here | Setup |
