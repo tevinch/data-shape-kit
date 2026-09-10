@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2022"
+  },
+  "include": [
+    "MutationList.tsx",
+    "mutation-rows.ts",
+    "useMutationRows.ts",
+    "test/types.ts"
+  ]
+}

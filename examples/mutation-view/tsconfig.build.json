@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "noEmit": false,
+    "outDir": ".test-dist",
+    "rootDir": "."
+  },
+  "include": ["MutationList.tsx", "mutation-rows.ts", "useMutationRows.ts"]
+}
