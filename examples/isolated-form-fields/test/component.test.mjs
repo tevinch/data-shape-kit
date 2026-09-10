@@ -84,7 +84,7 @@ test('a memoized sibling stays quiet while the changed real field remains live',
     'input[aria-label="Isolated first name"]',
   );
   input.focus();
-  const before = counts.getSnapshot()['isolated.profile.lastName'];
+  const before = counts.getSnapshot();
 
   for (const value of ['Adal', 'Adala']) {
     await changeInput(input, value);
@@ -98,7 +98,12 @@ test('a memoized sibling stays quiet while the changed real field remains live',
   assert.equal(document.activeElement, input);
   assert.equal(
     counts.getSnapshot()['isolated.profile.lastName'],
-    before,
+    before['isolated.profile.lastName'],
+  );
+  assert.ok(counts.getSnapshot()['isolated.group'] > before['isolated.group']);
+  assert.equal(
+    query('[data-testid="isolated-group-value"]').textContent,
+    '{"firstName":"Adala","lastName":"Lee"}',
   );
   await React.act(async () => root.unmount());
 });
