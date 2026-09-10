@@ -119,7 +119,7 @@ After installing the optional requirements, run all tests, including actual Pola
 python -m unittest discover -s test -v
 ```
 
-The integration tests skip if Polars is absent. The release verification runs them with the pinned dependency and checks both eager and lazy imports, the original failing input, malformed first lines, CRLF/non-ASCII records and a remaining schema mismatch. Unit tests cover original bytes and offsets, bounded oversized reads, rejection reasons, output progress, I/O errors and new-directory CLI behavior.
+The integration tests skip if Polars is absent. Release checks were executed on Python 3.12.14; Python 3.11 compatibility is based on syntax and standard-library API review. The release verification runs the integration tests with the pinned dependency and checks both eager and lazy imports, the original failing input, malformed first lines, CRLF/non-ASCII records and a remaining schema mismatch. Unit tests cover original bytes and offsets, bounded oversized reads, rejection reasons, output progress, I/O errors and new-directory CLI behavior.
 
 ## License
 
