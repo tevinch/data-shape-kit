@@ -18,6 +18,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
 | Debounce remote validation while keeping form input and submission current | [Remote field check](examples/remote-field-check) | Copyable JavaScript core; React / React Hook Form example and offline demo |
 | Show Ant Design local-rule errors immediately while debouncing remote validation | [Ant Design rule example](examples/antd-remote-rule) | Copyable rule bridge and React form with cancellation and immediate submit |
+| Keep TanStack Form pending indicators accurate when async field checks overlap | [Validation state patch](examples/tanstack-validation-state) | Exact-version 1.33.5 patch; runnable ESM and CommonJS regression fixture |
 | Keep PapaParse Worker results correct in tested Vite 8 production builds | [Vite Worker configuration and checks](examples/papaparse-vite-worker) | Copyable minifier configuration; runnable browser comparison |
 | Select all eligible query results across server-paginated pages, with exclusions | [Cross-page selection](examples/cross-page-selection) | Dependency-free selection module; TanStack Table 9 example with a local read-only server |
 | Process UTF-8 CSV records sequentially with asynchronous callbacks and cancellation | [Streaming CSV](examples/streaming-csv) | Node.js 20+; csv-parse integration with strict decoding and header checks |
