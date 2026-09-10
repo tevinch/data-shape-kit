@@ -11,6 +11,13 @@ const calendarUnits: readonly CalendarUnit[] = ['day', 'week', 'month', 'year'];
 const disambiguations = ['reject', 'earlier', 'later', 'compatible'] as const;
 const overflows = ['constrain', 'reject'] as const;
 
+function isStringMember<T extends string>(
+  value: unknown,
+  candidates: readonly T[],
+): value is T {
+  return typeof value === 'string' && candidates.some((candidate) => candidate === value);
+}
+
 function assertSafeInteger(value: unknown, name: string): asserts value is number {
   if (typeof value !== 'number') {
     throw new TypeError(`${name} must be a number`);
@@ -42,15 +49,21 @@ function readOptions(options: ShiftOptions | undefined): Required<ShiftOptions> 
     }
   }
 
-  const disambiguation = options?.disambiguation ?? 'reject';
-  if (!disambiguations.includes(disambiguation)) {
+  const disambiguation: unknown =
+    options !== undefined && Object.hasOwn(options, 'disambiguation')
+      ? options.disambiguation
+      : 'reject';
+  if (!isStringMember(disambiguation, disambiguations)) {
     throw new RangeError(
       `disambiguation must be one of: ${disambiguations.join(', ')}`,
     );
   }
 
-  const overflow = options?.overflow ?? 'constrain';
-  if (!overflows.includes(overflow)) {
+  const overflow: unknown =
+    options !== undefined && Object.hasOwn(options, 'overflow')
+      ? options.overflow
+      : 'constrain';
+  if (!isStringMember(overflow, overflows)) {
     throw new RangeError(`overflow must be one of: ${overflows.join(', ')}`);
   }
 

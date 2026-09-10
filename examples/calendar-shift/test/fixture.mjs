@@ -246,6 +246,22 @@ assert.throws(
   /overflow/,
 );
 assert.throws(
+  () => shiftCalendar(0, 0, 'day', 'UTC', { disambiguation: undefined }),
+  /disambiguation/,
+);
+assert.throws(
+  () => shiftCalendar(0, 0, 'day', 'UTC', { overflow: undefined }),
+  /overflow/,
+);
+assert.throws(
+  () => shiftCalendar(0, 0, 'day', 'UTC', { disambiguation: null }),
+  /disambiguation/,
+);
+assert.throws(
+  () => shiftCalendar(0, 0, 'day', 'UTC', { overflow: null }),
+  /overflow/,
+);
+assert.throws(
   () => shiftCalendar(0, 0, 'day', 'UTC', { ignored: true }),
   /unknown option/,
 );

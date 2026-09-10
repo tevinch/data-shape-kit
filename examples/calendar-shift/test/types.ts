@@ -30,4 +30,16 @@ shiftCalendar(source.valueOf(), 1, 'day', zone, { disambiguation: 'middle' });
 // @ts-expect-error Overflow is a closed union.
 shiftCalendar(source.valueOf(), 1, 'month', zone, { overflow: 'balance' });
 
+// @ts-expect-error A present undefined value is not an omitted disambiguation.
+shiftCalendar(source.valueOf(), 1, 'day', zone, { disambiguation: undefined });
+
+// @ts-expect-error A present undefined value is not an omitted overflow.
+shiftCalendar(source.valueOf(), 1, 'day', zone, { overflow: undefined });
+
+// @ts-expect-error Null is not a valid disambiguation.
+shiftCalendar(source.valueOf(), 1, 'day', zone, { disambiguation: null });
+
+// @ts-expect-error Null is not a valid overflow.
+shiftCalendar(source.valueOf(), 1, 'day', zone, { overflow: null });
+
 void displayed;
