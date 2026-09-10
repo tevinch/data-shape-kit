@@ -14,7 +14,7 @@ function requireDenseArray(value: unknown, name: string): asserts value is unkno
   }
 
   for (let index = 0; index < value.length; index += 1) {
-    if (!(index in value)) {
+    if (!Object.hasOwn(value, index)) {
       throw new TypeError(`${name} must not be sparse`);
     }
   }

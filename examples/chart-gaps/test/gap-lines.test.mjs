@@ -6,6 +6,13 @@ import test from 'node:test';
 
 import { splitCategoryGaps, splitTimeGaps } from '../dist/gap-lines.js';
 
+function addInheritedIndex(array, index, value) {
+  const prototype = Object.create(Array.prototype);
+  Object.defineProperty(prototype, index, { value });
+  Object.setPrototypeOf(array, prototype);
+  return array;
+}
+
 test('aligns category samples and bridges each bounded missing run', () => {
   assert.deepEqual(
     splitCategoryGaps(
@@ -100,6 +107,18 @@ test('rejects malformed category input with the documented error classes', () =>
   ]) {
     assert.throws(() => splitCategoryGaps(categories, samples), RangeError);
   }
+});
+
+test('rejects inherited numeric properties as sparse array holes', () => {
+  const categories = addInheritedIndex(new Array(1), 0, 'A');
+  const samples = addInheritedIndex(new Array(1), 0, ['A', 1]);
+  const tuple = ['A'];
+  tuple.length = 2;
+  addInheritedIndex(tuple, 1, 1);
+
+  assert.throws(() => splitCategoryGaps(categories, []), TypeError);
+  assert.throws(() => splitCategoryGaps(['A'], samples), TypeError);
+  assert.throws(() => splitCategoryGaps(['A'], [tuple]), TypeError);
 });
 
 test('detects omitted time intervals only when they exceed the threshold', () => {
