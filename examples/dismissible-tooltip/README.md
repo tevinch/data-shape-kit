@@ -12,7 +12,7 @@ The [Tooltip API](https://recharts.github.io/en-US/api/Tooltip/) distinguishes `
 
 ## Run the example
 
-Extract the ZIP, open a terminal in `dismissible-tooltip`, and use Node.js 22.12 or newer:
+Extract the ZIP, open a terminal in `dismissible-tooltip`, and use Node.js 22.22.2 or newer within Node 22, Node.js 24.15.0 or newer within Node 24, or Node.js 26.0.0 or newer:
 
 ```sh
 npm ci --ignore-scripts
@@ -55,11 +55,11 @@ Each hook instance owns its own state. Reset it when replacing a dataset whose p
 
 This is application logic around public props and callbacks, not a change to Recharts. It does not call private event emitters, mutate a chart ref's state, or remount the chart to reset it. Native chart hover controls remain in charge after the gate reopens.
 
-The demonstrated tooltip behavior is mouse hover on a single Scatter series. The HTML table supplies a keyboard-accessible route to the same data and dialog; this is not a general keyboard or touch tooltip adapter. Check your own chart type, input method, series identifiers and modal implementation before adapting it. No v2 compatibility or map synchronization is claimed.
+The demonstrated tooltip behavior is mouse hover on a single Scatter series. The HTML table supplies a keyboard-accessible route to the same data and dialog; this is not a general keyboard or touch tooltip adapter. The chart sets `accessibilityLayer={false}` for this pointer-focused demonstration because the always-visible HTML table supplies equivalent data and keyboard details controls; retain the table when adapting that choice. Check your own chart type, input method, series identifiers and modal implementation before adapting it. No v2 compatibility or map synchronization is claimed.
 
 ## Verification
 
-Verified with Node.js 24.19.0, React 19.3.0 and Recharts 3.10.1: seven tests passed, followed by TypeScript checking and a production build. The tests mount the actual React hook and Recharts chart. They cover repeated enters at the dismissed point, visiting another point, restored native hiding, suspension during the dialog, reset, separate instances, invalid IDs and table-driven details. The declared Node.js minimum follows the build tool's supported engine range; Node.js 22.12 was not tested here.
+Verified by execution with Node.js 24.19.0, React 19.3.0 and Recharts 3.10.1: seven tests passed, followed by TypeScript checking and a production build. The tests mount the actual React hook and Recharts chart. They cover repeated enters at the dismissed point, visiting another point, restored native hiding, suspension during the dialog, reset, separate instances, invalid IDs and table-driven details. The supported Node range is 22.22.2 or newer within Node 22, 24.15.0 or newer within Node 24, or 26.0.0 or newer. The Node 22 and Node 26 branches are inferred from the locked packages' engine metadata; only Node.js 24.19.0 was executed here.
 
 The test DOM supplies only the missing native dialog methods. Chrome separately verified the A → details → close → A stays hidden → B shows → leave hides flow, table activation with Enter, closing with Escape, and focus returning to the table button. At a 390px viewport, the page had no horizontal overflow; chart and table scroll within their own containers. Browser warning and error logs were empty.
 
