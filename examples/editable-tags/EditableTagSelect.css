@@ -1,0 +1,135 @@
+.editable-tags {
+  width: 100%;
+  max-width: 100%;
+}
+
+.editable-tags .editable-tags__label,
+.editable-tags .editable-tags__editor-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #243148;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.editable-tags .editable-tags-select__control {
+  min-height: 3rem;
+  border-color: #aeb8c9;
+  border-radius: 0.65rem;
+  box-shadow: none;
+}
+
+.editable-tags .editable-tags-select__control:hover,
+.editable-tags .editable-tags-select__control--is-focused {
+  border-color: #526c9a;
+}
+
+.editable-tags .editable-tags-select__control--is-focused {
+  box-shadow: 0 0 0 3px rgb(82 108 154 / 18%);
+}
+
+.editable-tags .editable-tags-select__multi-value {
+  max-width: min(15rem, 100%);
+  background: #edf2fa;
+  border-radius: 0.4rem;
+}
+
+.editable-tags .editable-tags-select__multi-value__label {
+  min-width: 0;
+  padding: 0;
+}
+
+.editable-tags .editable-tags__edit-button {
+  display: block;
+  max-width: 13rem;
+  padding: 0.25rem 0.45rem;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: #243148;
+  font: inherit;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.editable-tags .editable-tags__edit-button:hover:not(:disabled) {
+  color: #234f98;
+  text-decoration: underline;
+}
+
+.editable-tags .editable-tags__edit-button:focus-visible {
+  outline: 2px solid #315faa;
+  outline-offset: -2px;
+}
+
+.editable-tags .editable-tags__edit-button:disabled {
+  color: #6f7785;
+  cursor: not-allowed;
+}
+
+.editable-tags .editable-tags__editor {
+  margin-top: 0.85rem;
+  padding: 0.9rem;
+  border: 1px solid #c9d1de;
+  border-radius: 0.65rem;
+  background: #f8fafc;
+}
+
+.editable-tags .editable-tags__editor-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid #9ba8bc;
+  border-radius: 0.45rem;
+  color: #172033;
+  font: inherit;
+}
+
+.editable-tags .editable-tags__editor-input:focus {
+  border-color: #315f99;
+  outline: 3px solid rgb(49 95 153 / 18%);
+}
+
+.editable-tags .editable-tags__editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.editable-tags .editable-tags__editor-actions button {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #8090a8;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #243148;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.editable-tags .editable-tags__editor-actions button:first-child {
+  border-color: #315f99;
+  background: #315f99;
+  color: #fff;
+}
+
+.editable-tags .editable-tags__editor-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.editable-tags .editable-tags__error {
+  margin: 0.55rem 0 0;
+  color: #a02e38;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 390px) {
+  .editable-tags .editable-tags__edit-button {
+    max-width: 9.5rem;
+  }
+}

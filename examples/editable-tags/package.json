@@ -1,0 +1,29 @@
+{
+  "name": "editable-tags-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "test": "npm run test:compile && node --test test/*.test.mjs",
+    "test:compile": "rm -rf .test-build && tsc --project tsconfig.json --outDir .test-build --noEmit false --declaration false --declarationMap false && cp tag-edits.mjs .test-build/tag-edits.mjs",
+    "typecheck": "tsc --project tsconfig.json",
+    "build": "vite build",
+    "start": "vite preview"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-select": "5.10.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "jsdom": "30.0.1",
+    "typescript": "5.9.3",
+    "vite": "8.2.2"
+  }
+}
