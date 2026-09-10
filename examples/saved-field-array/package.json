@@ -1,0 +1,28 @@
+{
+  "name": "saved-field-array-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "test": "tsc --outDir .compiled --declaration false --declarationMap false && node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc && vite build --outDir dist/site",
+    "start": "vite preview --outDir dist/site --host 127.0.0.1"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.87.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "jsdom": "30.0.1",
+    "typescript": "5.9.3",
+    "vite": "8.2.2"
+  }
+}
