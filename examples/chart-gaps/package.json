@@ -1,0 +1,16 @@
+{
+  "name": "chart-gaps-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "preview": "npm run build && node render-example.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "echarts": "6.1.0",
+    "typescript": "5.9.3"
+  }
+}
