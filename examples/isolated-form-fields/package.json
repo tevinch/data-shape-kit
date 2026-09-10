@@ -1,0 +1,31 @@
+{
+  "name": "isolated-form-fields-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "start": "vite preview --host 127.0.0.1",
+    "test": "npm run test:runtime && npm run test:types",
+    "test:runtime": "rm -rf .test-build && tsc --project tsconfig.json --outDir .test-build --noEmit false && node --test test/component.test.mjs",
+    "test:types": "tsc --noEmit --strict --jsx react-jsx --module NodeNext --moduleResolution NodeNext --target ES2022 --skipLibCheck test/types.test.tsx MemoFieldSet.tsx",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@tanstack/react-form": "1.33.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "jsdom": "30.0.1",
+    "typescript": "5.9.3",
+    "vite": "8.2.2"
+  }
+}
