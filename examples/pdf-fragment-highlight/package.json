@@ -1,0 +1,29 @@
+{
+  "name": "pdf-fragment-highlight-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "copy-types": "node --eval \"import { copyFileSync } from 'node:fs'; copyFileSync('highlight-text.d.mts', 'dist/highlight-text.d.mts')\"",
+    "build": "tsc && npm run copy-types && vite build --outDir dist/site",
+    "start": "vite preview --outDir dist/site --host 127.0.0.1"
+  },
+  "dependencies": {
+    "pdfjs-dist": "5.4.296",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-pdf": "10.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "5.9.3",
+    "vite": "8.2.2"
+  }
+}
