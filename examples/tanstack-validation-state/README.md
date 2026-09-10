@@ -62,7 +62,7 @@ Run your application's validation and submission checks afterward. Reinstalling 
 
 ## Verification scope
 
-The example uses mounted `FormApi` and `FieldApi` instances and controllable promises. It exercises old-first and latest-first completion with and without debounce, an old checker that ignores cancellation, independent fields, linked-field validation, a form-level asynchronous validator, idle behavior and changes that supersede a timer before it starts. Assertions use public state and subscriptions. All 18 scenarios pass on the patched copy with Node.js 24.19.0, including a fresh install from the source ZIP.
+The example uses mounted `FormApi` and `FieldApi` instances and controllable promises. It exercises old-first and latest-first completion with and without debounce, an old checker that ignores cancellation, independent fields, linked-field validation, a form-level asynchronous validator, idle behavior and changes that supersede a timer before it starts. Assertions read public field and form state. All 18 scenarios pass on the patched copy with Node.js 24.19.0, including a fresh install from the source ZIP.
 
 The pending indicator must remain true while the newer check is in flight, and the latest result must own the displayed field error after settlement. Form-level activity contributes to the aggregate indicator. The fixture checks Node ESM and CommonJS execution; it does not establish native browser rendering or every framework adapter's behavior, nor fix every possible form-level validation lifecycle problem.
 
