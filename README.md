@@ -24,6 +24,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Highlight a phrase across PDF text fragments and explicit line endings | [PDF fragment highlights](examples/pdf-fragment-highlight) | Copyable module and React-PDF component; repeated and overlapping literal matches |
 | Acknowledge a saved dynamic form without losing focus or edits made during the request | [Saved field array](examples/saved-field-array) | Copyable React Hook Form component; local slow-save and failure example |
 | Show Ant Design local-rule errors immediately while debouncing remote validation | [Ant Design rule example](examples/antd-remote-rule) | Copyable rule bridge and React form with cancellation and immediate submit |
+| Keep unrelated fields quiet inside a reactive form group | [Isolated form fields](examples/isolated-form-fields) | Copyable typed React memo boundary; TanStack Form comparison with live validation |
 | Keep TanStack Form pending indicators accurate when async field checks overlap | [Validation state patch](examples/tanstack-validation-state) | Exact-version 1.33.5 patch; runnable ESM and CommonJS regression fixture |
 | Refresh a pending-operation list when its selected category changes | [Mutation view](examples/mutation-view) | Copyable TypeScript React component; React Query 5.102.8 regression example |
 | Add calendar days, weeks, months or years in a chosen time zone with explicit DST handling | [Calendar shift](examples/calendar-shift) | Copyable TypeScript function; Temporal polyfill and Day.js integration checks |
