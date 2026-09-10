@@ -27,6 +27,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Add, subtract or count working dates with custom weekdays and supplied holidays | [Work calendar](examples/work-calendar) | Dependency-free TypeScript core; date-fns integration checks |
 | Generate linked PDF contents with verified page numbers, including multi-page contents | [PDF contents](examples/pdf-contents) | Node/TypeScript utility and React component; react-pdf integration checks |
 | Reduce line-chart points while retaining missing intervals and original records | [Line sampling](examples/line-sampling) | Dependency-free TypeScript core; React / Recharts component and SVG checks |
+| Close a chart tooltip for a details dialog and restore hover at a different point | [Dismissible tooltip](examples/dismissible-tooltip) | Copyable React hook; Recharts Scatter example and keyboard-accessible data table |
 | Draw dashed connections across missing categories or time samples without inventing measurements | [Chart gaps](examples/chart-gaps) | Dependency-free TypeScript adapter; ECharts 6.1.0 SVG checks |
 | Keep PapaParse Worker results correct in tested Vite 8 production builds | [Vite Worker configuration and checks](examples/papaparse-vite-worker) | Copyable minifier configuration; runnable browser comparison |
 | Select and rename CSV columns while preserving original value alignment | [CSV Column Map](examples/csv-column-map) | Dependency-free JavaScript core; PapaParse 5.7.0 string adapter and tests |
