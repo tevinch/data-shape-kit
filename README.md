@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules and chart gaps. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
+Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps and PDF contents. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
 
 ## Choose a tool
 
@@ -23,6 +23,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks
 | Refresh a pending-operation list when its selected category changes | [Mutation view](examples/mutation-view) | Copyable TypeScript React component; React Query 5.102.8 regression example |
 | Add calendar days, weeks, months or years in a chosen time zone with explicit DST handling | [Calendar shift](examples/calendar-shift) | Copyable TypeScript function; Temporal polyfill and Day.js integration checks |
 | Add, subtract or count working dates with custom weekdays and supplied holidays | [Work calendar](examples/work-calendar) | Dependency-free TypeScript core; date-fns integration checks |
+| Generate linked PDF contents with verified page numbers, including multi-page contents | [PDF contents](examples/pdf-contents) | Node/TypeScript utility and React component; react-pdf integration checks |
 | Draw dashed connections across missing categories or time samples without inventing measurements | [Chart gaps](examples/chart-gaps) | Dependency-free TypeScript adapter; ECharts 6.1.0 SVG checks |
 | Keep PapaParse Worker results correct in tested Vite 8 production builds | [Vite Worker configuration and checks](examples/papaparse-vite-worker) | Copyable minifier configuration; runnable browser comparison |
 | Select and rename CSV columns while preserving original value alignment | [CSV Column Map](examples/csv-column-map) | Dependency-free JavaScript core; PapaParse 5.7.0 string adapter and tests |
