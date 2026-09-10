@@ -1,0 +1,24 @@
+{
+  "name": "antd-remote-rule-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test-rule.mjs test-form.mjs",
+    "typecheck": "tsc --noEmit --strict --skipLibCheck --jsx react-jsx --target es2022 --module nodenext --moduleResolution nodenext --lib es2022,dom code-form-example.tsx"
+  },
+  "devDependencies": {
+    "antd": "6.6.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "5.9.3",
+    "esbuild": "0.25.5",
+    "jsdom": "25.0.0"
+  }
+}

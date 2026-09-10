@@ -1,5 +1,7 @@
 # Remote field check
 
+Using Ant Design? The separate [remote-rule example](../antd-remote-rule) keeps required and format errors immediate while handling debounce, cancellation and explicit validation inside Form rules.
+
 A free, copyable JavaScript controller for debounced remote field checks, with React hooks and a working React Hook Form example. It keeps input updates immediate, stops unrelated fields from starting checks, and prevents an old response from replacing the current result.
 
 [Download v0.1.0](https://github.com/tevinch/data-shape-kit/raw/refs/heads/main/downloads/remote-field-check-v0.1.0.zip), extract it, and open **demo.html**. The included demo uses only local simulated responses and bundled assets; no installation, account or backend is needed. Try `taken`, `slow`, `offline` and `timeout`, or submit immediately after typing `available`.
