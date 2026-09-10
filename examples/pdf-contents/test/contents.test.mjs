@@ -219,6 +219,40 @@ test('keeps the contents title with an entire long first row', async () => {
   assert.equal(titlePage, firstRowPage);
 });
 
+test('preserves each printed contents title and page-number association', async () => {
+  const entries = [
+    { id: 'cedar', title: 'Cedar Signal', level: 1, pageNumber: 37 },
+    { id: 'violet', title: 'Violet Orbit', level: 1, pageNumber: 58 },
+    { id: 'quartz', title: 'Quartz Harbor', level: 1, pageNumber: 94 },
+  ];
+  const buffer = await renderToBuffer(h(
+    Document,
+    null,
+    h(
+      Page,
+      { size: 'A4', style: styles.page },
+      h(View, { style: { width: 320 } }, h(Contents, { entries, title: 'Pair check' })),
+      ...entries.map((entry) => text(`Target ${entry.id}`, { id: entry.id, key: entry.id })),
+    ),
+  ));
+  const { pageTexts } = await inspectPdf(buffer);
+  const pairPattern = /(Cedar Signal|Violet Orbit|Quartz Harbor)(37|58|94)/g;
+  const observedPairs = [...pageTexts.join('').matchAll(pairPattern)].map((match) => (
+    [match[1], Number(match[2])]
+  ));
+
+  assert.deepEqual(observedPairs, [
+    ['Cedar Signal', 37],
+    ['Violet Orbit', 58],
+    ['Quartz Harbor', 94],
+  ]);
+  assert.notDeepEqual(observedPairs, [
+    ['Cedar Signal', 58],
+    ['Violet Orbit', 94],
+    ['Quartz Harbor', 37],
+  ]);
+});
+
 test('resolves actual destinations, preserves metadata and links, and freezes values', async () => {
   const headings = [
     { id: 'intro', title: 'Overview' },
