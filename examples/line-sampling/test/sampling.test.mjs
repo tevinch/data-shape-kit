@@ -70,6 +70,29 @@ test("compresses a long all-null run to its two boundary markers", () => {
   assert.equal(result.minimumPoints, 2);
 });
 
+test("handles a large finite run without exceeding the argument limit", () => {
+  const data = Array.from({ length: 200000 }, (_, x) => ({ x, y: x % 17 }));
+  const result = sampleLine(data, {
+    x: (row) => row.x,
+    y: (row) => row.y,
+    maxPoints: 150000,
+  });
+
+  assert.equal(result.data.length, 150000);
+  assert.equal(result.indices.length, 150000);
+  assert.equal(result.indices[0], 0);
+  assert.equal(result.indices.at(-1), 199999);
+  for (let index = 1; index < result.indices.length; index += 1) {
+    assert.ok(result.indices[index] > result.indices[index - 1]);
+  }
+  result.indices.forEach((sourceIndex, selectedIndex) => {
+    assert.equal(result.data[selectedIndex], data[sourceIndex]);
+  });
+  assert.ok(Object.isFrozen(result));
+  assert.ok(Object.isFrozen(result.data));
+  assert.ok(Object.isFrozen(result.indices));
+});
+
 test("keeps all original rows when the cap covers the input", () => {
   const data = rows([1, null, null, 2, 3]);
   const result = sampleLine(data, options(data.length));

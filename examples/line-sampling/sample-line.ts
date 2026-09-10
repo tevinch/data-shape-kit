@@ -249,7 +249,9 @@ export function sampleLine<T>(
         indices.push(run.start);
         if (run.end - run.start > 1) indices.push(run.end - 1);
       } else {
-        indices.push(...selectFiniteRun(run, target, xs, ys));
+        for (const index of selectFiniteRun(run, target, xs, ys)) {
+          indices.push(index);
+        }
       }
     });
   }
