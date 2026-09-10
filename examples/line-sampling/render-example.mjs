@@ -21,6 +21,8 @@ function chartMarkup(container) {
 
 let original;
 let sampled;
+let renderError;
+const cleanupErrors = [];
 try {
   original = await mountSampledLineChart({
     data: sampleData,
@@ -71,7 +73,34 @@ try {
   await writeFile(new URL("./output/preview.svg", import.meta.url), preview);
   await writeFile(new URL("./output/summary.json", import.meta.url), `${JSON.stringify(summary, null, 2)}\n`);
   console.log(JSON.stringify(summary));
+} catch (error) {
+  renderError = error;
 } finally {
-  if (sampled !== undefined) await sampled.close();
-  if (original !== undefined) await original.close();
+  if (sampled !== undefined) {
+    try {
+      await sampled.close();
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
+  }
+  if (original !== undefined) {
+    try {
+      await original.close();
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
+  }
+}
+
+if (renderError !== undefined && cleanupErrors.length > 0) {
+  throw new AggregateError(
+    [renderError, ...cleanupErrors],
+    "Example rendering and cleanup failed",
+    { cause: renderError },
+  );
+}
+if (renderError !== undefined) throw renderError;
+if (cleanupErrors.length === 1) throw cleanupErrors[0];
+if (cleanupErrors.length > 1) {
+  throw new AggregateError(cleanupErrors, "Example cleanup failed");
 }

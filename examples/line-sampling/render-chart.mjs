@@ -51,8 +51,37 @@ export async function mountSampledLineChart(initialProps, { rootId = "line-chart
   });
   const restoreGlobals = installDomGlobals(dom);
   let root;
-  let closed = false;
+  let reactAct;
+  let cleanupPromise;
   let currentProps = initialProps;
+
+  const cleanup = () => {
+    if (cleanupPromise !== undefined) return cleanupPromise;
+    cleanupPromise = (async () => {
+      const errors = [];
+      const attempt = async (operation) => {
+        try {
+          await operation();
+        } catch (error) {
+          errors.push(error);
+        }
+      };
+
+      if (root !== undefined && reactAct !== undefined) {
+        await attempt(() => reactAct(async () => root.unmount()));
+        await attempt(() => waitForAnimationFrame(dom));
+      }
+      await attempt(() => restoreGlobals());
+      await attempt(() => dom.window.close());
+      return errors;
+    })();
+    return cleanupPromise;
+  };
+
+  const throwCleanupErrors = (errors) => {
+    if (errors.length === 1) throw errors[0];
+    if (errors.length > 1) throw new AggregateError(errors, "Chart cleanup failed");
+  };
 
   try {
     const [{ createElement, act }, { createRoot }, { SampledLineChart }, { sampleLine }] = await Promise.all([
@@ -61,6 +90,7 @@ export async function mountSampledLineChart(initialProps, { rootId = "line-chart
       import("./dist/SampledLineChart.js"),
       import("./dist/sample-line.js"),
     ]);
+    reactAct = act;
     const container = dom.window.document.getElementById(rootId);
     root = createRoot(container, { identifierPrefix: `${rootId}-` });
 
@@ -69,13 +99,13 @@ export async function mountSampledLineChart(initialProps, { rootId = "line-chart
       y: (row) => row.y,
       maxPoints: props.maxPoints,
     }).data;
-    let selectedData = selectedFor(currentProps);
+    let selectedData;
     const render = async (nextProps) => {
       currentProps = nextProps;
-      selectedData = selectedFor(currentProps);
       await act(async () => {
         root.render(createElement(SampledLineChart, currentProps));
       });
+      selectedData = selectedFor(currentProps);
     };
     await render(currentProps);
 
@@ -87,22 +117,18 @@ export async function mountSampledLineChart(initialProps, { rootId = "line-chart
       },
       render,
       async close() {
-        if (closed) return;
-        closed = true;
-        await act(async () => root.unmount());
-        await waitForAnimationFrame(dom);
-        restoreGlobals();
-        dom.window.close();
+        throwCleanupErrors(await cleanup());
       },
     };
-  } catch (error) {
-    if (root !== undefined) {
-      const { act } = await import("react");
-      await act(async () => root.unmount());
-      await waitForAnimationFrame(dom);
+  } catch (renderError) {
+    const cleanupErrors = await cleanup();
+    if (cleanupErrors.length > 0) {
+      throw new AggregateError(
+        [renderError, ...cleanupErrors],
+        "Chart rendering and cleanup failed",
+        { cause: renderError },
+      );
     }
-    restoreGlobals();
-    dom.window.close();
-    throw error;
+    throw renderError;
   }
 }

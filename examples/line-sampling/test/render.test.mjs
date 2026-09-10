@@ -20,6 +20,69 @@ function axisLabels(container, axisClass) {
     .map((node) => node.textContent);
 }
 
+const domGlobalNames = [
+  "window",
+  "document",
+  "navigator",
+  "HTMLElement",
+  "SVGElement",
+  "Element",
+  "Node",
+  "getComputedStyle",
+  "requestAnimationFrame",
+  "cancelAnimationFrame",
+  "IS_REACT_ACT_ENVIRONMENT",
+];
+
+function snapshotDomGlobals() {
+  return new Map(domGlobalNames.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
+}
+
+function restoreDomGlobals(snapshot) {
+  for (const name of domGlobalNames) {
+    const descriptor = snapshot.get(name);
+    if (descriptor === undefined) delete globalThis[name];
+    else Object.defineProperty(globalThis, name, descriptor);
+  }
+}
+
+function domGlobalsMatch(snapshot) {
+  return domGlobalNames.every((name) => {
+    const expected = snapshot.get(name);
+    const actual = Object.getOwnPropertyDescriptor(globalThis, name);
+    if (expected === undefined || actual === undefined) return expected === actual;
+    return actual.value === expected.value &&
+      actual.get === expected.get &&
+      actual.set === expected.set &&
+      actual.configurable === expected.configurable &&
+      actual.enumerable === expected.enumerable &&
+      actual.writable === expected.writable;
+  });
+}
+
+async function captureExpectedReactError(expectedMessage, operation) {
+  const originalConsoleError = console.error;
+  console.error = (...values) => {
+    const message = values.map((value) => value instanceof Error ? value.message : String(value)).join(" ");
+    if (message.includes(expectedMessage)) return;
+    originalConsoleError(...values);
+  };
+  try {
+    return await operation();
+  } finally {
+    console.error = originalConsoleError;
+  }
+}
+
+async function rejectionOf(promise) {
+  try {
+    await promise;
+  } catch (error) {
+    return error;
+  }
+  assert.fail("expected operation to reject");
+}
+
 test("the deterministic fixture has the specified size, gaps, and isolated spikes", () => {
   assert.equal(sampleData.length, 8_000);
   assert.equal(sampleData.filter((row) => row.y !== null).length, 7_845);
@@ -129,14 +192,92 @@ test("uses original domains and rerenders when the budget or data reference chan
   }
 });
 
-test("propagates sampler validation and point-budget failures", async () => {
-  await assert.rejects(
+test("propagates point-budget failures from the real wrapper", async () => {
+  await captureExpectedReactError("cannot preserve", () => assert.rejects(
     mountSampledLineChart({
       data: [{ x: 0, y: 1 }, { x: 1, y: null }, { x: 2, y: 2 }],
       maxPoints: 2,
       width: 640,
       height: 300,
     }, { rootId: "error-test" }),
-    (error) => error?.name === "PointBudgetError",
-  );
+    (error) => error?.name === "PointBudgetError" && /SampledLineChart/.test(error.stack),
+  ));
+});
+
+test("preserves a real-wrapper validation error when cleanup also fails", async () => {
+  const globals = snapshotDomGlobals();
+  let mountedWindow;
+  const cleanupFailure = new Error("animation-frame drain failed");
+  const invalidData = [{
+    get x() {
+      mountedWindow = globalThis.window;
+      mountedWindow.requestAnimationFrame = () => { throw cleanupFailure; };
+      return NaN;
+    },
+    y: 1,
+  }];
+
+  let rejected;
+  let restored;
+  let closed;
+  try {
+    await captureExpectedReactError("x values must be finite", async () => {
+      rejected = await rejectionOf(
+        mountSampledLineChart({
+          data: invalidData,
+          maxPoints: 2,
+          width: 640,
+          height: 300,
+        }, { rootId: "invalid-coordinate-test" }),
+      );
+    });
+    restored = domGlobalsMatch(globals);
+    closed = mountedWindow?.document === undefined;
+  } finally {
+    restoreDomGlobals(globals);
+    mountedWindow?.close();
+  }
+
+  assert.ok(rejected instanceof AggregateError);
+  assert.ok(rejected.cause instanceof RangeError);
+  assert.equal(rejected.cause.message, "x values must be finite");
+  assert.match(rejected.cause.stack, /SampledLineChart/);
+  assert.ok(rejected.errors.includes(cleanupFailure));
+  assert.equal(restored, true);
+  assert.equal(closed, true);
+});
+
+test("restores globals and leaves the window closed after a cleanup-only failure", async () => {
+  const globals = snapshotDomGlobals();
+  const mounted = await mountSampledLineChart({
+    data: [{ x: 0, y: 1 }, { x: 1, y: 2 }],
+    maxPoints: 2,
+    width: 640,
+    height: 300,
+  }, { rootId: "cleanup-failure-test" });
+  const mountedWindow = mounted.dom.window;
+  const nodePrototype = mountedWindow.Node.prototype;
+  const originalRemoveChild = nodePrototype.removeChild;
+  nodePrototype.removeChild = () => { throw new Error("unmount failed"); };
+
+  let rejected;
+  let restored;
+  let closed;
+  try {
+    rejected = await rejectionOf(mounted.close());
+    nodePrototype.removeChild = originalRemoveChild;
+    if (globalThis.window === mountedWindow) {
+      await new Promise((resolve) => globalThis.requestAnimationFrame(() => resolve()));
+    }
+    restored = domGlobalsMatch(globals);
+    closed = mountedWindow.document === undefined;
+  } finally {
+    nodePrototype.removeChild = originalRemoveChild;
+    mountedWindow.close();
+    restoreDomGlobals(globals);
+  }
+
+  assert.ok(rejected instanceof Error);
+  assert.equal(restored, true);
+  assert.equal(closed, true);
 });
