@@ -1,0 +1,21 @@
+{
+  "name": "pdf-contents-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "example": "npm run build && node dist/example.js"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "4.9.0",
+    "pdf-lib": "1.17.1",
+    "react": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}
