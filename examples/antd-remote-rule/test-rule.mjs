@@ -254,6 +254,47 @@ test('runImmediately flushes debounce and propagates callback values and errors'
   await assert.rejects(rule.runImmediately(() => { throw failure; }), (error) => error === failure);
 });
 
+test('ordinary validation is debounced after the final successful immediate scope', async (t) => {
+  timers(t);
+  const value = 'alpha';
+  const checked = [];
+  const rule = createDebouncedRule((candidate) => {
+    checked.push(candidate);
+    return null;
+  }, { getValue: () => value, isEligible: () => true, delayMs: 25 });
+
+  await rule.runImmediately(async () => 'finished');
+  const validation = rule.validator(null, value);
+  t.mock.timers.tick(24);
+  assert.deepEqual(checked, []);
+  t.mock.timers.tick(1);
+  await validation;
+  assert.deepEqual(checked, ['alpha']);
+});
+
+test('ordinary validation is debounced after an asynchronously rejected immediate scope', async (t) => {
+  timers(t);
+  const value = 'alpha';
+  const checked = [];
+  const scopeWork = deferred();
+  const rule = createDebouncedRule((candidate) => {
+    checked.push(candidate);
+    return null;
+  }, { getValue: () => value, isEligible: () => true, delayMs: 25 });
+
+  const failure = new Error('scope callback failed');
+  const scope = rule.runImmediately(() => scopeWork.promise);
+  scopeWork.reject(failure);
+  await assert.rejects(scope, (error) => error === failure);
+
+  const validation = rule.validator(null, value);
+  t.mock.timers.tick(24);
+  assert.deepEqual(checked, []);
+  t.mock.timers.tick(1);
+  await validation;
+  assert.deepEqual(checked, ['alpha']);
+});
+
 test('nested and overlapping immediate scopes remain immediate until all finish', async () => {
   const value = 'alpha';
   const checked = [];
