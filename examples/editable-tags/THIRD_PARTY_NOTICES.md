@@ -983,7 +983,7 @@ Declared license: MIT
 LICENSE
 
 ```text
-Copyright 2013 Thorsten Lorenz. 
+Copyright 2013 Thorsten Lorenz.
 All rights reserved.
 
 Permission is hereby granted, free of charge, to any person
