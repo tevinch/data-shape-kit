@@ -1,0 +1,31 @@
+{
+  "name": "calendar-shift-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/calendar-shift.js",
+  "types": "./dist/calendar-shift.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/calendar-shift.d.ts",
+      "import": "./dist/calendar-shift.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "reproduce": "TZ=UTC node test/reproduce.mjs",
+    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "0.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "dayjs": "1.11.23",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
