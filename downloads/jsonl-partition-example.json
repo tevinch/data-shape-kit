@@ -1,0 +1,43 @@
+{
+  "polars_version": "1.44.2",
+  "source_lines": 3,
+  "stats": {
+    "lines": 3,
+    "accepted": 2,
+    "rejected": 1,
+    "source_bytes": 34,
+    "accepted_bytes": 32,
+    "rejected_bytes": 2
+  },
+  "issues": [
+    {
+      "line": 2,
+      "source_offset": 16,
+      "byte_length": 2,
+      "rejected_offset": 0,
+      "code": "invalid_json",
+      "detail": "physical line is not valid JSON"
+    }
+  ],
+  "rejected_text": "x\n",
+  "eager_rows": [
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 4,
+      "b": 2
+    }
+  ],
+  "lazy_rows": [
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 4,
+      "b": 2
+    }
+  ]
+}

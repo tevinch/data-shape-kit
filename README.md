@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps, line sampling and PDF contents. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
+Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps, line sampling, JSONL imports and PDF contents. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
 
 ## Choose a tool
 
@@ -32,6 +32,7 @@ Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks
 | Process UTF-8 CSV records sequentially with asynchronous callbacks and cancellation | [Streaming CSV](examples/streaming-csv) | Node.js 20+; csv-parse integration with strict decoding and header checks |
 | Keep blank numeric fields distinct from zero, with typed form inputs and submissions | [Number Input](examples/number-input) | Copyable Zod 4 schemas; React Hook Form example and type checks |
 | Replace declared CSV missing markers in selected columns while preserving identifiers and notes | [Missing Tokens](examples/missing-tokens) | Copyable Python module; standard library only |
+| Separate malformed JSONL lines while retaining original bytes and rejection locations | [JSONL partition](examples/jsonl-partition) | Python standard library; optional Polars eager/lazy integration |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
