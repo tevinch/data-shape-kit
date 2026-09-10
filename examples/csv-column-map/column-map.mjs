@@ -11,7 +11,10 @@ export function createColumnProjector(headers, mapping) {
   const prototype = mapping === null || mapping === undefined
     ? undefined
     : Object.getPrototypeOf(mapping);
-  if (prototype !== Object.prototype && prototype !== null) {
+  if (typeof mapping !== 'object'
+    || mapping === null
+    || Array.isArray(mapping)
+    || (prototype !== Object.prototype && prototype !== null)) {
     throw new TypeError('mapping must be a plain object');
   }
 

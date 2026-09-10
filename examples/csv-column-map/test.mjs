@@ -133,6 +133,15 @@ test('rejects invalid mappings and destination names', async (t) => {
   }
 });
 
+test('rejects arrays even when their prototype is changed to null', () => {
+  const mapping = Object.setPrototypeOf(['value'], null);
+
+  assert.throws(
+    () => createColumnProjector(['source'], mapping),
+    { name: 'TypeError', message: /mapping.*plain object/i },
+  );
+});
+
 test('validates every projected row against the captured rectangular schema', async (t) => {
   const project = createColumnProjector(['first', 'second'], { first: 'value' });
   const sparse = ['kept'];
