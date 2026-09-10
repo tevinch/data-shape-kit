@@ -108,7 +108,7 @@ Keep the document deterministic throughout a call. Do not fetch changing data, u
 
 Numbers refer to **physical PDF pages**, including covers and every contents page. Custom printed offsets, Roman numeral front matter and PDF PageLabels are not handled. The helper does not discover headings by scanning arbitrary JSX; the heading registry and matching IDs are the integration contract.
 
-This is a **Node generation solution**. Browser viewers and browser bundles are outside the tested scope. The contents row uses the fonts configured for your document; register a suitable font when your titles need glyphs beyond the built-in fonts. A single row taller than the available page area remains a react-pdf layout constraint. Render passes are bounded, but this helper does not impose a document-size or execution-time limit on the renderer.
+This is a **Node generation solution**. Browser viewers and browser bundles are outside the tested scope. The contents row uses the fonts configured for your document; register a suitable font when your titles need glyphs beyond the built-in fonts. The title and first row stay together, and every later row stays together individually. Each such group must fit within a page; oversized groups remain a react-pdf layout constraint. Render passes are bounded, but this helper does not impose a document-size or execution-time limit on the renderer.
 
 ## Verification and background
 
