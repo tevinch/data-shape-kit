@@ -1,0 +1,23 @@
+{
+  "name": "calendar-hours-example",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "demo": "node server.mjs",
+    "test": "node --test test/browser.test.mjs",
+    "reproduce": "REPRODUCE_ORIGINAL=1 node --test test/browser.test.mjs"
+  },
+  "dependencies": {
+    "fullcalendar": "7.1.0",
+    "fullcalendar-scheduler": "7.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.62.1"
+  }
+}

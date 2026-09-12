@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar hours example</title>
+    <link rel="stylesheet" href="/bundle.css">
+    <style>
+      :root { color-scheme: light; font-family: system-ui, sans-serif; }
+      body { margin: 0; background: #f5f7fa; color: #172033; }
+      main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+      h1 { margin: 0 0 8px; font-size: 1.6rem; }
+      p { margin: 0 0 18px; color: #4b5568; }
+      .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
+      label { display: grid; gap: 4px; font-size: 0.9rem; font-weight: 650; }
+      select, button { min-height: 38px; padding: 6px 10px; font: inherit; }
+      button { cursor: pointer; }
+      #mode-note { margin-left: auto; font-size: 0.85rem; color: #596174; }
+      #calendar { background: white; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Calendar hours example</h1>
+      <p>Change the visible opening and closing times without remounting the calendar.</p>
+      <div class="controls">
+        <label>Opens
+          <select id="opening-time">
+            <option value="04:30">04:30</option>
+            <option value="05:45" selected>05:45</option>
+            <option value="06:00">06:00</option>
+            <option value="08:00">08:00</option>
+          </select>
+        </label>
+        <label>Closes
+          <select id="closing-time">
+            <option value="18:00">18:00</option>
+            <option value="22:00" selected>22:00</option>
+            <option value="23:00">23:00</option>
+          </select>
+        </label>
+        <button id="apply-hours" type="button">Apply hours</button>
+        <span id="mode-note"></span>
+      </div>
+      <div id="calendar"></div>
+    </main>
+    <script type="module" src="/bundle.js"></script>
+  </body>
+</html>

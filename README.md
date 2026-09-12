@@ -29,6 +29,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Refresh a pending-operation list when its selected category changes | [Mutation view](examples/mutation-view) | Copyable TypeScript React component; React Query 5.102.8 regression example |
 | Add calendar days, weeks, months or years in a chosen time zone with explicit DST handling | [Calendar shift](examples/calendar-shift) | Copyable TypeScript function; Temporal polyfill and Day.js integration checks |
 | Add, subtract or count working dates with custom weekdays and supplied holidays | [Work calendar](examples/work-calendar) | Dependency-free TypeScript core; date-fns integration checks |
+| Keep FullCalendar time-grid lanes usable while opening hours change | [Calendar hours](examples/calendar-hours) | Version-pinned configuration workaround; Chrome browser regression checks |
 | Generate linked PDF contents with verified page numbers, including multi-page contents | [PDF contents](examples/pdf-contents) | Node/TypeScript utility and React component; react-pdf integration checks |
 | Reduce line-chart points while retaining missing intervals and original records | [Line sampling](examples/line-sampling) | Dependency-free TypeScript core; React / Recharts component and SVG checks |
 | Close a chart tooltip for a details dialog and restore hover at a different point | [Dismissible tooltip](examples/dismissible-tooltip) | Copyable React hook; Recharts Scatter example and keyboard-accessible data table |
