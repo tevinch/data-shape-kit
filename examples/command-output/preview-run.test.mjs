@@ -4,6 +4,7 @@ import {
   existsSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   statSync,
 } from 'node:fs';
@@ -30,11 +31,15 @@ function makeTemporaryRoot() {
   return root;
 }
 
-function runPreview(arguments_, { temporaryRoot = makeTemporaryRoot() } = {}) {
+function runPreview(
+  arguments_,
+  { temporaryRoot = makeTemporaryRoot(), input } = {},
+) {
   const result = spawnSync('sh', [scriptPath, ...arguments_], {
     cwd: temporaryRoot,
     encoding: 'utf8',
     env: { ...process.env, TMPDIR: temporaryRoot },
+    input,
     timeout: 5_000,
   });
   assert.equal(result.error, undefined);
@@ -107,6 +112,29 @@ test('literal empty, spaced and shell metacharacter arguments are preserved', ()
   assert.equal(result.status, 0);
   assert.deepEqual(JSON.parse(readFileSync(markerPath, 'utf8')), literalArguments);
   assert.equal(existsSync(unwantedSideEffect), false);
+});
+
+test('the command receives the caller cwd and stdin unchanged', () => {
+  const root = makeTemporaryRoot();
+  const input = 'first input line\nsecond input line\n';
+  const childProgram = [
+    "const { readFileSync } = require('node:fs');",
+    'process.stdout.write(JSON.stringify({',
+    '  cwd: process.cwd(),',
+    "  stdin: readFileSync(0, 'utf8'),",
+    '}));',
+  ].join('\n');
+
+  const result = runPreview([nodePath, '-e', childProgram], {
+    temporaryRoot: root,
+    input,
+  });
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(JSON.parse(result.stdout), {
+    cwd: realpathSync(root),
+    stdin: input,
+  });
 });
 
 test('the restrictive log umask does not change files created by the command', () => {

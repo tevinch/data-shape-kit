@@ -1,16 +1,18 @@
 # Command output capture and preview
 
-Run a finite test or build command to completion, retain all of its stdout and stderr in a private temporary file, display its first 120 lines, and return the command's exit code. The wrapper is a POSIX shell script for macOS and Linux and requires `mktemp` and `head`.
+Run a finite test or build command to completion, retain all of its stdout and stderr in a private temporary file, display its first 120 lines, and return the command's exit code. The wrapper was tested on macOS. It is intended for Linux but has not been tested there. It requires a POSIX shell, `mktemp` and `head`.
 
 [Download or copy `preview-run.sh`](preview-run.sh?raw=true) into any convenient local directory. It does not need to be inside the project being tested.
 
+For the script, tests and guide together, download the [v0.1.0 source ZIP](https://github.com/tevinch/data-shape-kit/blob/main/downloads/command-output-v0.1.0.zip?raw=true).
+
 ## Run Vitest from your project
 
-Change to the project whose tests you want to run, then put the wrapper before the exact command and arguments you would otherwise use:
+With Vitest already installed in your project, change to that project and put the wrapper before the exact command and arguments you would otherwise use:
 
 ```sh
 cd /path/to/your-project
-sh /path/to/preview-run.sh npx vitest run src/example.test.ts
+sh /path/to/preview-run.sh ./node_modules/.bin/vitest run src/example.test.ts
 ```
 
 The script keeps that working directory and stdin. It invokes the command exactly once as the argument vector after `preview-run.sh`; it does not parse or evaluate a command string. Quote spaces and shell metacharacters at the calling shell, just as you would for a direct invocation:
@@ -40,7 +42,7 @@ This wrapper is for finite commands. Capture finishes before preview begins, so 
 
 The retained file can grow to the command's complete output. The 120-line preview is neither a byte limit nor a storage limit. Because output is redirected to a file, programs may buffer or format it differently than they do in a terminal. Always inspect the log for messages after line 120.
 
-This is an invocation workaround for the early pipe closure described in [Vitest #11241](https://github.com/vitest-dev/vitest/issues/11241). It avoids sending a live command directly through `head`; it does not repair Vitest's IPC handling or reproduce or fix the reported OOM race. The contributor's [worker IPC patch and reproduction](https://github.com/vitest-dev/vitest/compare/main...Gaurav1112:fix/worker-dead-ipc-loop) remain relevant upstream work.
+This is an invocation workaround for the early pipe closure described in [Vitest #11241](https://github.com/vitest-dev/vitest/issues/11241). It avoids sending a live command directly through `head`; it does not repair Vitest's IPC handling or reproduce or fix the reported OOM race. The contributor's [worker IPC patch](https://github.com/vitest-dev/vitest/compare/main...Gaurav1112:fix/worker-dead-ipc-loop) and [orphan reproduction](https://github.com/Gaurav1112/vitest-11241-repro) remain relevant upstream work.
 
 ## Run checks
 
@@ -51,7 +53,11 @@ node --test examples/command-output/preview-run.test.mjs
 sh -n examples/command-output/preview-run.sh
 ```
 
-The behavioral tests use a bounded local producer and real processes. They cover completion past the preview boundary, complete retained output, statuses 0, 7 and 127, exact argument preservation, usage, log-creation failure, and preview failure. Direct integration with Vitest is outside this example's built-in test suite.
+The behavioral tests use a bounded local producer and real processes. They cover completion past the preview boundary, complete retained output, statuses 0, 7 and 127, exact argument, working-directory and stdin preservation, usage, log-creation failure, and preview failure. Direct integration with Vitest is outside this example's built-in test suite.
+
+From the extracted ZIP's `command-output` directory, run `node --test preview-run.test.mjs` and `sh -n preview-run.sh` instead.
+
+Separately checked on macOS with Node.js 24.19.0, Vitest 4.1.11 and 5.0.0, `--pool=forks --maxWorkers=1 --reporter=verbose`: both a passing and an intentionally failing finite test completed their `afterAll` hook. Their exit codes remained 0 and 1, respectively; all four runs displayed 120 lines while retaining late stderr and the final test summary in the log. This checks ordinary completion, not the reported dead-IPC/OOM race. Linux execution has not been checked here.
 
 ## License
 
