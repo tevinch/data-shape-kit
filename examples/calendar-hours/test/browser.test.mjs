@@ -60,14 +60,7 @@ async function readState(page) {
 async function setOpeningTime(page, min) {
   await page.selectOption('#opening-time', min);
   await page.evaluate((value) => window.calendar.setOption('slotMinTime', value), min);
-  await page.waitForFunction(
-    (expected) => {
-      const first = document.querySelector('[data-slot-time]');
-      return first?.dataset.slotTime === expected;
-    },
-    min,
-    { timeout: 4_000 },
-  );
+  await waitForSettledLayout(page, min, { expectCollapse: reproduction });
 }
 
 async function setClosingTime(page, max) {
@@ -80,6 +73,59 @@ async function setClosingTime(page, max) {
     (expected) => [...document.querySelectorAll('[data-slot-time]')].at(-1)?.dataset.slotTime === expected,
     expectedLast,
     { timeout: 4_000 },
+  );
+}
+
+async function waitForSettledLayout(page, expectedTime, { expectCollapse = false } = {}) {
+  await page.evaluate(
+    ({ expectedTime, expectCollapse }) => new Promise((resolve, reject) => {
+      const timeout = window.setTimeout(() => {
+        const label = document.querySelector('[data-slot-time]');
+        const rect = label?.getBoundingClientRect();
+        const observed = label
+          ? `${label.dataset.slotTime}, ${rect.width}px wide, ${rect.height}px high`
+          : 'no labelled slot';
+        reject(new Error(expectCollapse
+          ? `Original configuration did not reach the defining 0-width collapse within 4000ms; last observed ${observed}`
+          : `Configured layout did not settle with usable dimensions within 4000ms; last observed ${observed}`));
+      }, 4_000);
+      let previous;
+      let stableFrames = 0;
+      let observedFrames = 0;
+
+      const sample = () => {
+        observedFrames += 1;
+        const label = document.querySelector('[data-slot-time]');
+        const rect = label?.getBoundingClientRect();
+        const current = label && {
+          time: label.dataset.slotTime,
+          width: rect.width,
+          height: rect.height,
+        };
+        stableFrames = current
+          && previous
+          && current.time === previous.time
+          && current.width === previous.width
+          && current.height === previous.height
+          ? stableFrames + 1
+          : 1;
+        previous = current;
+
+        const isExpectedState = current?.time === expectedTime
+          && (expectCollapse
+            ? current.width === 0 && current.height < 40
+            : current.width > 0 && current.height >= 40);
+        if (observedFrames >= 4 && stableFrames >= 3 && isExpectedState) {
+          window.clearTimeout(timeout);
+          resolve({ ...current, observedFrames, stableFrames });
+          return;
+        }
+        requestAnimationFrame(sample);
+      };
+
+      requestAnimationFrame(sample);
+    }),
+    { expectedTime, expectCollapse },
   );
 }
 

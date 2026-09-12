@@ -61,7 +61,7 @@ Verification on September 13, 2026 used macOS 14.6, Node.js 24.19.0 and Google C
 
 The example pins `fullcalendar` 7.1.0, `fullcalendar-scheduler` 7.1.0, esbuild 0.28.2 and Playwright 1.62.1. It uses their public APIs and official plugins without modifying or vendoring dependency code. It does not patch FullCalendar internals, coerce DOM dimensions, or claim to fix the upstream implementation.
 
-The Standard view is the default. The resource view is provided for evaluation and deliberately leaves the Scheduler license key unset, so the package's own license warning remains visible. FullCalendar Premium has [separate licensing terms](https://fullcalendar.io/docs/premium); using the resource view in a production application requires following those terms. The MIT license in this directory covers the original example code and guide, not the unmodified FullCalendar dependencies.
+The Standard view is the default, and the resource view is provided for evaluation. Both demo modes load the unmodified Premium resource and scroll-grid plugins and deliberately leave the Scheduler license key unset, so both show the package's own license warning. FullCalendar Premium has [separate licensing terms](https://fullcalendar.io/docs/premium); using its plugins in a production application requires following those terms. The MIT license in this directory covers the original example code and guide, not the unmodified FullCalendar dependencies.
 
 ## Buy me a coffee, if this helped
 
