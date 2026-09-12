@@ -1,0 +1,26 @@
+{
+  "@tiptap/markdown": {
+    "version": "3.31.3",
+    "files": {
+      "src/MarkdownManager.ts": "cba38a7a65a2c1822f69e4665443406d92522a22b999b6b98bc7c85227517709",
+      "dist/index.js": "dc93a7cf47b82e7bcb8fef522b440cec7d054617f4b374e87e2297eeb429233f",
+      "dist/index.cjs": "514f0736b5f35fa1db0bfc5f1fc74fc3044514ae9c56f009d51225cb2dbc31f6"
+    }
+  },
+  "@tiptap/extension-code": {
+    "version": "3.31.3",
+    "files": {
+      "src/code.ts": "79d8e923babdee08bda160e9cefe64bda22ce5a87a81a3cf3e24294891b70c84",
+      "dist/index.js": "d8d632761db8df2636f709b4398de188ba389a30ed2442ad0630cdc139e35175",
+      "dist/index.cjs": "7e22b7540115dd97ee734c66993a9fecd7fa0289d5f39df03f52fd7ba7ee1f5c"
+    }
+  },
+  "@tiptap/extension-table": {
+    "version": "3.31.3",
+    "files": {
+      "src/table/utilities/markdown.ts": "a772a7151894453b1f2bc5fdd67143ab0e9c804bc940a1db64c1d3a6f16d8fc5",
+      "dist/index.js": "02f074ce3662a8e525daaea6c7df6e0938c0973d3e50e959974151196624a1ea",
+      "dist/index.cjs": "9610bf8611376e1e3af97107201f3b7f410c782570dfbccbda0cb53adbd0f870"
+    }
+  }
+}

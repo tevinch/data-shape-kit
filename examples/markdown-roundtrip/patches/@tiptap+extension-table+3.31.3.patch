@@ -1,0 +1,402 @@
+diff --git a/node_modules/@tiptap/extension-table/src/table/utilities/markdown.ts b/node_modules/@tiptap/extension-table/src/table/utilities/markdown.ts
+index 0928f66..84d78f7 100644
+--- a/node_modules/@tiptap/extension-table/src/table/utilities/markdown.ts
++++ b/node_modules/@tiptap/extension-table/src/table/utilities/markdown.ts
+@@ -1,4 +1,4 @@
+-import type { JSONContent, MarkdownRendererHelpers } from '@tiptap/core'
++import { encodeHtmlEntities, type JSONContent, type MarkdownRendererHelpers } from '@tiptap/core'
+ 
+ import {
+   type TableCellAlign as TableCellAlignType,
+@@ -82,7 +82,123 @@ export function preprocessTablePipes(src: string): string {
+ }
+ 
+ function collapseWhitespace(s: string) {
+-  return (s || '').replace(/\s+/g, ' ').trim()
++  const source = s || ''
++  let result = ''
++  let pendingSpace = false
++  let index = 0
++
++  while (index < source.length) {
++    if (/\s/.test(source[index])) {
++      pendingSpace = result.length > 0
++      index += 1
++      continue
++    }
++
++    if (source[index] !== '`') {
++      if (pendingSpace) result += ' '
++      pendingSpace = false
++      result += source[index]
++      index += 1
++      continue
++    }
++
++    let fenceLength = 1
++    while (source[index + fenceLength] === '`') fenceLength += 1
++    let closingIndex = index + fenceLength
++    while (closingIndex < source.length) {
++      if (source[closingIndex] !== '`') {
++        closingIndex += 1
++        continue
++      }
++      let closingLength = 1
++      while (source[closingIndex + closingLength] === '`') closingLength += 1
++      if (closingLength === fenceLength) break
++      closingIndex += closingLength
++    }
++
++    if (closingIndex >= source.length) {
++      if (pendingSpace) result += ' '
++      pendingSpace = false
++      result += source.slice(index, index + fenceLength)
++      index += fenceLength
++      continue
++    }
++
++    if (pendingSpace) result += ' '
++    pendingSpace = false
++    result += source.slice(index, closingIndex + fenceLength)
++    index = closingIndex + fenceLength
++  }
++
++  return result
++}
++
++function escapePipesInCellText(text: string) {
++  let result = ''
++  let index = 0
++
++  while (index < text.length) {
++    if (text[index] === '\\' && index + 1 < text.length) {
++      result += text[index] + text[index + 1]
++      index += 2
++      continue
++    }
++    if (text[index] === '|') {
++      result += '\\|'
++      index += 1
++      continue
++    }
++    if (text[index] !== '`') {
++      result += text[index++]
++      continue
++    }
++
++    let fenceLength = 1
++    while (text[index + fenceLength] === '`') fenceLength += 1
++    let closingIndex = index + fenceLength
++    while (closingIndex < text.length) {
++      if (text[closingIndex] !== '`') {
++        closingIndex += 1
++        continue
++      }
++      let closingLength = 1
++      while (text[closingIndex + closingLength] === '`') closingLength += 1
++      if (closingLength === fenceLength) break
++      closingIndex += closingLength
++    }
++
++    if (closingIndex >= text.length) {
++      result += text.slice(index, index + fenceLength)
++      index += fenceLength
++      continue
++    }
++
++    const code = text.slice(index + fenceLength, closingIndex)
++    const normalizedCode =
++      code.startsWith(' ') && code.endsWith(' ') && /[^ ]/.test(code)
++        ? code.slice(1, -1)
++        : code
++    const hasOddBackslashPipe = Array.from(normalizedCode.matchAll(/\|/g)).some(match => {
++      let backslashes = 0
++      for (let offset = (match.index ?? 0) - 1; offset >= 0 && normalizedCode[offset] === '\\'; offset -= 1) {
++        backslashes += 1
++      }
++      return backslashes % 2 === 1
++    })
++
++    if (hasOddBackslashPipe) {
++      const escapedCode = encodeHtmlEntities(normalizedCode).replace(/\|/g, '&#124;')
++      result += `<code>${escapedCode}</code>`
++    } else {
++      result +=
++        text.slice(index, index + fenceLength) +
++        code.replace(/\|/g, '\\|') +
++        text.slice(closingIndex, closingIndex + fenceLength)
++    }
++    index = closingIndex + fenceLength
++  }
++
++  return result
+ }
+ 
+ export function renderTableToMarkdown(
+@@ -120,12 +236,13 @@ export function renderTableToMarkdown(
+ 
+         // Cells have to stay on a single line, so line breaks become <br> tags.
+         // The parser already turns <br> back into hard breaks, so this round trips.
+-        const text = collapseWhitespace(
++        const singleLine = collapseWhitespace(
+           raw
+             .split(cellSep)
+             .join('\n')
+             .replace(/[ \t]*\r?\n[ \t]*/g, '<br>'),
+         )
++        const text = escapePipesInCellText(singleLine)
+         const isHeader = cellNode.type === 'tableHeader'
+         const align = normalizeTableCellAlignFromAttributes(cellNode.attrs)
+ 
+diff --git a/node_modules/@tiptap/extension-table/dist/index.js b/node_modules/@tiptap/extension-table/dist/index.js
+index b4dd9f6..638c956 100644
+--- a/node_modules/@tiptap/extension-table/dist/index.js
++++ b/node_modules/@tiptap/extension-table/dist/index.js
+@@ -1,4 +1,4 @@
+-import { Extension, Node, callOrReturn, findParentNodeClosestToPos, getExtensionField, mergeAttributes } from "@tiptap/core";
++import { Extension, Node, callOrReturn, encodeHtmlEntities, findParentNodeClosestToPos, getExtensionField, mergeAttributes } from "@tiptap/core";
+ import { TextSelection } from "@tiptap/pm/state";
+ import { CellSelection, addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, columnResizing, deleteColumn, deleteRow, deleteTable, fixTables, goToNextCell, mergeCells, setCellAttr, splitCell, tableEditing, toggleHeader, toggleHeaderCell } from "@tiptap/pm/tables";
+ //#region src/utils/parseAlign.ts
+@@ -444,7 +444,100 @@ function preprocessTablePipes(src) {
+ 	}).join("\n");
+ }
+ function collapseWhitespace(s) {
+-	return (s || "").replace(/\s+/g, " ").trim();
++	const source = s || "";
++	let result = "";
++	let pendingSpace = false;
++	let index = 0;
++	while (index < source.length) {
++		if (/\s/.test(source[index])) {
++			pendingSpace = result.length > 0;
++			index += 1;
++			continue;
++		}
++		if (source[index] !== "`") {
++			if (pendingSpace) result += " ";
++			pendingSpace = false;
++			result += source[index];
++			index += 1;
++			continue;
++		}
++		let fenceLength = 1;
++		while (source[index + fenceLength] === "`") fenceLength += 1;
++		let closingIndex = index + fenceLength;
++		while (closingIndex < source.length) {
++			if (source[closingIndex] !== "`") {
++				closingIndex += 1;
++				continue;
++			}
++			let closingLength = 1;
++			while (source[closingIndex + closingLength] === "`") closingLength += 1;
++			if (closingLength === fenceLength) break;
++			closingIndex += closingLength;
++		}
++		if (closingIndex >= source.length) {
++			if (pendingSpace) result += " ";
++			pendingSpace = false;
++			result += source.slice(index, index + fenceLength);
++			index += fenceLength;
++			continue;
++		}
++		if (pendingSpace) result += " ";
++		pendingSpace = false;
++		result += source.slice(index, closingIndex + fenceLength);
++		index = closingIndex + fenceLength;
++	}
++	return result;
++}
++function escapePipesInCellText(text) {
++	let result = "";
++	let index = 0;
++	while (index < text.length) {
++		if (text[index] === "\\" && index + 1 < text.length) {
++			result += text[index] + text[index + 1];
++			index += 2;
++			continue;
++		}
++		if (text[index] === "|") {
++			result += "\\|";
++			index += 1;
++			continue;
++		}
++		if (text[index] !== "`") {
++			result += text[index++];
++			continue;
++		}
++		let fenceLength = 1;
++		while (text[index + fenceLength] === "`") fenceLength += 1;
++		let closingIndex = index + fenceLength;
++		while (closingIndex < text.length) {
++			if (text[closingIndex] !== "`") {
++				closingIndex += 1;
++				continue;
++			}
++			let closingLength = 1;
++			while (text[closingIndex + closingLength] === "`") closingLength += 1;
++			if (closingLength === fenceLength) break;
++			closingIndex += closingLength;
++		}
++		if (closingIndex >= text.length) {
++			result += text.slice(index, index + fenceLength);
++			index += fenceLength;
++			continue;
++		}
++		const code = text.slice(index + fenceLength, closingIndex);
++		const normalizedCode = code.startsWith(" ") && code.endsWith(" ") && /[^ ]/.test(code) ? code.slice(1, -1) : code;
++		const hasOddBackslashPipe = Array.from(normalizedCode.matchAll(/\|/g)).some((match) => {
++			let backslashes = 0;
++			for (let offset = (match.index || 0) - 1; offset >= 0 && normalizedCode[offset] === "\\"; offset -= 1) backslashes += 1;
++			return backslashes % 2 === 1;
++		});
++		if (hasOddBackslashPipe) {
++			const escapedCode = encodeHtmlEntities(normalizedCode).replace(/\|/g, "&#124;");
++			result += `<code>${escapedCode}</code>`;
++		} else result += text.slice(index, index + fenceLength) + code.replace(/\|/g, "\\|") + text.slice(closingIndex, closingIndex + fenceLength);
++		index = closingIndex + fenceLength;
++	}
++	return result;
+ }
+ function renderTableToMarkdown(node, h, options = {}) {
+ 	var _options$cellLineSepa;
+@@ -457,7 +550,8 @@ function renderTableToMarkdown(node, h, options = {}) {
+ 			let raw = "";
+ 			if (cellNode.content && Array.isArray(cellNode.content) && cellNode.content.length > 1) raw = cellNode.content.map((child) => h.renderChildren(child)).join(cellSep);
+ 			else raw = cellNode.content ? h.renderChildren(cellNode.content) : "";
+-			const text = collapseWhitespace(raw.split(cellSep).join("\n").replace(/[ \t]*\r?\n[ \t]*/g, "<br>"));
++			const singleLine = collapseWhitespace(raw.split(cellSep).join("\n").replace(/[ \t]*\r?\n[ \t]*/g, "<br>"));
++			const text = escapePipesInCellText(singleLine);
+ 			const isHeader = cellNode.type === "tableHeader";
+ 			const align = normalizeTableCellAlignFromAttributes(cellNode.attrs);
+ 			cells.push({
+@@ -755,5 +849,3 @@ const TableKit = Extension.create({
+ });
+ //#endregion
+ export { DEFAULT_CELL_LINE_SEPARATOR, Table, TableCell, TableHeader, TableKit, TableRow, TableView, createColGroup, createTable, escapeTableCellPipes, preprocessTablePipes, renderTableToMarkdown, updateColumns };
+-
+-//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@tiptap/extension-table/dist/index.cjs b/node_modules/@tiptap/extension-table/dist/index.cjs
+index 52af484..84399a8 100644
+--- a/node_modules/@tiptap/extension-table/dist/index.cjs
++++ b/node_modules/@tiptap/extension-table/dist/index.cjs
+@@ -445,7 +445,100 @@ function preprocessTablePipes(src) {
+ 	}).join("\n");
+ }
+ function collapseWhitespace(s) {
+-	return (s || "").replace(/\s+/g, " ").trim();
++	const source = s || "";
++	let result = "";
++	let pendingSpace = false;
++	let index = 0;
++	while (index < source.length) {
++		if (/\s/.test(source[index])) {
++			pendingSpace = result.length > 0;
++			index += 1;
++			continue;
++		}
++		if (source[index] !== "`") {
++			if (pendingSpace) result += " ";
++			pendingSpace = false;
++			result += source[index];
++			index += 1;
++			continue;
++		}
++		let fenceLength = 1;
++		while (source[index + fenceLength] === "`") fenceLength += 1;
++		let closingIndex = index + fenceLength;
++		while (closingIndex < source.length) {
++			if (source[closingIndex] !== "`") {
++				closingIndex += 1;
++				continue;
++			}
++			let closingLength = 1;
++			while (source[closingIndex + closingLength] === "`") closingLength += 1;
++			if (closingLength === fenceLength) break;
++			closingIndex += closingLength;
++		}
++		if (closingIndex >= source.length) {
++			if (pendingSpace) result += " ";
++			pendingSpace = false;
++			result += source.slice(index, index + fenceLength);
++			index += fenceLength;
++			continue;
++		}
++		if (pendingSpace) result += " ";
++		pendingSpace = false;
++		result += source.slice(index, closingIndex + fenceLength);
++		index = closingIndex + fenceLength;
++	}
++	return result;
++}
++function escapePipesInCellText(text) {
++	let result = "";
++	let index = 0;
++	while (index < text.length) {
++		if (text[index] === "\\" && index + 1 < text.length) {
++			result += text[index] + text[index + 1];
++			index += 2;
++			continue;
++		}
++		if (text[index] === "|") {
++			result += "\\|";
++			index += 1;
++			continue;
++		}
++		if (text[index] !== "`") {
++			result += text[index++];
++			continue;
++		}
++		let fenceLength = 1;
++		while (text[index + fenceLength] === "`") fenceLength += 1;
++		let closingIndex = index + fenceLength;
++		while (closingIndex < text.length) {
++			if (text[closingIndex] !== "`") {
++				closingIndex += 1;
++				continue;
++			}
++			let closingLength = 1;
++			while (text[closingIndex + closingLength] === "`") closingLength += 1;
++			if (closingLength === fenceLength) break;
++			closingIndex += closingLength;
++		}
++		if (closingIndex >= text.length) {
++			result += text.slice(index, index + fenceLength);
++			index += fenceLength;
++			continue;
++		}
++		const code = text.slice(index + fenceLength, closingIndex);
++		const normalizedCode = code.startsWith(" ") && code.endsWith(" ") && /[^ ]/.test(code) ? code.slice(1, -1) : code;
++		const hasOddBackslashPipe = Array.from(normalizedCode.matchAll(/\|/g)).some((match) => {
++			let backslashes = 0;
++			for (let offset = (match.index || 0) - 1; offset >= 0 && normalizedCode[offset] === "\\"; offset -= 1) backslashes += 1;
++			return backslashes % 2 === 1;
++		});
++		if (hasOddBackslashPipe) {
++			const escapedCode = (0, _tiptap_core.encodeHtmlEntities)(normalizedCode).replace(/\|/g, "&#124;");
++			result += `<code>${escapedCode}</code>`;
++		} else result += text.slice(index, index + fenceLength) + code.replace(/\|/g, "\\|") + text.slice(closingIndex, closingIndex + fenceLength);
++		index = closingIndex + fenceLength;
++	}
++	return result;
+ }
+ function renderTableToMarkdown(node, h, options = {}) {
+ 	var _options$cellLineSepa;
+@@ -458,7 +551,8 @@ function renderTableToMarkdown(node, h, options = {}) {
+ 			let raw = "";
+ 			if (cellNode.content && Array.isArray(cellNode.content) && cellNode.content.length > 1) raw = cellNode.content.map((child) => h.renderChildren(child)).join(cellSep);
+ 			else raw = cellNode.content ? h.renderChildren(cellNode.content) : "";
+-			const text = collapseWhitespace(raw.split(cellSep).join("\n").replace(/[ \t]*\r?\n[ \t]*/g, "<br>"));
++			const singleLine = collapseWhitespace(raw.split(cellSep).join("\n").replace(/[ \t]*\r?\n[ \t]*/g, "<br>"));
++			const text = escapePipesInCellText(singleLine);
+ 			const isHeader = cellNode.type === "tableHeader";
+ 			const align = normalizeTableCellAlignFromAttributes(cellNode.attrs);
+ 			cells.push({
+@@ -768,5 +862,3 @@ exports.escapeTableCellPipes = escapeTableCellPipes;
+ exports.preprocessTablePipes = preprocessTablePipes;
+ exports.renderTableToMarkdown = renderTableToMarkdown;
+ exports.updateColumns = updateColumns;
+-
+-//# sourceMappingURL=index.cjs.map
+\ No newline at end of file

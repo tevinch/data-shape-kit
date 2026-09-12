@@ -1,0 +1,600 @@
+diff --git a/node_modules/@tiptap/markdown/src/MarkdownManager.ts b/node_modules/@tiptap/markdown/src/MarkdownManager.ts
+index 7a28740..9c408e8 100644
+--- a/node_modules/@tiptap/markdown/src/MarkdownManager.ts
++++ b/node_modules/@tiptap/markdown/src/MarkdownManager.ts
+@@ -33,6 +33,7 @@ import {
+   reopenMarksAfterNode,
+   wrapInMarkdownBlock,
+ } from './utils.js'
++import { collectMarkSpanTexts } from './utils/collectMarkSpanTexts.js'
+ import { htmlContainsUnrecognizedTag } from './utils/htmlTagDetection.js'
+ 
+ export class MarkdownManager {
+@@ -957,7 +958,22 @@ export class MarkdownManager {
+       return this.htmlAsLiteralText(html, !!token.block)
+     }
+ 
+-    // generateJSON requires window.DOMParser – treat recognized HTML as literal on the server
++    // Preserve the exact escaped fallback emitted for code text that a GFM table cannot represent.
++    const codeMatch = html.match(/^<code>([^<>]*)<\/code>$/i)
++    const handler = this.getHandlerForToken('codespan')
++    if (codeMatch && handler?.parseMarkdown) {
++      const codeText = decodeHtmlEntities(codeMatch[1].replace(/&#124;/gi, '|'))
++      const parsed = handler.parseMarkdown(
++        { type: 'codespan', raw: html, text: codeText },
++        this.createParseHelpers(),
++      )
++      if (this.isMarkResult(parsed)) {
++        return this.applyMarkToContent(parsed.mark, parsed.content, parsed.attrs)
++      }
++      return this.normalizeParseResult(parsed)
++    }
++
++    // generateJSON requires window.DOMParser – treat other recognized HTML as literal on the server
+     if (typeof window === 'undefined' || typeof window.DOMParser === 'undefined') {
+       return this.htmlAsLiteralText(html, !!token.block)
+     }
+@@ -1271,6 +1287,8 @@ export class MarkdownManager {
+     const activeMarks: Map<string, any> = new Map()
+     const reopenWithHtmlOnNextOpen = new Set<string>()
+     const markOpeningModes = new Map<string, 'markdown' | 'html'>()
++    // Delimiters can depend on the whole mark run, not just one text node.
++    const markSpanTexts = collectMarkSpanTexts(nodes)
+     nodes.forEach((node, i) => {
+       // Lookahead to the next node to determine if marks need to be closed
+       const nextNode = i < nodes.length - 1 ? nodes[i + 1] : null
+@@ -1291,7 +1309,7 @@ export class MarkdownManager {
+         const isWhitespaceOnly = textContent.length > 0 && textContent.trim().length === 0
+         if (isWhitespaceOnly && currentMarks.size > 0) {
+           const transientMarks = new Set(
+-            marksToClose.filter(markType => !activeMarks.has(markType)),
++            marksToClose.filter(markType => markType !== 'code' && !activeMarks.has(markType)),
+           )
+ 
+           if (transientMarks.size > 0) {
+@@ -1319,7 +1337,11 @@ export class MarkdownManager {
+ 
+         let middleTrailingWhitespace = ''
+ 
+-        if (marksToClose.length > 0 && !hasCrossedBoundary) {
++        if (
++          marksToClose.length > 0 &&
++          !marksToClose.includes('code') &&
++          !hasCrossedBoundary
++        ) {
+           // Extract trailing whitespace before closing marks to prevent invalid markdown like "**text **"
+           const middleTrailingMatch = textContent.match(/(\s+)$/)
+           if (middleTrailingMatch) {
+@@ -1344,6 +1366,7 @@ export class MarkdownManager {
+                 markType,
+                 mark,
+                 markOpeningModes.get(markType),
++                markSpanTexts[i]?.get(markType),
+               )
+               if (closeMarkdown) {
+                 textContent += closeMarkdown
+@@ -1358,7 +1381,7 @@ export class MarkdownManager {
+         // Open new marks (should be at the beginning)
+         // Extract leading whitespace before opening marks to prevent invalid markdown like "** text**"
+         let leadingWhitespace = ''
+-        if (marksToOpen.length > 0) {
++        if (marksToOpen.length > 0 && !marksToOpen.some(({ type }) => type === 'code')) {
+           const leadingMatch = textContent.match(/^(\s+)/)
+           if (leadingMatch) {
+             leadingWhitespace = leadingMatch[1]
+@@ -1372,7 +1395,12 @@ export class MarkdownManager {
+         // so new marks correctly see them as active context.
+         marksToOpen.forEach(({ type, mark }) => {
+           const openingMode = reopenWithHtmlOnNextOpen.has(type) ? 'html' : 'markdown'
+-          const openMarkdown = this.getMarkOpening(type, mark, openingMode)
++          const openMarkdown = this.getMarkOpening(
++            type,
++            mark,
++            openingMode,
++            markSpanTexts[i]?.get(type),
++          )
+           if (openMarkdown) {
+             textContent = openMarkdown + textContent
+           }
+@@ -1429,7 +1457,7 @@ export class MarkdownManager {
+ 
+         // Extract trailing whitespace before closing marks to prevent invalid markdown like "**text **"
+         let trailingWhitespace = ''
+-        if (marksToCloseAtEnd.length > 0) {
++        if (marksToCloseAtEnd.length > 0 && !marksToCloseAtEnd.includes('code')) {
+           const trailingMatch = textContent.match(/(\s+)$/)
+           if (trailingMatch) {
+             trailingWhitespace = trailingMatch[1]
+@@ -1439,7 +1467,12 @@ export class MarkdownManager {
+ 
+         marksToCloseAtEnd.forEach(markType => {
+           const mark = activeMarks.get(markType) ?? currentMarks.get(markType)
+-          const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType))
++          const closeMarkdown = this.getMarkClosing(
++            markType,
++            mark,
++            markOpeningModes.get(markType),
++            markSpanTexts[i]?.get(markType),
++          )
+           if (closeMarkdown) {
+             textContent += closeMarkdown
+           }
+@@ -1465,9 +1498,14 @@ export class MarkdownManager {
+           }
+         })
+ 
+-        // Close all marks before the node
++        // Close all marks before the node. The run ends on the previous text node.
+         const beforeMarkdown = closeMarksBeforeNode(activeMarks, (markType, mark) => {
+-          return this.getMarkClosing(markType, mark, markOpeningModes.get(markType))
++          return this.getMarkClosing(
++            markType,
++            mark,
++            markOpeningModes.get(markType),
++            markSpanTexts[i - 1]?.get(markType),
++          )
+         })
+         markOpeningModes.clear()
+ 
+@@ -1482,7 +1520,12 @@ export class MarkdownManager {
+             : reopenMarksAfterNode(marksToReopen, activeMarks, (markType, mark) => {
+                 const openingMode = openingModesToReopen.get(markType) ?? 'markdown'
+                 markOpeningModes.set(markType, openingMode)
+-                return this.getMarkOpening(markType, mark, openingMode)
++                return this.getMarkOpening(
++                  markType,
++                  mark,
++                  openingMode,
++                  markSpanTexts[i + 1]?.get(markType),
++                )
+               })
+ 
+         result.push(beforeMarkdown + nodeContent + afterMarkdown)
+@@ -1499,6 +1542,7 @@ export class MarkdownManager {
+     markType: string,
+     mark: any,
+     openingMode: 'markdown' | 'html' = 'markdown',
++    markText?: string,
+   ): string {
+     if (openingMode === 'html') {
+       return this.getHtmlReopenTags(markType)?.open || ''
+@@ -1529,7 +1573,7 @@ export class MarkdownManager {
+           indent: (content: string) => content,
+           wrapInBlock: (prefix: string, content: string) => prefix + content,
+         },
+-        { index: 0, level: 0, parentType: 'text', meta: {} },
++        { index: 0, level: 0, parentType: 'text', meta: { markText } },
+       )
+ 
+       // Extract the opening part (everything before placeholder)
+@@ -1547,6 +1591,7 @@ export class MarkdownManager {
+     markType: string,
+     mark: any,
+     openingMode: 'markdown' | 'html' = 'markdown',
++    markText?: string,
+   ): string {
+     if (openingMode === 'html') {
+       return this.getHtmlReopenTags(markType)?.close || ''
+@@ -1576,7 +1621,7 @@ export class MarkdownManager {
+           indent: (content: string) => content,
+           wrapInBlock: (prefix: string, content: string) => prefix + content,
+         },
+-        { index: 0, level: 0, parentType: 'text', meta: {} },
++        { index: 0, level: 0, parentType: 'text', meta: { markText } },
+       )
+ 
+       // Extract the closing part (everything after placeholder)
+diff --git a/node_modules/@tiptap/markdown/src/utils/collectMarkSpanTexts.ts b/node_modules/@tiptap/markdown/src/utils/collectMarkSpanTexts.ts
+new file mode 100644
+index 0000000..977482b
+--- /dev/null
++++ b/node_modules/@tiptap/markdown/src/utils/collectMarkSpanTexts.ts
+@@ -0,0 +1,40 @@
++import type { JSONContent } from '@tiptap/core'
++
++// Gives each node the full text of its mark run, so a delimiter can fit the whole span.
++export function collectMarkSpanTexts(nodes: JSONContent[]): Map<string, string>[] {
++  const spanTexts: Map<string, string>[] = nodes.map(() => new Map())
++  const openRuns = new Map<string, { indexes: number[]; text: string }>()
++
++  const flush = (markType: string) => {
++    const run = openRuns.get(markType)
++    if (!run) {
++      return
++    }
++    run.indexes.forEach(index => spanTexts[index].set(markType, run.text))
++    openRuns.delete(markType)
++  }
++
++  nodes.forEach((node, index) => {
++    if (node.type !== 'text') {
++      Array.from(openRuns.keys()).forEach(flush)
++      return
++    }
++
++    const markTypes = new Set((node.marks || []).map(mark => mark.type))
++
++    Array.from(openRuns.keys())
++      .filter(markType => !markTypes.has(markType))
++      .forEach(flush)
++
++    markTypes.forEach(markType => {
++      const run = openRuns.get(markType) || { indexes: [], text: '' }
++      run.indexes.push(index)
++      run.text += node.text || ''
++      openRuns.set(markType, run)
++    })
++  })
++
++  Array.from(openRuns.keys()).forEach(flush)
++
++  return spanTexts
++}
+diff --git a/node_modules/@tiptap/markdown/dist/index.js b/node_modules/@tiptap/markdown/dist/index.js
+index 76a9e77..32f3d8b 100644
+--- a/node_modules/@tiptap/markdown/dist/index.js
++++ b/node_modules/@tiptap/markdown/dist/index.js
+@@ -114,6 +114,32 @@ function reopenMarksAfterNode(marksToReopen, activeMarks, getMarkOpening) {
+ 	});
+ 	return afterMarkdown;
+ }
++function collectMarkSpanTexts(nodes) {
++	const spanTexts = nodes.map(() => /* @__PURE__ */ new Map());
++	const openRuns = /* @__PURE__ */ new Map();
++	const flush = (markType) => {
++		const run = openRuns.get(markType);
++		if (!run) return;
++		run.indexes.forEach((index) => spanTexts[index].set(markType, run.text));
++		openRuns.delete(markType);
++	};
++	nodes.forEach((node, index) => {
++		if (node.type !== "text") {
++			Array.from(openRuns.keys()).forEach(flush);
++			return;
++		}
++		const markTypes = new Set((node.marks || []).map((mark) => mark.type));
++		Array.from(openRuns.keys()).filter((markType) => !markTypes.has(markType)).forEach(flush);
++		markTypes.forEach((markType) => {
++			const run = openRuns.get(markType) || { indexes: [], text: "" };
++			run.indexes.push(index);
++			run.text += node.text || "";
++			openRuns.set(markType, run);
++		});
++	});
++	Array.from(openRuns.keys()).forEach(flush);
++	return spanTexts;
++}
+ /**
+ * Check if a markdown list item token is a task item and extract its state.
+ *
+@@ -888,6 +914,14 @@ var MarkdownManager = class {
+ 		const html = token.text || token.raw || "";
+ 		if (!html.trim()) return null;
+ 		if (this.isUnrecognizedHtml(html)) return this.htmlAsLiteralText(html, !!token.block);
++		const codeMatch = html.match(/^<code>([^<>]*)<\/code>$/i);
++		const handler = this.getHandlerForToken("codespan");
++		if (codeMatch && handler && handler.parseMarkdown) {
++			const codeText = decodeHtmlEntities(codeMatch[1].replace(/&#124;/gi, "|"));
++			const parsed = handler.parseMarkdown({ type: "codespan", raw: html, text: codeText }, this.createParseHelpers());
++			if (this.isMarkResult(parsed)) return this.applyMarkToContent(parsed.mark, parsed.content, parsed.attrs);
++			return this.normalizeParseResult(parsed);
++		}
+ 		if (typeof window === "undefined" || typeof window.DOMParser === "undefined") return this.htmlAsLiteralText(html, !!token.block);
+ 		try {
+ 			const parsed = generateJSON(html, this.baseExtensions);
+@@ -1091,6 +1125,7 @@ var MarkdownManager = class {
+ 		const activeMarks = /* @__PURE__ */ new Map();
+ 		const reopenWithHtmlOnNextOpen = /* @__PURE__ */ new Set();
+ 		const markOpeningModes = /* @__PURE__ */ new Map();
++		const markSpanTexts = collectMarkSpanTexts(nodes);
+ 		nodes.forEach((node, i) => {
+ 			const nextNode = i < nodes.length - 1 ? nodes[i + 1] : null;
+ 			if (!node.type) return;
+@@ -1100,7 +1135,7 @@ var MarkdownManager = class {
+ 				let marksToOpen = this.getMarksToOpenForSerialization(activeMarks, currentMarks, nextNode);
+ 				let marksToClose = findMarksToClose(currentMarks, nextNode);
+ 				if (textContent.length > 0 && textContent.trim().length === 0 && currentMarks.size > 0) {
+-					const transientMarks = new Set(marksToClose.filter((markType) => !activeMarks.has(markType)));
++					const transientMarks = new Set(marksToClose.filter((markType) => markType !== "code" && !activeMarks.has(markType)));
+ 					if (transientMarks.size > 0) {
+ 						currentMarks = new Map(Array.from(currentMarks).filter(([markType]) => !transientMarks.has(markType)));
+ 						marksToOpen = this.getMarksToOpenForSerialization(activeMarks, currentMarks, nextNode);
+@@ -1110,7 +1145,7 @@ var MarkdownManager = class {
+ 				const activeMarksClosingHere = marksToClose.filter((markType) => activeMarks.has(markType));
+ 				const hasCrossedBoundary = activeMarksClosingHere.length > 0 && marksToOpen.length > 0;
+ 				let middleTrailingWhitespace = "";
+-				if (marksToClose.length > 0 && !hasCrossedBoundary) {
++				if (marksToClose.length > 0 && !marksToClose.includes("code") && !hasCrossedBoundary) {
+ 					const middleTrailingMatch = textContent.match(/(\s+)$/);
+ 					if (middleTrailingMatch) {
+ 						middleTrailingWhitespace = middleTrailingMatch[1];
+@@ -1120,7 +1155,7 @@ var MarkdownManager = class {
+ 				if (!hasCrossedBoundary) marksToClose.slice().reverse().forEach((markType) => {
+ 					if (!activeMarks.has(markType)) return;
+ 					const mark = currentMarks.get(markType);
+-					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i] && markSpanTexts[i].get(markType));
+ 					if (closeMarkdown) textContent += closeMarkdown;
+ 					if (activeMarks.has(markType)) {
+ 						activeMarks.delete(markType);
+@@ -1128,7 +1163,7 @@ var MarkdownManager = class {
+ 					}
+ 				});
+ 				let leadingWhitespace = "";
+-				if (marksToOpen.length > 0) {
++				if (marksToOpen.length > 0 && !marksToOpen.some(({ type }) => type === "code")) {
+ 					const leadingMatch = textContent.match(/^(\s+)/);
+ 					if (leadingMatch) {
+ 						leadingWhitespace = leadingMatch[1];
+@@ -1137,7 +1172,7 @@ var MarkdownManager = class {
+ 				}
+ 				marksToOpen.forEach(({ type, mark }) => {
+ 					const openingMode = reopenWithHtmlOnNextOpen.has(type) ? "html" : "markdown";
+-					const openMarkdown = this.getMarkOpening(type, mark, openingMode);
++					const openMarkdown = this.getMarkOpening(type, mark, openingMode, markSpanTexts[i] && markSpanTexts[i].get(type));
+ 					if (openMarkdown) textContent = openMarkdown + textContent;
+ 					markOpeningModes.set(type, openingMode);
+ 					reopenWithHtmlOnNextOpen.delete(type);
+@@ -1157,7 +1192,7 @@ var MarkdownManager = class {
+ 					marksToCloseAtEnd = [...marksToOpen.map((m) => m.type), ...activeMarksClosingHereLifo];
+ 				} else marksToCloseAtEnd = findMarksToCloseAtEnd(activeMarks, currentMarks, nextNode, this.markSetsEqual.bind(this));
+ 				let trailingWhitespace = "";
+-				if (marksToCloseAtEnd.length > 0) {
++				if (marksToCloseAtEnd.length > 0 && !marksToCloseAtEnd.includes("code")) {
+ 					const trailingMatch = textContent.match(/(\s+)$/);
+ 					if (trailingMatch) {
+ 						trailingWhitespace = trailingMatch[1];
+@@ -1167,7 +1202,7 @@ var MarkdownManager = class {
+ 				marksToCloseAtEnd.forEach((markType) => {
+ 					var _activeMarks$get;
+ 					const mark = (_activeMarks$get = activeMarks.get(markType)) !== null && _activeMarks$get !== void 0 ? _activeMarks$get : currentMarks.get(markType);
+-					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i] && markSpanTexts[i].get(markType));
+ 					if (closeMarkdown) textContent += closeMarkdown;
+ 					activeMarks.delete(markType);
+ 					markOpeningModes.delete(markType);
+@@ -1187,7 +1222,7 @@ var MarkdownManager = class {
+ 					}
+ 				});
+ 				const beforeMarkdown = closeMarksBeforeNode(activeMarks, (markType, mark) => {
+-					return this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					return this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i - 1] && markSpanTexts[i - 1].get(markType));
+ 				});
+ 				markOpeningModes.clear();
+ 				const nodeContent = this.renderNodeToMarkdown(node, parentNode, i, level);
+@@ -1195,7 +1230,7 @@ var MarkdownManager = class {
+ 					var _openingModesToReopen;
+ 					const openingMode = (_openingModesToReopen = openingModesToReopen.get(markType)) !== null && _openingModesToReopen !== void 0 ? _openingModesToReopen : "markdown";
+ 					markOpeningModes.set(markType, openingMode);
+-					return this.getMarkOpening(markType, mark, openingMode);
++					return this.getMarkOpening(markType, mark, openingMode, markSpanTexts[i + 1] && markSpanTexts[i + 1].get(markType));
+ 				});
+ 				result.push(beforeMarkdown + nodeContent + afterMarkdown);
+ 			}
+@@ -1205,7 +1240,7 @@ var MarkdownManager = class {
+ 	/**
+ 	* Get the opening markdown syntax for a mark type.
+ 	*/
+-	getMarkOpening(markType, mark, openingMode = "markdown") {
++	getMarkOpening(markType, mark, openingMode = "markdown", markText) {
+ 		if (openingMode === "html") {
+ 			var _this$getHtmlReopenTa;
+ 			return ((_this$getHtmlReopenTa = this.getHtmlReopenTags(markType)) === null || _this$getHtmlReopenTa === void 0 ? void 0 : _this$getHtmlReopenTa.open) || "";
+@@ -1232,7 +1267,7 @@ var MarkdownManager = class {
+ 				index: 0,
+ 				level: 0,
+ 				parentType: "text",
+-				meta: {}
++				meta: { markText }
+ 			});
+ 			const placeholderIndex = rendered.indexOf(placeholder);
+ 			return placeholderIndex >= 0 ? rendered.substring(0, placeholderIndex) : "";
+@@ -1243,7 +1278,7 @@ var MarkdownManager = class {
+ 	/**
+ 	* Get the closing markdown syntax for a mark type.
+ 	*/
+-	getMarkClosing(markType, mark, openingMode = "markdown") {
++	getMarkClosing(markType, mark, openingMode = "markdown", markText) {
+ 		if (openingMode === "html") {
+ 			var _this$getHtmlReopenTa2;
+ 			return ((_this$getHtmlReopenTa2 = this.getHtmlReopenTags(markType)) === null || _this$getHtmlReopenTa2 === void 0 ? void 0 : _this$getHtmlReopenTa2.close) || "";
+@@ -1270,7 +1305,7 @@ var MarkdownManager = class {
+ 				index: 0,
+ 				level: 0,
+ 				parentType: "text",
+-				meta: {}
++				meta: { markText }
+ 			});
+ 			const placeholderIndex = rendered.indexOf(placeholder);
+ 			const placeholderEnd = placeholderIndex + 33;
+@@ -1403,5 +1438,3 @@ const Markdown = Extension.create({
+ });
+ //#endregion
+ export { Markdown, MarkdownManager, assumeContentType, closeMarksBeforeNode, extractAbsorbedBlankLines, findMarksToClose, findMarksToCloseAtEnd, findMarksToOpen, isTaskItem, reopenMarksAfterNode, wrapInMarkdownBlock };
+-
+-//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@tiptap/markdown/dist/index.cjs b/node_modules/@tiptap/markdown/dist/index.cjs
+index e4a07ed..34c223c 100644
+--- a/node_modules/@tiptap/markdown/dist/index.cjs
++++ b/node_modules/@tiptap/markdown/dist/index.cjs
+@@ -115,6 +115,32 @@ function reopenMarksAfterNode(marksToReopen, activeMarks, getMarkOpening) {
+ 	});
+ 	return afterMarkdown;
+ }
++function collectMarkSpanTexts(nodes) {
++	const spanTexts = nodes.map(() => /* @__PURE__ */ new Map());
++	const openRuns = /* @__PURE__ */ new Map();
++	const flush = (markType) => {
++		const run = openRuns.get(markType);
++		if (!run) return;
++		run.indexes.forEach((index) => spanTexts[index].set(markType, run.text));
++		openRuns.delete(markType);
++	};
++	nodes.forEach((node, index) => {
++		if (node.type !== "text") {
++			Array.from(openRuns.keys()).forEach(flush);
++			return;
++		}
++		const markTypes = new Set((node.marks || []).map((mark) => mark.type));
++		Array.from(openRuns.keys()).filter((markType) => !markTypes.has(markType)).forEach(flush);
++		markTypes.forEach((markType) => {
++			const run = openRuns.get(markType) || { indexes: [], text: "" };
++			run.indexes.push(index);
++			run.text += node.text || "";
++			openRuns.set(markType, run);
++		});
++	});
++	Array.from(openRuns.keys()).forEach(flush);
++	return spanTexts;
++}
+ /**
+ * Check if a markdown list item token is a task item and extract its state.
+ *
+@@ -889,6 +915,14 @@ var MarkdownManager = class {
+ 		const html = token.text || token.raw || "";
+ 		if (!html.trim()) return null;
+ 		if (this.isUnrecognizedHtml(html)) return this.htmlAsLiteralText(html, !!token.block);
++		const codeMatch = html.match(/^<code>([^<>]*)<\/code>$/i);
++		const handler = this.getHandlerForToken("codespan");
++		if (codeMatch && handler && handler.parseMarkdown) {
++			const codeText = (0, _tiptap_core.decodeHtmlEntities)(codeMatch[1].replace(/&#124;/gi, "|"));
++			const parsed = handler.parseMarkdown({ type: "codespan", raw: html, text: codeText }, this.createParseHelpers());
++			if (this.isMarkResult(parsed)) return this.applyMarkToContent(parsed.mark, parsed.content, parsed.attrs);
++			return this.normalizeParseResult(parsed);
++		}
+ 		if (typeof window === "undefined" || typeof window.DOMParser === "undefined") return this.htmlAsLiteralText(html, !!token.block);
+ 		try {
+ 			const parsed = (0, _tiptap_core.generateJSON)(html, this.baseExtensions);
+@@ -1092,6 +1126,7 @@ var MarkdownManager = class {
+ 		const activeMarks = /* @__PURE__ */ new Map();
+ 		const reopenWithHtmlOnNextOpen = /* @__PURE__ */ new Set();
+ 		const markOpeningModes = /* @__PURE__ */ new Map();
++		const markSpanTexts = collectMarkSpanTexts(nodes);
+ 		nodes.forEach((node, i) => {
+ 			const nextNode = i < nodes.length - 1 ? nodes[i + 1] : null;
+ 			if (!node.type) return;
+@@ -1101,7 +1136,7 @@ var MarkdownManager = class {
+ 				let marksToOpen = this.getMarksToOpenForSerialization(activeMarks, currentMarks, nextNode);
+ 				let marksToClose = findMarksToClose(currentMarks, nextNode);
+ 				if (textContent.length > 0 && textContent.trim().length === 0 && currentMarks.size > 0) {
+-					const transientMarks = new Set(marksToClose.filter((markType) => !activeMarks.has(markType)));
++					const transientMarks = new Set(marksToClose.filter((markType) => markType !== "code" && !activeMarks.has(markType)));
+ 					if (transientMarks.size > 0) {
+ 						currentMarks = new Map(Array.from(currentMarks).filter(([markType]) => !transientMarks.has(markType)));
+ 						marksToOpen = this.getMarksToOpenForSerialization(activeMarks, currentMarks, nextNode);
+@@ -1111,7 +1146,7 @@ var MarkdownManager = class {
+ 				const activeMarksClosingHere = marksToClose.filter((markType) => activeMarks.has(markType));
+ 				const hasCrossedBoundary = activeMarksClosingHere.length > 0 && marksToOpen.length > 0;
+ 				let middleTrailingWhitespace = "";
+-				if (marksToClose.length > 0 && !hasCrossedBoundary) {
++				if (marksToClose.length > 0 && !marksToClose.includes("code") && !hasCrossedBoundary) {
+ 					const middleTrailingMatch = textContent.match(/(\s+)$/);
+ 					if (middleTrailingMatch) {
+ 						middleTrailingWhitespace = middleTrailingMatch[1];
+@@ -1121,7 +1156,7 @@ var MarkdownManager = class {
+ 				if (!hasCrossedBoundary) marksToClose.slice().reverse().forEach((markType) => {
+ 					if (!activeMarks.has(markType)) return;
+ 					const mark = currentMarks.get(markType);
+-					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i] && markSpanTexts[i].get(markType));
+ 					if (closeMarkdown) textContent += closeMarkdown;
+ 					if (activeMarks.has(markType)) {
+ 						activeMarks.delete(markType);
+@@ -1129,7 +1164,7 @@ var MarkdownManager = class {
+ 					}
+ 				});
+ 				let leadingWhitespace = "";
+-				if (marksToOpen.length > 0) {
++				if (marksToOpen.length > 0 && !marksToOpen.some(({ type }) => type === "code")) {
+ 					const leadingMatch = textContent.match(/^(\s+)/);
+ 					if (leadingMatch) {
+ 						leadingWhitespace = leadingMatch[1];
+@@ -1138,7 +1173,7 @@ var MarkdownManager = class {
+ 				}
+ 				marksToOpen.forEach(({ type, mark }) => {
+ 					const openingMode = reopenWithHtmlOnNextOpen.has(type) ? "html" : "markdown";
+-					const openMarkdown = this.getMarkOpening(type, mark, openingMode);
++					const openMarkdown = this.getMarkOpening(type, mark, openingMode, markSpanTexts[i] && markSpanTexts[i].get(type));
+ 					if (openMarkdown) textContent = openMarkdown + textContent;
+ 					markOpeningModes.set(type, openingMode);
+ 					reopenWithHtmlOnNextOpen.delete(type);
+@@ -1158,7 +1193,7 @@ var MarkdownManager = class {
+ 					marksToCloseAtEnd = [...marksToOpen.map((m) => m.type), ...activeMarksClosingHereLifo];
+ 				} else marksToCloseAtEnd = findMarksToCloseAtEnd(activeMarks, currentMarks, nextNode, this.markSetsEqual.bind(this));
+ 				let trailingWhitespace = "";
+-				if (marksToCloseAtEnd.length > 0) {
++				if (marksToCloseAtEnd.length > 0 && !marksToCloseAtEnd.includes("code")) {
+ 					const trailingMatch = textContent.match(/(\s+)$/);
+ 					if (trailingMatch) {
+ 						trailingWhitespace = trailingMatch[1];
+@@ -1168,7 +1203,7 @@ var MarkdownManager = class {
+ 				marksToCloseAtEnd.forEach((markType) => {
+ 					var _activeMarks$get;
+ 					const mark = (_activeMarks$get = activeMarks.get(markType)) !== null && _activeMarks$get !== void 0 ? _activeMarks$get : currentMarks.get(markType);
+-					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					const closeMarkdown = this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i] && markSpanTexts[i].get(markType));
+ 					if (closeMarkdown) textContent += closeMarkdown;
+ 					activeMarks.delete(markType);
+ 					markOpeningModes.delete(markType);
+@@ -1188,7 +1223,7 @@ var MarkdownManager = class {
+ 					}
+ 				});
+ 				const beforeMarkdown = closeMarksBeforeNode(activeMarks, (markType, mark) => {
+-					return this.getMarkClosing(markType, mark, markOpeningModes.get(markType));
++					return this.getMarkClosing(markType, mark, markOpeningModes.get(markType), markSpanTexts[i - 1] && markSpanTexts[i - 1].get(markType));
+ 				});
+ 				markOpeningModes.clear();
+ 				const nodeContent = this.renderNodeToMarkdown(node, parentNode, i, level);
+@@ -1196,7 +1231,7 @@ var MarkdownManager = class {
+ 					var _openingModesToReopen;
+ 					const openingMode = (_openingModesToReopen = openingModesToReopen.get(markType)) !== null && _openingModesToReopen !== void 0 ? _openingModesToReopen : "markdown";
+ 					markOpeningModes.set(markType, openingMode);
+-					return this.getMarkOpening(markType, mark, openingMode);
++					return this.getMarkOpening(markType, mark, openingMode, markSpanTexts[i + 1] && markSpanTexts[i + 1].get(markType));
+ 				});
+ 				result.push(beforeMarkdown + nodeContent + afterMarkdown);
+ 			}
+@@ -1206,7 +1241,7 @@ var MarkdownManager = class {
+ 	/**
+ 	* Get the opening markdown syntax for a mark type.
+ 	*/
+-	getMarkOpening(markType, mark, openingMode = "markdown") {
++	getMarkOpening(markType, mark, openingMode = "markdown", markText) {
+ 		if (openingMode === "html") {
+ 			var _this$getHtmlReopenTa;
+ 			return ((_this$getHtmlReopenTa = this.getHtmlReopenTags(markType)) === null || _this$getHtmlReopenTa === void 0 ? void 0 : _this$getHtmlReopenTa.open) || "";
+@@ -1233,7 +1268,7 @@ var MarkdownManager = class {
+ 				index: 0,
+ 				level: 0,
+ 				parentType: "text",
+-				meta: {}
++				meta: { markText }
+ 			});
+ 			const placeholderIndex = rendered.indexOf(placeholder);
+ 			return placeholderIndex >= 0 ? rendered.substring(0, placeholderIndex) : "";
+@@ -1244,7 +1279,7 @@ var MarkdownManager = class {
+ 	/**
+ 	* Get the closing markdown syntax for a mark type.
+ 	*/
+-	getMarkClosing(markType, mark, openingMode = "markdown") {
++	getMarkClosing(markType, mark, openingMode = "markdown", markText) {
+ 		if (openingMode === "html") {
+ 			var _this$getHtmlReopenTa2;
+ 			return ((_this$getHtmlReopenTa2 = this.getHtmlReopenTags(markType)) === null || _this$getHtmlReopenTa2 === void 0 ? void 0 : _this$getHtmlReopenTa2.close) || "";
+@@ -1271,7 +1306,7 @@ var MarkdownManager = class {
+ 				index: 0,
+ 				level: 0,
+ 				parentType: "text",
+-				meta: {}
++				meta: { markText }
+ 			});
+ 			const placeholderIndex = rendered.indexOf(placeholder);
+ 			const placeholderEnd = placeholderIndex + 33;
+@@ -1414,5 +1449,3 @@ exports.findMarksToOpen = findMarksToOpen;
+ exports.isTaskItem = isTaskItem;
+ exports.reopenMarksAfterNode = reopenMarksAfterNode;
+ exports.wrapInMarkdownBlock = wrapInMarkdownBlock;
+-
+-//# sourceMappingURL=index.cjs.map
+\ No newline at end of file

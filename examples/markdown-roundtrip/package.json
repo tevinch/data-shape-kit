@@ -1,0 +1,21 @@
+{
+  "name": "markdown-roundtrip-regression",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "reproduce": "node verify.mjs --reproduce",
+    "test": "node verify.mjs"
+  },
+  "dependencies": {
+    "@tiptap/core": "3.31.3",
+    "@tiptap/extension-table": "3.31.3",
+    "@tiptap/markdown": "3.31.3",
+    "@tiptap/starter-kit": "3.31.3",
+    "jsdom": "30.0.1",
+    "marked": "17.0.6"
+  }
+}
