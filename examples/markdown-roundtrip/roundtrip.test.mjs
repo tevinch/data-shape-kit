@@ -140,6 +140,16 @@ const codeCases = [
     document: doc([paragraph([codeText("\\|tick` & <x>")])]),
   },
   {
+    name: "DOM-free ordinary code HTML control",
+    markdown: "<code>plain</code>",
+    document: doc([paragraph([text("<code>plain</code>")])]),
+  },
+  {
+    name: "DOM-free encoded-pipe code HTML control",
+    markdown: "<code>plain&#124;value</code>",
+    document: doc([paragraph([text("<code>plain&#124;value</code>")])]),
+  },
+  {
     name: "DOM-free ordinary HTML control",
     markdown: "<span>kept literally</span>",
     document: doc([paragraph([text("<span>kept literally</span>")])]),

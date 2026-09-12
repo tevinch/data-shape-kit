@@ -231,7 +231,7 @@ async function runPatchedVerification() {
   }
 
   if (failure) throw failure;
-  console.log("PASS 50 scenarios: 25 ESM, 25 CJS");
+  console.log("PASS 54 scenarios: 27 ESM, 27 CJS");
 }
 
 if (process.argv.includes("--reproduce")) await runReproduction();
