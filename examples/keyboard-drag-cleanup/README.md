@@ -10,6 +10,7 @@ From this directory:
 
 ```sh
 npm ci --ignore-scripts
+npx playwright install chromium firefox
 npm run reproduce
 npm test
 # Optional focused development lifecycle check:
