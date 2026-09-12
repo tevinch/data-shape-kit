@@ -18,8 +18,8 @@ const playwrightBin = join(dirname(require.resolve('@playwright/test/package.jso
 const tscBin = join(dirname(require.resolve('typescript/package.json')), 'bin/tsc')
 const mode = process.argv[2]
 
-if (!['--original', '--patched', '--dev'].includes(mode)) {
-  throw new Error('Usage: node verify.mjs --original|--patched|--dev')
+if (!['--original', '--patched', '--strict-mode', '--dev'].includes(mode)) {
+  throw new Error('Usage: node verify.mjs --original|--patched|--strict-mode|--dev')
 }
 
 function sha256(content) {
@@ -116,6 +116,33 @@ async function runBrowserSuite(outDir, port, args, extraEnv = {}) {
   }
 }
 
+async function runDevelopmentStrictModeSuite(packageRoot, port) {
+  const server = spawn(process.execPath, [viteBin, '--host', '127.0.0.1', '--port', String(port), '--strictPort', '--force'], {
+    cwd: exampleRoot,
+    env: cleanEnvironment({REACT_ARIA_PACKAGE_ROOT: packageRoot, REACT_ARIA_FORMAT: 'mjs'}),
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  let serverOutput = ''
+  server.stdout.on('data', (chunk) => { serverOutput += chunk })
+  server.stderr.on('data', (chunk) => { serverOutput += chunk })
+
+  try {
+    await waitForServer(port)
+    return runNode([playwrightBin, 'test', 'tests/strict-mode-development.spec.ts'], {
+      env: {FIXTURE_PORT: String(port)},
+    })
+  } finally {
+    server.kill('SIGTERM')
+    await new Promise((resolve) => {
+      if (server.exitCode !== null) resolve()
+      else server.once('exit', resolve)
+    })
+    if (server.exitCode && server.exitCode !== 143) {
+      process.stderr.write(serverOutput)
+    }
+  }
+}
+
 async function buildFixture(packageRoot, format, outDir) {
   const result = runNode([viteBin, 'build', '--outDir', outDir, '--emptyOutDir'], {
     env: {REACT_ARIA_PACKAGE_ROOT: packageRoot, REACT_ARIA_FORMAT: format},
@@ -192,13 +219,30 @@ async function verifyPatched() {
       requireSuccess(result, `${format} Chromium/Firefox browser suite`)
       port += 1
     }
+    const strictModeResult = await runDevelopmentStrictModeSuite(packageRoot, port)
+    requireSuccess(strictModeResult, 'development StrictMode Chromium/Firefox browser suite')
   } finally {
     await rm(installation, {recursive: true, force: true})
   }
 
   await verifyInstalledState('original')
   await reportBrowserVersions()
-  console.log('Verified patched react-aria 3.52.1 across .mjs, .js, and .cjs browser builds; the installed control remains unchanged.')
+  console.log('Verified patched react-aria 3.52.1 across .mjs, .js, and .cjs production builds plus development StrictMode effect replay; the installed control remains unchanged.')
+}
+
+async function verifyDevelopmentStrictMode() {
+  await verifyInstalledState('original')
+  const {installation, packageRoot} = await makeInstallation()
+  try {
+    requireSuccess(runNode([join(exampleRoot, 'apply-patch.mjs'), installation]), 'patch application')
+    const result = await runDevelopmentStrictModeSuite(packageRoot, 4176)
+    requireSuccess(result, 'development StrictMode Chromium/Firefox browser suite')
+  } finally {
+    await rm(installation, {recursive: true, force: true})
+  }
+  await verifyInstalledState('original')
+  await reportBrowserVersions()
+  console.log('Verified development StrictMode effect replay, source-unmount cancellation, remount, and a subsequent drag; the installed control remains unchanged.')
 }
 
 async function dev() {
@@ -220,4 +264,5 @@ async function dev() {
 
 if (mode === '--original') await reproduce()
 else if (mode === '--patched') await verifyPatched()
+else if (mode === '--strict-mode') await verifyDevelopmentStrictMode()
 else await dev()

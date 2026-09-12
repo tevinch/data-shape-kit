@@ -145,7 +145,7 @@ test('a new drag starts after source-unmount cancellation', async ({page}) => {
   ])
 })
 
-test('StrictMode tree mount cycles without a drag do not emit drag-end', async ({page}) => {
+test('tree mount cycles without a drag do not emit drag-end', async ({page}) => {
   await page.goto('/fixture/index.html')
   await page.getByRole('button', {name: 'Unmount tree'}).click()
   await expect(page.getByRole('treegrid', {name: 'Files'})).toHaveCount(0)

@@ -12,9 +12,11 @@ From this directory:
 npm ci --ignore-scripts
 npm run reproduce
 npm test
+# Optional focused development lifecycle check:
+npm run test:strict-mode
 ```
 
-`npm run reproduce` intentionally exits nonzero. Against the pristine published package it records three remaining inert nodes, `BODY` focus, rejected input, and two drag-end events after Escape. `npm test` applies the patch only to a temporary package copy and runs the complete checks while leaving the installed control unchanged.
+`npm run reproduce` intentionally exits nonzero. Against the pristine published package it records three remaining inert nodes, `BODY` focus, rejected input, and two drag-end events after Escape. `npm test` applies the patch only to a temporary package copy, runs the production format matrix and a development StrictMode check, and leaves the installed control unchanged. `npm run test:strict-mode` runs only that development lifecycle check.
 
 To apply the patch explicitly to this example and open the interactive fixture:
 
@@ -58,7 +60,7 @@ The patch is based on Adobe's published `react-aria` 3.52.1 runtime files and th
 
 The modified generated runtime files carry a Tevinch modification notice and omit their now-invalid source-map references. `UPSTREAM-LICENSE` reproduces the Apache License 2.0 shipped in the npm tarball. The tarball contains no `NOTICE` file. `original-hashes.json` records the expected pristine and patched bytes.
 
-The browser suite uses real keyboard interaction in Chromium 153.0.8010.12 and Firefox 155.0 on macOS arm64. It covers LTR and RTL source-ancestor collapse, direct source removal, unrelated collapse, whole-widget unmount, normal Escape, a new drag after cancellation, React StrictMode mounting, and successful synchronous source removal. It does not exercise pointer drag, touch drag, native assistive technology, or screen-reader output.
+The browser suite uses real keyboard interaction in Chromium 153.0.8010.12 and Firefox 155.0 on macOS arm64. Its production builds cover LTR and RTL source-ancestor collapse, direct source removal, unrelated collapse, whole-widget unmount, normal Escape, a new drag after cancellation, ordinary tree mount cycles, and successful synchronous source removal. A separate Vite development-server run observes StrictMode's effect counters at two setups and one cleanup on initial mount, then verifies active-drag cancellation, remount replay without a false drag-end, and another usable drag. It does not exercise pointer drag, touch drag, native assistive technology, or screen-reader output.
 
 ## License
 

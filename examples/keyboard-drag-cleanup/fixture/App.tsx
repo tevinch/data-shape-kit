@@ -1,4 +1,4 @@
-import {StrictMode, useCallback, useState} from 'react'
+import {StrictMode, useCallback, useEffect, useState} from 'react'
 import {flushSync} from 'react-dom'
 import {createRoot} from 'react-dom/client'
 import {
@@ -13,15 +13,29 @@ import type {Key} from 'react-aria-components'
 import './style.css'
 
 type FixtureEvent = {type: string; operation?: string}
+type EffectLifecycle = {setups: number; cleanups: number}
+
+const effectLifecycle: EffectLifecycle = {setups: 0, cleanups: 0}
 
 declare global {
   interface Window {
     dragFixture: {
       getEvents(): FixtureEvent[]
+      getEffectLifecycle(): EffectLifecycle
       removeSource(): void
       unmountTree(): void
     }
   }
+}
+
+function EffectReplayProbe() {
+  useEffect(() => {
+    effectLifecycle.setups += 1
+    return () => {
+      effectLifecycle.cleanups += 1
+    }
+  }, [])
+  return null
 }
 
 const direction = new URLSearchParams(window.location.search).get('dir') === 'rtl'
@@ -88,6 +102,7 @@ function DragTree({
 
   return (
     <section className="tree-panel" aria-label="File move fixture">
+      <EffectReplayProbe />
       <label className="drop-removal">
         <input
           type="checkbox"
@@ -135,6 +150,7 @@ function App() {
 
   window.dragFixture = {
     getEvents: () => events,
+    getEffectLifecycle: () => ({...effectLifecycle}),
     removeSource: () => {},
     unmountTree: () => flushSync(() => setTreeMounted(false)),
   }

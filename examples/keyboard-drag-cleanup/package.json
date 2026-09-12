@@ -11,6 +11,7 @@
     "dev": "node verify.mjs --dev",
     "reproduce": "node verify.mjs --original",
     "test": "node verify.mjs --patched",
+    "test:strict-mode": "node verify.mjs --strict-mode",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
