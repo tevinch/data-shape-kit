@@ -40,6 +40,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Keep blank numeric fields distinct from zero, with typed form inputs and submissions | [Number Input](examples/number-input) | Copyable Zod 4 schemas; React Hook Form example and type checks |
 | Replace declared CSV missing markers in selected columns while preserving identifiers and notes | [Missing Tokens](examples/missing-tokens) | Copyable Python module; standard library only |
 | Separate malformed JSONL lines while retaining original bytes and rejection locations | [JSONL partition](examples/jsonl-partition) | Python standard library; optional Polars eager/lazy integration |
+| Retain complete finite-command output and exit status while previewing its first 120 lines | [Command output capture](examples/command-output) | POSIX shell with `mktemp` and `head`; Node.js 20+ only for tests |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
