@@ -17,6 +17,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Preserve merged cells when table paste fails while creating its selection | [Merged-cell paste patch](examples/merged-cell-paste) | Exact-version ProseMirror 1.8.5 patch; Tiptap 3.31.3 regression fixture |
 | Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Tiptap 3.31.3 patches; runnable ESM and CommonJS regression fixture |
+| End a React Aria keyboard drag cleanly when its source item unmounts | [Keyboard drag cleanup](examples/keyboard-drag-cleanup) | Exact-version React Aria 3.52.1 patch; Chromium and Firefox regression fixture |
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
@@ -101,4 +102,4 @@ The Glide adapter requires the host application to validate a whole paste before
 
 ## License
 
-[MIT](LICENSE). Use, modify and share the code, retaining the license notice. If a component saves you time, its guide includes a small optional coffee note. Feedback and useful examples are appreciated too.
+[MIT](LICENSE) for original collection code. Exact-version patches retain their upstream licenses as documented in their guides. Use, modify and share the code, retaining the applicable license notices. If a component saves you time, its guide includes a small optional coffee note. Feedback and useful examples are appreciated too.

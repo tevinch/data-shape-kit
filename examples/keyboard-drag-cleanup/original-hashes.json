@@ -1,0 +1,30 @@
+{
+  "package": "react-aria",
+  "version": "3.52.1",
+  "files": {
+    "dist/private/dnd/DragManager.mjs": {
+      "original": "bd2287415d2cabfccdb3200f0c50056280020040357a8648c0ddb81fba334718",
+      "patched": "4c9f7cbf08a76bbe0fbf755f0f5b1df9092c548c33c9f8e5617de952b6662db3"
+    },
+    "dist/private/dnd/DragManager.js": {
+      "original": "e74a122f452ae8a59747ceda3329e75f2ceba4b0b89b7030adb67990288bbd39",
+      "patched": "e6163fceb01c3e836ce45e464e291e5fe2b659af08089345713b5376a642675c"
+    },
+    "dist/private/dnd/DragManager.cjs": {
+      "original": "d9d203ef3d1bd1a4fc39a3fca7379202f7ecb5523e346acac2d1a3a98ba977bc",
+      "patched": "c21c3b3a3690affdc65b161ccde6f8124a0348c7167f7840013d40c3e3d8e526"
+    },
+    "dist/private/dnd/useDrag.mjs": {
+      "original": "957ed799027a8578b7742052c0768a886fcc13bd5493d04081908aa8e308edf4",
+      "patched": "ea96d0ab06146298f853c7efb53a2664418c2d6b146361f894369c3470e8212d"
+    },
+    "dist/private/dnd/useDrag.js": {
+      "original": "1a34c1a2c09292f02fb9b94209249e647ec68b28210886cfd014b8e40d6e79ce",
+      "patched": "02945df624f76097551fe8b9a033bdee8ea6039566f7f63ad65bcf29b557447b"
+    },
+    "dist/private/dnd/useDrag.cjs": {
+      "original": "a90366a1ad992b8f56afba29529ca9615a78d5e5d312c5cdc74fca364ca4a4c7",
+      "patched": "367fe4d1b52c56a1ccefd24d2d2aca9b78af163e475d0ad2584315d398e83062"
+    }
+  }
+}

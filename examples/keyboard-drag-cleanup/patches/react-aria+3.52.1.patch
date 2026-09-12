@@ -1,0 +1,482 @@
+diff --git a/node_modules/react-aria/dist/private/dnd/DragManager.cjs b/node_modules/react-aria/dist/private/dnd/DragManager.cjs
+index 7a4906d..f01c1ba 100644
+--- a/node_modules/react-aria/dist/private/dnd/DragManager.cjs
++++ b/node_modules/react-aria/dist/private/dnd/DragManager.cjs
+@@ -15,8 +15,10 @@ $parcel$export(module.exports, "registerDropItem", function () { return $7394b27
+ $parcel$export(module.exports, "beginDragging", function () { return $7394b2797bc2343d$export$549dbcf8649bf3b2; });
+ $parcel$export(module.exports, "useDragSession", function () { return $7394b2797bc2343d$export$418e185dd3f1b968; });
+ $parcel$export(module.exports, "isVirtualDragging", function () { return $7394b2797bc2343d$export$403bc76cbf68cf60; });
++$parcel$export(module.exports, "cancelDraggingSource", function () { return $7394b2797bc2343d$export$2f3a4b41b89d7de8; });
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -74,6 +76,11 @@ function $7394b2797bc2343d$export$418e185dd3f1b968() {
+ function $7394b2797bc2343d$export$403bc76cbf68cf60() {
+     return !!$7394b2797bc2343d$var$dragSession;
+ }
++function $7394b2797bc2343d$export$2f3a4b41b89d7de8(element) {
++    if (!$7394b2797bc2343d$var$dragSession || $7394b2797bc2343d$var$dragSession.dragTarget.element !== element) return false;
++    $7394b2797bc2343d$var$dragSession.cancel();
++    return true;
++}
+ function $7394b2797bc2343d$var$endDragging() {
+     $7394b2797bc2343d$var$dragSession = null;
+     for (let cb of $7394b2797bc2343d$var$subscriptions)cb();
+@@ -115,6 +122,27 @@ const $7394b2797bc2343d$var$MESSAGES = {
+     touch: 'dragStartedTouch',
+     virtual: 'dragStartedVirtual'
+ };
++function $7394b2797bc2343d$var$isUsableFocusTarget(element) {
++    return element instanceof HTMLElement && element.isConnected && element !== document.body && element !== document.documentElement && !element.hasAttribute('disabled') && !element.closest('[aria-hidden="true"], [inert]');
++}
++function $7394b2797bc2343d$var$focusFirstUsable(candidates) {
++    let fallbackCandidates = document.querySelectorAll('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
++    for (let element of [
++        ...candidates,
++        ...fallbackCandidates
++    ])if ($7394b2797bc2343d$var$isUsableFocusTarget(element)) {
++        element.focus();
++        let activeElement = (0, $da02ee888921bc9e$exports.getActiveElement)();
++        if (activeElement === element || activeElement instanceof Node && element.contains(activeElement)) return true;
++    }
++    return false;
++}
++function $7394b2797bc2343d$var$restoreFocus(candidates) {
++    $7394b2797bc2343d$var$focusFirstUsable(candidates);
++    requestAnimationFrame(()=>{
++        if (!$7394b2797bc2343d$var$isUsableFocusTarget((0, $da02ee888921bc9e$exports.getActiveElement)())) $7394b2797bc2343d$var$focusFirstUsable(candidates);
++    });
++}
+ class $7394b2797bc2343d$var$DragSession {
+     constructor(target, stringFormatter){
+         this.validDropTargets = [];
+@@ -124,7 +152,10 @@ class $7394b2797bc2343d$var$DragSession {
+         this.mutationObserver = null;
+         this.restoreAriaHidden = null;
+         this.isVirtualClick = false;
++        this.hasEnded = false;
++        this.isDropping = false;
+         this.dragTarget = target;
++        this.focusFallback = target.element.closest('[role="treegrid"], [role="grid"], [role="listbox"], [role="tree"]');
+         this.stringFormatter = stringFormatter;
+         this.onKeyDown = this.onKeyDown.bind(this);
+         this.onKeyUp = this.onKeyUp.bind(this);
+@@ -421,6 +452,8 @@ class $7394b2797bc2343d$var$DragSession {
+         }
+     }
+     end() {
++        if (this.hasEnded) return;
++        this.hasEnded = true;
+         this.teardown();
+         $7394b2797bc2343d$var$endDragging();
+         if (typeof this.dragTarget.onDragEnd === 'function') {
+@@ -442,9 +475,20 @@ class $7394b2797bc2343d$var$DragSession {
+         this.setCurrentDropTarget(null);
+     }
+     cancel() {
++        if (this.hasEnded || this.isDropping) return;
++        let activeElement = (0, $da02ee888921bc9e$exports.getActiveElement)();
++        let outsideFocus = activeElement instanceof Element && this.focusFallback && !this.focusFallback.contains(activeElement) ? activeElement : null;
++        let dropFocus = this.currentDropItem?.element ?? this.currentDropTarget?.element;
++        let dropAncestor = dropFocus?.closest('[role="row"], [role="option"], [role="treeitem"]');
+         this.setCurrentDropTarget(null);
+         this.end();
+-        if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) this.dragTarget.element.focus();
++        $7394b2797bc2343d$var$restoreFocus([
++            this.dragTarget.element,
++            outsideFocus,
++            dropAncestor,
++            dropFocus,
++            this.focusFallback
++        ]);
+         // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+         (0, $da02ee888921bc9e$exports.getActiveElement)()?.dispatchEvent(new FocusEvent('focusin', {
+             bubbles: true
+@@ -464,20 +508,25 @@ class $7394b2797bc2343d$var$DragSession {
+             this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
+         } else // TODO: show menu ??
+         this.dropOperation = this.dragTarget.allowedDropOperations[0];
+-        if (typeof this.currentDropTarget.onDrop === 'function') {
++        this.isDropping = true;
++        try {
++            if (typeof this.currentDropTarget.onDrop === 'function') {
+             let items = this.dragTarget.items.map((item)=>({
+                     kind: 'text',
+                     types: new Set(Object.keys(item)),
+                     getText: (type)=>Promise.resolve(item[type])
+                 }));
+             let rect = this.currentDropTarget.element.getBoundingClientRect();
+-            this.currentDropTarget.onDrop({
++                this.currentDropTarget.onDrop({
+                 type: 'drop',
+                 x: rect.left + rect.width / 2,
+                 y: rect.top + rect.height / 2,
+                 items: items,
+                 dropOperation: this.dropOperation
+-            }, item?.target ?? null);
++                }, item?.target ?? null);
++            }
++        } finally{
++            this.isDropping = false;
+         }
+         this.end();
+         (0, $74b2c5b1e7ea9589$exports.announce)(this.stringFormatter.format('dropComplete'));
+@@ -504,6 +553,3 @@ function $7394b2797bc2343d$var$findValidDropTargets(options) {
+         return true;
+     });
+ }
+-
+-
+-//# sourceMappingURL=DragManager.cjs.map
+diff --git a/node_modules/react-aria/dist/private/dnd/DragManager.js b/node_modules/react-aria/dist/private/dnd/DragManager.js
+index 6aa8589..e05861b 100644
+--- a/node_modules/react-aria/dist/private/dnd/DragManager.js
++++ b/node_modules/react-aria/dist/private/dnd/DragManager.js
+@@ -7,6 +7,7 @@ import {useState as $b7acf$useState, useEffect as $b7acf$useEffect} from "react"
+ 
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -64,6 +65,11 @@ function $e1cd17e16f360ff6$export$418e185dd3f1b968() {
+ function $e1cd17e16f360ff6$export$403bc76cbf68cf60() {
+     return !!$e1cd17e16f360ff6$var$dragSession;
+ }
++function $e1cd17e16f360ff6$export$2f3a4b41b89d7de8(element) {
++    if (!$e1cd17e16f360ff6$var$dragSession || $e1cd17e16f360ff6$var$dragSession.dragTarget.element !== element) return false;
++    $e1cd17e16f360ff6$var$dragSession.cancel();
++    return true;
++}
+ function $e1cd17e16f360ff6$var$endDragging() {
+     $e1cd17e16f360ff6$var$dragSession = null;
+     for (let cb of $e1cd17e16f360ff6$var$subscriptions)cb();
+@@ -105,6 +111,27 @@ const $e1cd17e16f360ff6$var$MESSAGES = {
+     touch: 'dragStartedTouch',
+     virtual: 'dragStartedVirtual'
+ };
++function $e1cd17e16f360ff6$var$isUsableFocusTarget(element) {
++    return element instanceof HTMLElement && element.isConnected && element !== document.body && element !== document.documentElement && !element.hasAttribute('disabled') && !element.closest('[aria-hidden="true"], [inert]');
++}
++function $e1cd17e16f360ff6$var$focusFirstUsable(candidates) {
++    let fallbackCandidates = document.querySelectorAll('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
++    for (let element of [
++        ...candidates,
++        ...fallbackCandidates
++    ])if ($e1cd17e16f360ff6$var$isUsableFocusTarget(element)) {
++        element.focus();
++        let activeElement = (0, $d8ac7ed472840322$export$cd4e5573fbe2b576)();
++        if (activeElement === element || activeElement instanceof Node && element.contains(activeElement)) return true;
++    }
++    return false;
++}
++function $e1cd17e16f360ff6$var$restoreFocus(candidates) {
++    $e1cd17e16f360ff6$var$focusFirstUsable(candidates);
++    requestAnimationFrame(()=>{
++        if (!$e1cd17e16f360ff6$var$isUsableFocusTarget((0, $d8ac7ed472840322$export$cd4e5573fbe2b576)())) $e1cd17e16f360ff6$var$focusFirstUsable(candidates);
++    });
++}
+ class $e1cd17e16f360ff6$var$DragSession {
+     setup() {
+         document.addEventListener('keydown', this.onKeyDown, true);
+@@ -412,6 +439,8 @@ class $e1cd17e16f360ff6$var$DragSession {
+         // This corrects state such as whether focus ring should appear.
+         // useDroppableCollection handles this itself, so this is only for standalone drop zones.
+         _getActiveElement;
++        if (this.hasEnded) return;
++        this.hasEnded = true;
+         this.teardown();
+         $e1cd17e16f360ff6$var$endDragging();
+         if (typeof this.dragTarget.onDragEnd === 'function') {
+@@ -432,9 +461,20 @@ class $e1cd17e16f360ff6$var$DragSession {
+     cancel() {
+         var // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+         _getActiveElement;
++        if (this.hasEnded || this.isDropping) return;
++        let activeElement = (0, $d8ac7ed472840322$export$cd4e5573fbe2b576)();
++        let outsideFocus = activeElement instanceof Element && this.focusFallback && !this.focusFallback.contains(activeElement) ? activeElement : null;
++        let dropFocus = this.currentDropItem?.element ?? this.currentDropTarget?.element;
++        let dropAncestor = dropFocus?.closest('[role="row"], [role="option"], [role="treeitem"]');
+         this.setCurrentDropTarget(null);
+         this.end();
+-        if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) this.dragTarget.element.focus();
++        $e1cd17e16f360ff6$var$restoreFocus([
++            this.dragTarget.element,
++            outsideFocus,
++            dropAncestor,
++            dropFocus,
++            this.focusFallback
++        ]);
+         (_getActiveElement = (0, $d8ac7ed472840322$export$cd4e5573fbe2b576)()) === null || _getActiveElement === void 0 ? void 0 : _getActiveElement.dispatchEvent(new FocusEvent('focusin', {
+             bubbles: true
+         }));
+@@ -453,7 +493,9 @@ class $e1cd17e16f360ff6$var$DragSession {
+             this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
+         } else // TODO: show menu ??
+         this.dropOperation = this.dragTarget.allowedDropOperations[0];
+-        if (typeof this.currentDropTarget.onDrop === 'function') {
++        this.isDropping = true;
++        try {
++            if (typeof this.currentDropTarget.onDrop === 'function') {
+             let items = this.dragTarget.items.map((item)=>({
+                     kind: 'text',
+                     types: new Set(Object.keys(item)),
+@@ -461,13 +503,16 @@ class $e1cd17e16f360ff6$var$DragSession {
+                 }));
+             let rect = this.currentDropTarget.element.getBoundingClientRect();
+             var _item_target;
+-            this.currentDropTarget.onDrop({
++                this.currentDropTarget.onDrop({
+                 type: 'drop',
+                 x: rect.left + rect.width / 2,
+                 y: rect.top + rect.height / 2,
+                 items: items,
+                 dropOperation: this.dropOperation
+-            }, (_item_target = item === null || item === void 0 ? void 0 : item.target) !== null && _item_target !== void 0 ? _item_target : null);
++                }, (_item_target = item === null || item === void 0 ? void 0 : item.target) !== null && _item_target !== void 0 ? _item_target : null);
++            }
++        } finally{
++            this.isDropping = false;
+         }
+         this.end();
+         (0, $a53edfcc12185fd0$export$a9b970dcc4ae71a9)(this.stringFormatter.format('dropComplete'));
+@@ -492,7 +537,10 @@ class $e1cd17e16f360ff6$var$DragSession {
+         this.mutationObserver = null;
+         this.restoreAriaHidden = null;
+         this.isVirtualClick = false;
++        this.hasEnded = false;
++        this.isDropping = false;
+         this.dragTarget = target;
++        this.focusFallback = target.element.closest('[role="treegrid"], [role="grid"], [role="listbox"], [role="tree"]');
+         this.stringFormatter = stringFormatter;
+         this.onKeyDown = this.onKeyDown.bind(this);
+         this.onKeyUp = this.onKeyUp.bind(this);
+@@ -516,5 +564,4 @@ function $e1cd17e16f360ff6$var$findValidDropTargets(options) {
+ }
+ 
+ 
+-export {$e1cd17e16f360ff6$export$c28d9fb4a54e471a as registerDropTarget, $e1cd17e16f360ff6$export$aef80212ac99c003 as registerDropItem, $e1cd17e16f360ff6$export$549dbcf8649bf3b2 as beginDragging, $e1cd17e16f360ff6$export$418e185dd3f1b968 as useDragSession, $e1cd17e16f360ff6$export$403bc76cbf68cf60 as isVirtualDragging, $e1cd17e16f360ff6$export$7454aff2e161f241 as isValidDropTarget};
+-//# sourceMappingURL=DragManager.js.map
++export {$e1cd17e16f360ff6$export$c28d9fb4a54e471a as registerDropTarget, $e1cd17e16f360ff6$export$aef80212ac99c003 as registerDropItem, $e1cd17e16f360ff6$export$549dbcf8649bf3b2 as beginDragging, $e1cd17e16f360ff6$export$418e185dd3f1b968 as useDragSession, $e1cd17e16f360ff6$export$403bc76cbf68cf60 as isVirtualDragging, $e1cd17e16f360ff6$export$2f3a4b41b89d7de8 as cancelDraggingSource, $e1cd17e16f360ff6$export$7454aff2e161f241 as isValidDropTarget};
+diff --git a/node_modules/react-aria/dist/private/dnd/DragManager.mjs b/node_modules/react-aria/dist/private/dnd/DragManager.mjs
+index 2b08040..f5ff6ee 100644
+--- a/node_modules/react-aria/dist/private/dnd/DragManager.mjs
++++ b/node_modules/react-aria/dist/private/dnd/DragManager.mjs
+@@ -7,6 +7,7 @@ import {useState as $3R3zh$useState, useEffect as $3R3zh$useEffect} from "react"
+ 
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -64,6 +65,11 @@ function $99f1ee31a7e95d0e$export$418e185dd3f1b968() {
+ function $99f1ee31a7e95d0e$export$403bc76cbf68cf60() {
+     return !!$99f1ee31a7e95d0e$var$dragSession;
+ }
++function $99f1ee31a7e95d0e$export$2f3a4b41b89d7de8(element) {
++    if (!$99f1ee31a7e95d0e$var$dragSession || $99f1ee31a7e95d0e$var$dragSession.dragTarget.element !== element) return false;
++    $99f1ee31a7e95d0e$var$dragSession.cancel();
++    return true;
++}
+ function $99f1ee31a7e95d0e$var$endDragging() {
+     $99f1ee31a7e95d0e$var$dragSession = null;
+     for (let cb of $99f1ee31a7e95d0e$var$subscriptions)cb();
+@@ -105,6 +111,27 @@ const $99f1ee31a7e95d0e$var$MESSAGES = {
+     touch: 'dragStartedTouch',
+     virtual: 'dragStartedVirtual'
+ };
++function $99f1ee31a7e95d0e$var$isUsableFocusTarget(element) {
++    return element instanceof HTMLElement && element.isConnected && element !== document.body && element !== document.documentElement && !element.hasAttribute('disabled') && !element.closest('[aria-hidden="true"], [inert]');
++}
++function $99f1ee31a7e95d0e$var$focusFirstUsable(candidates) {
++    let fallbackCandidates = document.querySelectorAll('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
++    for (let element of [
++        ...candidates,
++        ...fallbackCandidates
++    ])if ($99f1ee31a7e95d0e$var$isUsableFocusTarget(element)) {
++        element.focus();
++        let activeElement = (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)();
++        if (activeElement === element || activeElement instanceof Node && element.contains(activeElement)) return true;
++    }
++    return false;
++}
++function $99f1ee31a7e95d0e$var$restoreFocus(candidates) {
++    $99f1ee31a7e95d0e$var$focusFirstUsable(candidates);
++    requestAnimationFrame(()=>{
++        if (!$99f1ee31a7e95d0e$var$isUsableFocusTarget((0, $23f2114a1b82827e$export$cd4e5573fbe2b576)())) $99f1ee31a7e95d0e$var$focusFirstUsable(candidates);
++    });
++}
+ class $99f1ee31a7e95d0e$var$DragSession {
+     constructor(target, stringFormatter){
+         this.validDropTargets = [];
+@@ -114,7 +141,10 @@ class $99f1ee31a7e95d0e$var$DragSession {
+         this.mutationObserver = null;
+         this.restoreAriaHidden = null;
+         this.isVirtualClick = false;
++        this.hasEnded = false;
++        this.isDropping = false;
+         this.dragTarget = target;
++        this.focusFallback = target.element.closest('[role="treegrid"], [role="grid"], [role="listbox"], [role="tree"]');
+         this.stringFormatter = stringFormatter;
+         this.onKeyDown = this.onKeyDown.bind(this);
+         this.onKeyUp = this.onKeyUp.bind(this);
+@@ -411,6 +441,8 @@ class $99f1ee31a7e95d0e$var$DragSession {
+         }
+     }
+     end() {
++        if (this.hasEnded) return;
++        this.hasEnded = true;
+         this.teardown();
+         $99f1ee31a7e95d0e$var$endDragging();
+         if (typeof this.dragTarget.onDragEnd === 'function') {
+@@ -432,9 +464,20 @@ class $99f1ee31a7e95d0e$var$DragSession {
+         this.setCurrentDropTarget(null);
+     }
+     cancel() {
++        if (this.hasEnded || this.isDropping) return;
++        let activeElement = (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)();
++        let outsideFocus = activeElement instanceof Element && this.focusFallback && !this.focusFallback.contains(activeElement) ? activeElement : null;
++        let dropFocus = this.currentDropItem?.element ?? this.currentDropTarget?.element;
++        let dropAncestor = dropFocus?.closest('[role="row"], [role="option"], [role="treeitem"]');
+         this.setCurrentDropTarget(null);
+         this.end();
+-        if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) this.dragTarget.element.focus();
++        $99f1ee31a7e95d0e$var$restoreFocus([
++            this.dragTarget.element,
++            outsideFocus,
++            dropAncestor,
++            dropFocus,
++            this.focusFallback
++        ]);
+         // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+         (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)()?.dispatchEvent(new FocusEvent('focusin', {
+             bubbles: true
+@@ -454,20 +497,25 @@ class $99f1ee31a7e95d0e$var$DragSession {
+             this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
+         } else // TODO: show menu ??
+         this.dropOperation = this.dragTarget.allowedDropOperations[0];
+-        if (typeof this.currentDropTarget.onDrop === 'function') {
++        this.isDropping = true;
++        try {
++            if (typeof this.currentDropTarget.onDrop === 'function') {
+             let items = this.dragTarget.items.map((item)=>({
+                     kind: 'text',
+                     types: new Set(Object.keys(item)),
+                     getText: (type)=>Promise.resolve(item[type])
+                 }));
+             let rect = this.currentDropTarget.element.getBoundingClientRect();
+-            this.currentDropTarget.onDrop({
++                this.currentDropTarget.onDrop({
+                 type: 'drop',
+                 x: rect.left + rect.width / 2,
+                 y: rect.top + rect.height / 2,
+                 items: items,
+                 dropOperation: this.dropOperation
+-            }, item?.target ?? null);
++                }, item?.target ?? null);
++            }
++        } finally{
++            this.isDropping = false;
+         }
+         this.end();
+         (0, $a46cf152bb926da5$export$a9b970dcc4ae71a9)(this.stringFormatter.format('dropComplete'));
+@@ -496,5 +544,4 @@ function $99f1ee31a7e95d0e$var$findValidDropTargets(options) {
+ }
+ 
+ 
+-export {$99f1ee31a7e95d0e$export$c28d9fb4a54e471a as registerDropTarget, $99f1ee31a7e95d0e$export$aef80212ac99c003 as registerDropItem, $99f1ee31a7e95d0e$export$549dbcf8649bf3b2 as beginDragging, $99f1ee31a7e95d0e$export$418e185dd3f1b968 as useDragSession, $99f1ee31a7e95d0e$export$403bc76cbf68cf60 as isVirtualDragging, $99f1ee31a7e95d0e$export$7454aff2e161f241 as isValidDropTarget};
+-//# sourceMappingURL=DragManager.mjs.map
++export {$99f1ee31a7e95d0e$export$c28d9fb4a54e471a as registerDropTarget, $99f1ee31a7e95d0e$export$aef80212ac99c003 as registerDropItem, $99f1ee31a7e95d0e$export$549dbcf8649bf3b2 as beginDragging, $99f1ee31a7e95d0e$export$418e185dd3f1b968 as useDragSession, $99f1ee31a7e95d0e$export$403bc76cbf68cf60 as isVirtualDragging, $99f1ee31a7e95d0e$export$2f3a4b41b89d7de8 as cancelDraggingSource, $99f1ee31a7e95d0e$export$7454aff2e161f241 as isValidDropTarget};
+diff --git a/node_modules/react-aria/dist/private/dnd/useDrag.cjs b/node_modules/react-aria/dist/private/dnd/useDrag.cjs
+index bbaaf7b..c8e1163 100644
+--- a/node_modules/react-aria/dist/private/dnd/useDrag.cjs
++++ b/node_modules/react-aria/dist/private/dnd/useDrag.cjs
+@@ -22,6 +22,7 @@ function $parcel$export(e, n, v, s) {
+ $parcel$export(module.exports, "useDrag", function () { return $bc8c67c7657c5f5a$export$7941f8aafa4b6021; });
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -193,6 +194,7 @@ function $bc8c67c7657c5f5a$export$7941f8aafa4b6021(options) {
+             // https://github.com/facebook/react/issues/29585
+             // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
+             if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt((0, $69QEi$react.version), 10) < 17)) {
++                if ((0, $7394b2797bc2343d$exports.cancelDraggingSource)(isDraggingRef.current)) return;
+                 if (typeof state.options.onDragEnd === 'function') {
+                     let event = {
+                         type: 'dragend',
+@@ -311,5 +313,3 @@ function $bc8c67c7657c5f5a$export$7941f8aafa4b6021(options) {
+     };
+ }
+ 
+-
+-//# sourceMappingURL=useDrag.cjs.map
+diff --git a/node_modules/react-aria/dist/private/dnd/useDrag.js b/node_modules/react-aria/dist/private/dnd/useDrag.js
+index dd943e8..c24e898 100644
+--- a/node_modules/react-aria/dist/private/dnd/useDrag.js
++++ b/node_modules/react-aria/dist/private/dnd/useDrag.js
+@@ -1,4 +1,4 @@
+-import {beginDragging as $e1cd17e16f360ff6$export$549dbcf8649bf3b2} from "./DragManager.js";
++import {beginDragging as $e1cd17e16f360ff6$export$549dbcf8649bf3b2, cancelDraggingSource as $e1cd17e16f360ff6$export$2f3a4b41b89d7de8} from "./DragManager.js";
+ import {DROP_EFFECT_TO_DROP_OPERATION as $a5876944c9299b39$export$608ecc6f1b23c35d, DROP_OPERATION as $a5876944c9299b39$export$60b7b4bcf3903d8e, EFFECT_ALLOWED as $a5876944c9299b39$export$dd0165308d8bff45} from "./constants.js";
+ import {getEventTarget as $d8ac7ed472840322$export$e58f029f0fbfdb29} from "../utils/shadowdom/DOMFunctions.js";
+ import {globalDropEffect as $a279fa400589a731$export$8e6636520ac15722, setGlobalAllowedDropOperations as $a279fa400589a731$export$6539bc8c3a0a2d67, setGlobalDropEffect as $a279fa400589a731$export$64f52ed7349ddb84, useDragModality as $a279fa400589a731$export$49bac5d6d4b352ea, writeToDataTransfer as $a279fa400589a731$export$f9c1490890ddd063} from "./utils.js";
+@@ -16,6 +16,7 @@ function $parcel$interopDefault(a) {
+ }
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -188,6 +189,7 @@ function $220be66a19152688$export$7941f8aafa4b6021(options) {
+             // https://github.com/facebook/react/issues/29585
+             // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
+             if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt((0, $8164b$version), 10) < 17)) {
++                if ((0, $e1cd17e16f360ff6$export$2f3a4b41b89d7de8)(isDraggingRef.current)) return;
+                 if (typeof state.options.onDragEnd === 'function') {
+                     let event = {
+                         type: 'dragend',
+@@ -308,4 +310,3 @@ function $220be66a19152688$export$7941f8aafa4b6021(options) {
+ 
+ 
+ export {$220be66a19152688$export$7941f8aafa4b6021 as useDrag};
+-//# sourceMappingURL=useDrag.js.map
+diff --git a/node_modules/react-aria/dist/private/dnd/useDrag.mjs b/node_modules/react-aria/dist/private/dnd/useDrag.mjs
+index b38e446..5e14ed6 100644
+--- a/node_modules/react-aria/dist/private/dnd/useDrag.mjs
++++ b/node_modules/react-aria/dist/private/dnd/useDrag.mjs
+@@ -1,4 +1,4 @@
+-import {beginDragging as $99f1ee31a7e95d0e$export$549dbcf8649bf3b2} from "./DragManager.mjs";
++import {beginDragging as $99f1ee31a7e95d0e$export$549dbcf8649bf3b2, cancelDraggingSource as $99f1ee31a7e95d0e$export$2f3a4b41b89d7de8} from "./DragManager.mjs";
+ import {DROP_EFFECT_TO_DROP_OPERATION as $2991e2e71ca29774$export$608ecc6f1b23c35d, DROP_OPERATION as $2991e2e71ca29774$export$60b7b4bcf3903d8e, EFFECT_ALLOWED as $2991e2e71ca29774$export$dd0165308d8bff45} from "./constants.mjs";
+ import {getEventTarget as $23f2114a1b82827e$export$e58f029f0fbfdb29} from "../utils/shadowdom/DOMFunctions.mjs";
+ import {globalDropEffect as $d40e85a29b831dd6$export$8e6636520ac15722, setGlobalAllowedDropOperations as $d40e85a29b831dd6$export$6539bc8c3a0a2d67, setGlobalDropEffect as $d40e85a29b831dd6$export$64f52ed7349ddb84, useDragModality as $d40e85a29b831dd6$export$49bac5d6d4b352ea, writeToDataTransfer as $d40e85a29b831dd6$export$f9c1490890ddd063} from "./utils.mjs";
+@@ -16,6 +16,7 @@ function $parcel$interopDefault(a) {
+ }
+ /*
+  * Copyright 2020 Adobe. All rights reserved.
++ * Modified by Tevinch in 2026 to clean up drag sessions when their source unmounts.
+  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License. You may obtain a copy
+  * of the License at http://www.apache.org/licenses/LICENSE-2.0
+@@ -187,6 +188,7 @@ function $74812c42150b3de8$export$7941f8aafa4b6021(options) {
+             // https://github.com/facebook/react/issues/29585
+             // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
+             if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt((0, $9bfdR$version), 10) < 17)) {
++                if ((0, $99f1ee31a7e95d0e$export$2f3a4b41b89d7de8)(isDraggingRef.current)) return;
+                 if (typeof state.options.onDragEnd === 'function') {
+                     let event = {
+                         type: 'dragend',
+@@ -307,4 +309,3 @@ function $74812c42150b3de8$export$7941f8aafa4b6021(options) {
+ 
+ 
+ export {$74812c42150b3de8$export$7941f8aafa4b6021 as useDrag};
+-//# sourceMappingURL=useDrag.mjs.map
