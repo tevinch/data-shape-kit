@@ -158,6 +158,22 @@ function assertBehavioralReproduction(mode, result) {
   assert.match(result.output, new RegExp(`PASS \\[${mode}\\] ordinary table control`));
   assert.match(result.output, new RegExp(`FAIL \\[${mode}\\] one embedded backtick`));
   assert.match(result.output, new RegExp(`FAIL \\[${mode}\\] pipes at each position`));
+  assert.match(
+    result.output,
+    new RegExp(`FAIL \\[${mode}\\] escaped literal tick before code with repeated spaces`),
+  );
+  assert.match(
+    result.output,
+    new RegExp(`FAIL \\[${mode}\\] escaped literal tick before code with edge spaces`),
+  );
+  assert.match(
+    result.output,
+    new RegExp(`FAIL \\[${mode}\\] escaped literal tick before whitespace-only code`),
+  );
+  assert.match(
+    result.output,
+    new RegExp(`FAIL \\[${mode}\\] escaped literal tick before code with odd-backslash pipe`),
+  );
 }
 
 async function runReproduction() {
@@ -231,7 +247,7 @@ async function runPatchedVerification() {
   }
 
   if (failure) throw failure;
-  console.log("PASS 54 scenarios: 27 ESM, 27 CJS");
+  console.log("PASS 62 scenarios: 31 ESM, 31 CJS");
 }
 
 if (process.argv.includes("--reproduce")) await runReproduction();

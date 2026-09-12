@@ -191,6 +191,16 @@ const codeSlashRows = [
   ),
 ];
 
+function escapedTickPrefixTableCase(name, codeContent) {
+  return {
+    name,
+    document: tableDoc([
+      [tableCell([text("content")], "tableHeader")],
+      [tableCell([text("literal ` before "), codeText(codeContent)])],
+    ]),
+  };
+}
+
 const tableCases = [
   {
     name: "ordinary table control",
@@ -238,6 +248,22 @@ const tableCases = [
       [tableCell([text("only")]), tableCell([codeText("   ")])],
     ]),
   },
+  escapedTickPrefixTableCase(
+    "escaped literal tick before code with repeated spaces",
+    "two  spaces",
+  ),
+  escapedTickPrefixTableCase(
+    "escaped literal tick before code with edge spaces",
+    " padded ",
+  ),
+  escapedTickPrefixTableCase(
+    "escaped literal tick before whitespace-only code",
+    "   ",
+  ),
+  escapedTickPrefixTableCase(
+    "escaped literal tick before code with odd-backslash pipe",
+    "a\\|  b",
+  ),
   {
     name: "HTML fallback preserves spaces entities markup and backticks",
     document: tableDoc([

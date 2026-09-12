@@ -21,7 +21,7 @@ To run the same expectations against the unmodified packages:
 npm run reproduce
 ```
 
-That command intentionally exits nonzero. On the tested dependency tree, each module format reports 6 passing controls and 19 content-preservation failures. Missing modules, incomplete execution and absent passing controls are treated as fixture errors rather than successful reproduction.
+That command intentionally exits nonzero. On the tested dependency tree, each module format reports 8 passing controls and 23 content-preservation failures. Missing modules, incomplete execution and absent passing controls are treated as fixture errors rather than successful reproduction.
 
 ## Apply the patches to an application
 
@@ -69,7 +69,7 @@ is emitted as:
 ``hello ` world``
 ```
 
-The table renderer escapes cell pipes while retaining existing backslash pairs. It also preserves spaces inside code spans while it collapses layout whitespace outside them. A GFM pipe table cannot directly represent an odd literal backslash run immediately before a pipe inside backtick code: Marked uses the same backslash both to protect the column delimiter and then removes it. For that narrow combination, the serializer emits an escaped, attribute-free `<code>…</code>` span with the pipe represented as `&#124;`. The Markdown manager recognizes that form only when its decoded content contains an odd backslash run before the encoded pipe, then sends it through the registered `codespan` handler in browser and server environments. Ordinary `<code>` HTML and code HTML containing an encoded pipe without the odd backslash keep the existing parser or literal-text behavior.
+The table renderer escapes cell pipes while retaining existing backslash pairs. It also distinguishes escaped literal backticks from actual code fences, preserving spaces inside code spans while it collapses layout whitespace outside them. A GFM pipe table cannot directly represent an odd literal backslash run immediately before a pipe inside backtick code: Marked uses the same backslash both to protect the column delimiter and then removes it. For that narrow combination, the serializer emits an escaped, attribute-free `<code>…</code>` span with the pipe represented as `&#124;`. The Markdown manager recognizes that form only when its decoded content contains an odd backslash run before the encoded pipe, then sends it through the registered `codespan` handler in browser and server environments. Ordinary `<code>` HTML and code HTML containing an encoded pipe without the odd backslash keep the existing parser or literal-text behavior.
 
 Other Markdown consumers must support and preserve inline HTML for this fallback to round-trip. A renderer, sanitizer or storage layer that strips, escapes or disables inline HTML can remove the code mark or change the literal content.
 
@@ -77,7 +77,7 @@ The patch updates the published TypeScript source and both runtime formats in al
 
 ## Verification and limits
 
-The suite serializes and reparses every document three times, always using the reparsed result on the next pass. It compares content, relevant marks and table structure. Its 54 passing patched scenarios cover arbitrary backtick runs; sole, leading and trailing backticks; both-edge, repeated and whitespace-only spaces; adjacent plain text; split text nodes in one continuous code mark; pipe positions and repetition; 0 through 6 preceding backslashes in plain and code-marked cells; bold, italic and link marks; Unicode; multiple rows and cells; code containing both backticks and pipes; ordinary and encoded-pipe-only code HTML compatibility controls; DOM-free parsing; and a jsdom-backed `Editor` path.
+The suite serializes and reparses every document three times, always using the reparsed result on the next pass. It compares content, relevant marks and table structure. Its 62 passing patched scenarios cover arbitrary backtick runs; sole, leading and trailing backticks; both-edge, repeated and whitespace-only spaces; adjacent plain text; split text nodes in one continuous code mark; pipe positions and repetition; 0 through 6 preceding backslashes in plain and code-marked cells; escaped literal backticks immediately before code with repeated, edge or whitespace-only spaces and odd-backslash pipes; bold, italic and link marks; Unicode; multiple rows and cells; code containing both backticks and pipes; ordinary and encoded-pipe-only code HTML compatibility controls; DOM-free parsing; and a jsdom-backed `Editor` path.
 
 This fixture covers single-line inline code and the listed table shapes on the exact dependency versions above. CommonMark's normalization of line endings inside code spans, custom Markdown extensions, custom HTML behavior, custom table schemas and unrelated mark-overlap or inline-atom behavior need separate tests. It does not claim universal lossless Markdown conversion or an accepted upstream fix.
 

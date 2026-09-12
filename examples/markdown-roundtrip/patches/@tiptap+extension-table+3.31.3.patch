@@ -8,9 +8,17 @@ index 0928f66..84d78f7 100644
  
  import {
    type TableCellAlign as TableCellAlignType,
-@@ -82,7 +82,123 @@ export function preprocessTablePipes(src: string): string {
+@@ -82,7 +82,131 @@ export function preprocessTablePipes(src: string): string {
  }
  
++function isBackslashEscaped(text: string, index: number) {
++  let backslashes = 0
++  for (let offset = index - 1; offset >= 0 && text[offset] === '\\'; offset -= 1) {
++    backslashes += 1
++  }
++  return backslashes % 2 === 1
++}
++
  function collapseWhitespace(s: string) {
 -  return (s || '').replace(/\s+/g, ' ').trim()
 +  const source = s || ''
@@ -25,7 +33,7 @@ index 0928f66..84d78f7 100644
 +      continue
 +    }
 +
-+    if (source[index] !== '`') {
++    if (source[index] !== '`' || isBackslashEscaped(source, index)) {
 +      if (pendingSpace) result += ' '
 +      pendingSpace = false
 +      result += source[index]
@@ -133,7 +141,7 @@ index 0928f66..84d78f7 100644
  }
  
  export function renderTableToMarkdown(
-@@ -120,12 +236,13 @@ export function renderTableToMarkdown(
+@@ -120,12 +244,13 @@ export function renderTableToMarkdown(
  
          // Cells have to stay on a single line, so line breaks become <br> tags.
          // The parser already turns <br> back into hard breaks, so this round trips.
@@ -158,9 +166,15 @@ index b4dd9f6..638c956 100644
  import { TextSelection } from "@tiptap/pm/state";
  import { CellSelection, addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, columnResizing, deleteColumn, deleteRow, deleteTable, fixTables, goToNextCell, mergeCells, setCellAttr, splitCell, tableEditing, toggleHeader, toggleHeaderCell } from "@tiptap/pm/tables";
  //#region src/utils/parseAlign.ts
-@@ -444,7 +444,100 @@ function preprocessTablePipes(src) {
+@@ -444,7 +444,106 @@ function preprocessTablePipes(src) {
  	}).join("\n");
  }
++function isBackslashEscaped(text, index) {
++	let backslashes = 0;
++	for (let offset = index - 1; offset >= 0 && text[offset] === "\\"; offset -= 1) backslashes += 1;
++	return backslashes % 2 === 1;
++}
++
  function collapseWhitespace(s) {
 -	return (s || "").replace(/\s+/g, " ").trim();
 +	const source = s || "";
@@ -173,7 +187,7 @@ index b4dd9f6..638c956 100644
 +			index += 1;
 +			continue;
 +		}
-+		if (source[index] !== "`") {
++		if (source[index] !== "`" || isBackslashEscaped(source, index)) {
 +			if (pendingSpace) result += " ";
 +			pendingSpace = false;
 +			result += source[index];
@@ -260,7 +274,7 @@ index b4dd9f6..638c956 100644
  }
  function renderTableToMarkdown(node, h, options = {}) {
  	var _options$cellLineSepa;
-@@ -457,7 +550,8 @@ function renderTableToMarkdown(node, h, options = {}) {
+@@ -457,7 +556,8 @@ function renderTableToMarkdown(node, h, options = {}) {
  			let raw = "";
  			if (cellNode.content && Array.isArray(cellNode.content) && cellNode.content.length > 1) raw = cellNode.content.map((child) => h.renderChildren(child)).join(cellSep);
  			else raw = cellNode.content ? h.renderChildren(cellNode.content) : "";
@@ -270,7 +284,7 @@ index b4dd9f6..638c956 100644
  			const isHeader = cellNode.type === "tableHeader";
  			const align = normalizeTableCellAlignFromAttributes(cellNode.attrs);
  			cells.push({
-@@ -755,5 +849,3 @@ const TableKit = Extension.create({
+@@ -755,5 +855,3 @@ const TableKit = Extension.create({
  });
  //#endregion
  export { DEFAULT_CELL_LINE_SEPARATOR, Table, TableCell, TableHeader, TableKit, TableRow, TableView, createColGroup, createTable, escapeTableCellPipes, preprocessTablePipes, renderTableToMarkdown, updateColumns };
@@ -281,9 +295,15 @@ diff --git a/node_modules/@tiptap/extension-table/dist/index.cjs b/node_modules/
 index 52af484..84399a8 100644
 --- a/node_modules/@tiptap/extension-table/dist/index.cjs
 +++ b/node_modules/@tiptap/extension-table/dist/index.cjs
-@@ -445,7 +445,100 @@ function preprocessTablePipes(src) {
+@@ -445,7 +445,106 @@ function preprocessTablePipes(src) {
  	}).join("\n");
  }
++function isBackslashEscaped(text, index) {
++	let backslashes = 0;
++	for (let offset = index - 1; offset >= 0 && text[offset] === "\\"; offset -= 1) backslashes += 1;
++	return backslashes % 2 === 1;
++}
++
  function collapseWhitespace(s) {
 -	return (s || "").replace(/\s+/g, " ").trim();
 +	const source = s || "";
@@ -296,7 +316,7 @@ index 52af484..84399a8 100644
 +			index += 1;
 +			continue;
 +		}
-+		if (source[index] !== "`") {
++		if (source[index] !== "`" || isBackslashEscaped(source, index)) {
 +			if (pendingSpace) result += " ";
 +			pendingSpace = false;
 +			result += source[index];
@@ -383,7 +403,7 @@ index 52af484..84399a8 100644
  }
  function renderTableToMarkdown(node, h, options = {}) {
  	var _options$cellLineSepa;
-@@ -458,7 +551,8 @@ function renderTableToMarkdown(node, h, options = {}) {
+@@ -458,7 +557,8 @@ function renderTableToMarkdown(node, h, options = {}) {
  			let raw = "";
  			if (cellNode.content && Array.isArray(cellNode.content) && cellNode.content.length > 1) raw = cellNode.content.map((child) => h.renderChildren(child)).join(cellSep);
  			else raw = cellNode.content ? h.renderChildren(cellNode.content) : "";
@@ -393,7 +413,7 @@ index 52af484..84399a8 100644
  			const isHeader = cellNode.type === "tableHeader";
  			const align = normalizeTableCellAlignFromAttributes(cellNode.attrs);
  			cells.push({
-@@ -768,5 +862,3 @@ exports.escapeTableCellPipes = escapeTableCellPipes;
+@@ -768,5 +868,3 @@ exports.escapeTableCellPipes = escapeTableCellPipes;
  exports.preprocessTablePipes = preprocessTablePipes;
  exports.renderTableToMarkdown = renderTableToMarkdown;
  exports.updateColumns = updateColumns;
