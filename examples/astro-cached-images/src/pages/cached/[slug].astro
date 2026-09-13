@@ -1,0 +1,7 @@
+---
+import shared from '../../assets/shared.png';
+export function getStaticPaths() {
+  return [{ params: { slug: 'x' }, cacheKey: 'v1' }];
+}
+---
+<html><body><img src={shared.src} alt="c" /></body></html>

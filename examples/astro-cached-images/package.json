@@ -1,0 +1,13 @@
+{
+  "name": "astro-cached-images",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node verify-workflow.mjs && node --test metadata.test.mjs && node verify-installer.mjs"
+  },
+  "dependencies": {
+    "astro": "https://pkg.pr.new/astro@cb815d8",
+    "sass": "1.98.0"
+  }
+}

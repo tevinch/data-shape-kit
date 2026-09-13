@@ -1,0 +1,177 @@
+diff --git a/packages/astro/src/types/public/integrations.ts b/packages/astro/src/types/public/integrations.ts
+index 1eef5ab..4d71b4c 100644
+--- a/packages/astro/src/types/public/integrations.ts
++++ b/packages/astro/src/types/public/integrations.ts
+@@ -262,6 +262,8 @@ export interface PrerenderRenderMetadata {
+ 	contentEntryKeys: string[];
+ 	/** Optimized-image transforms the page resolved, or an empty array. */
+ 	staticImages: SerializedStaticImage[];
++	/** Original image source paths read during rendering. Omission prevents cache reuse. */
++	referencedImages?: string[];
+ }
+ 
+ /**
+diff --git a/packages/astro/src/core/render-scope/collect.ts b/packages/astro/src/core/render-scope/collect.ts
+index 1614ac6..e3eb308 100644
+--- a/packages/astro/src/core/render-scope/collect.ts
++++ b/packages/astro/src/core/render-scope/collect.ts
+@@ -5,6 +5,7 @@ import { getInstalledRenderScope, type RenderCollectors } from './scope.js';
+ export interface CollectedPrerenderMetadata {
+ 	contentEntryKeys: string[];
+ 	staticImages: SerializedStaticImage[];
++	referencedImages: string[];
+ }
+ 
+ let warnedNoScope = false;
+@@ -40,13 +41,14 @@ export async function collectPrerenderMetadata<T>(
+ 		}
+ 		return { value: await fn(), metadata: undefined };
+ 	}
+-	const store: RenderCollectors = { contentEntries: new Set(), staticImages: [] };
++	const store: RenderCollectors = { contentEntries: new Set(), staticImages: [], referencedImages: new Set() };
+ 	const value = await scope.run(store, fn);
+ 	return {
+ 		value,
+ 		metadata: {
+ 			contentEntryKeys: [...store.contentEntries!],
+ 			staticImages: [...store.staticImages!],
++			referencedImages: [...store.referencedImages!],
+ 		},
+ 	};
+ }
+diff --git a/packages/astro/src/core/render-scope/scope.ts b/packages/astro/src/core/render-scope/scope.ts
+index 5079a2b..c56265b 100644
+--- a/packages/astro/src/core/render-scope/scope.ts
++++ b/packages/astro/src/core/render-scope/scope.ts
+@@ -15,6 +15,8 @@ export interface RenderCollectors {
+ 	 * duplicates preserved.
+ 	 */
+ 	staticImages?: SerializedStaticImage[];
++	/** Source paths referenced outside image processing by this render. */
++	referencedImages?: Set<string>;
+ }
+ 
+ /**
+diff --git a/packages/astro/src/core/build/generate.ts b/packages/astro/src/core/build/generate.ts
+index afb19f7..e2c3aca 100644
+--- a/packages/astro/src/core/build/generate.ts
++++ b/packages/astro/src/core/build/generate.ts
+@@ -645,6 +645,9 @@ async function generatePathWithPrerenderer(
+ 			// still emits the images its restored HTML references.
+ 			const restoredImages = cache.previousStaticImages(route.component, pathname);
+ 			if (restoredImages) restoreStaticImages(restoredImages);
++			const restoredReferences = cache.previousReferencedImages(route.component, pathname)!;
++			const referencedImages = (globalThis.astroAsset.referencedImages ??= new Set());
++			for (const source of restoredReferences) referencedImages.add(source);
+ 
+ 			// Likewise, the route contributes no response headers when it is not
+ 			// rendered. Replay them so a `staticHeaders` adapter still writes this
+@@ -658,7 +661,7 @@ async function generatePathWithPrerenderer(
+ 			}
+ 
+ 			// Record in the new cache so orphan detection knows this path is still alive,
+-			// carrying forward the content entries, image transforms, and headers the
++			// carrying forward the content entries, image transforms, raw references, and headers the
+ 			// path resolved last build.
+ 			cache.record(
+ 				route.component,
+@@ -669,6 +672,7 @@ async function generatePathWithPrerenderer(
+ 				cache.previousContentEntryKeys(route.component, pathname),
+ 				restoredImages,
+ 				restoredHeaders,
++				restoredReferences,
+ 			);
+ 
+ 			// Track page name for stats even when skipped
+@@ -700,7 +704,7 @@ async function generatePathWithPrerenderer(
+ 	}
+ 
+ 	// When the incremental cache is active, the prerenderer collects the content
+-	// entries and image transforms resolved while rendering this path in its own
++	// entries, image transforms, and raw references resolved while rendering this path in its own
+ 	// runtime and reports them on the render's metadata, so they can be folded
+ 	// into the path's cache entry and replayed when the path is skipped on a
+ 	// later build.
+@@ -715,6 +719,7 @@ async function generatePathWithPrerenderer(
+ 	});
+ 	const contentEntryKeys = result?.metadata?.contentEntryKeys;
+ 	const staticImages = result?.metadata?.staticImages;
++	const referencedImages = result?.metadata?.referencedImages;
+ 	// Headers are collected only for `staticHeaders` adapters (see `renderPath`).
+ 	// Persist them so a skipped path can replay its route into the headers file.
+ 	const headers = cache ? [...(routeToHeaders.get(pathname)?.headers ?? [])] : undefined;
+@@ -744,6 +749,7 @@ async function generatePathWithPrerenderer(
+ 			contentEntryKeys,
+ 			staticImages,
+ 			headers,
++			referencedImages,
+ 		);
+ 	}
+ 
+diff --git a/packages/astro/src/core/build/incremental.ts b/packages/astro/src/core/build/incremental.ts
+index d42f120..112fecb 100644
+--- a/packages/astro/src/core/build/incremental.ts
++++ b/packages/astro/src/core/build/incremental.ts
+@@ -23,6 +23,8 @@ export interface IncrementalPathEntry {
+ 	 * keep the images its restored HTML references from 404ing.
+ 	 */
+ 	staticImages?: SerializedStaticImage[];
++	/** Original source paths to preserve when this path is restored. */
++	referencedImages?: string[];
+ 	/**
+ 	 * Response header name/value pairs a `staticHeaders` adapter collected for this
+ 	 * path (chiefly the CSP header when delivered as a header rather than a `<meta>`
+@@ -180,6 +182,9 @@ export class IncrementalBuildCache {
+ 
+ 		const pathEntry = routeEntry.paths[pathname];
+ 		if (!pathEntry) return false;
++		// Caches without raw references cannot safely replay image retention.
++		// https://github.com/withastro/astro/issues/17974#issuecomment-5632948538
++		if (!pathEntry.referencedImages) return false;
+ 
+ 		if (pathEntry.cacheKey !== cacheKey) return false;
+ 
+@@ -220,6 +225,11 @@ export class IncrementalBuildCache {
+ 		return this.#previous?.routes[routeComponent]?.paths[pathname]?.headers;
+ 	}
+ 
++	/** The original source paths a restored page must keep in the output. */
++	previousReferencedImages(routeComponent: string, pathname: string): string[] | undefined {
++		return this.#previous?.routes[routeComponent]?.paths[pathname]?.referencedImages;
++	}
++
+ 	/** Record a path in the next manifest so a later build can skip or prune it. */
+ 	record(
+ 		routeComponent: string,
+@@ -230,6 +240,7 @@ export class IncrementalBuildCache {
+ 		contentEntryKeys?: string[],
+ 		staticImages?: SerializedStaticImage[],
+ 		headers?: [string, string][],
++		referencedImages?: string[],
+ 	): void {
+ 		let routeEntry = this.#next.routes[routeComponent];
+ 		if (!routeEntry) {
+@@ -249,6 +260,7 @@ export class IncrementalBuildCache {
+ 		}
+ 		if (staticImages && staticImages.length > 0) pathEntry.staticImages = staticImages;
+ 		if (headers && headers.length > 0) pathEntry.headers = headers;
++		if (referencedImages) pathEntry.referencedImages = referencedImages;
+ 		routeEntry.paths[pathname] = pathEntry;
+ 	}
+ 
+diff --git a/packages/astro/src/assets/utils/proxy.ts b/packages/astro/src/assets/utils/proxy.ts
+index 05325b5..59879ce 100644
+--- a/packages/astro/src/assets/utils/proxy.ts
++++ b/packages/astro/src/assets/utils/proxy.ts
+@@ -13,7 +13,10 @@ export function getProxyCode(options: ImageMetadata, isSSR: boolean): string {
+ 							}
+ 							${
+ 								!isSSR
+-									? `if (target[name] !== undefined && globalThis.astroAsset) globalThis.astroAsset?.referencedImages?.add(${stringifiedFSPath});`
++									? `if (target[name] !== undefined && globalThis.astroAsset) {
++              globalThis.astroAsset.referencedImages?.add(${stringifiedFSPath});
++              globalThis[Symbol.for('astro:render-scope')]?.getStore()?.referencedImages?.add(${stringifiedFSPath});
++            }`
+ 									: ''
+ 							}
+ 							return target[name];

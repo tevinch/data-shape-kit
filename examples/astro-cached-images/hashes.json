@@ -1,0 +1,40 @@
+{
+  "package": "astro",
+  "version": "7.3.2",
+  "preview": "https://pkg.pr.new/astro@cb815d8",
+  "sourceCommit": "cb815d8",
+  "files": {
+    "dist/types/public/integrations.d.ts": {
+      "original": "64c744569587b82f6068f59958c5d246f64373544206e539b44ea68e2e16e66d",
+      "patched": "4e73667f5cdd9703b9cacb92c3e81f1e72a9ac2da2d6a1b0be7b29348e9114e9"
+    },
+    "dist/core/render-scope/collect.d.ts": {
+      "original": "373cc2caaa7ab70ebd276ed8a4d946694efb34f1c9457dc88f50dc63425c2805",
+      "patched": "97682cdc7415b25aaaa188f040d5a0bef18a95fc64adef4a72511530d98ae0a1"
+    },
+    "dist/core/render-scope/collect.js": {
+      "original": "12822e3ab93545d2fd41ed751ff3c82da9ef132a5bdd838cae7cd5568e91415c",
+      "patched": "4b0947d9e95285f09437509271e5c71cb78b61773935569536076cbf0cac4455"
+    },
+    "dist/core/render-scope/scope.d.ts": {
+      "original": "59f1a10800ba22f1ea8bc2d019918354ba10985d7a3c464030a950e83559e0da",
+      "patched": "5634fd7ea90c32ffdc12885d22d01774df97ff54c1128323ef6bd044a62e0f9c"
+    },
+    "dist/core/build/generate.js": {
+      "original": "6b8c0f5b3c206a0d3e2f06b6608284d962f82279fecfa91e1256b39429ef8186",
+      "patched": "434c9adaedfb0d5eb37924ba4db8f83c36ac4b6786e8ea431fe9db9e8c2d09d3"
+    },
+    "dist/core/build/incremental.d.ts": {
+      "original": "20970338e10448cee23a8559ef181df9e3e694cef15a77eabcee6e1645aaae34",
+      "patched": "3101cbbe2788226b58dcbe3ec9183b4d516b6d5bb9a9c27c4597b7c0ecb8b148"
+    },
+    "dist/core/build/incremental.js": {
+      "original": "4050faecb242adbc28c4b8e5eafdfbf5b6a2cd29e3ce9cc297c5f4645c3ff1dd",
+      "patched": "3f728c56b088b8e1dbe9e0c6940ab02596d3b6e49d1016ce6757a108b4ddb253"
+    },
+    "dist/assets/utils/proxy.js": {
+      "original": "4eeda3ee79c965ea38cb36e9beb114c82303820f35618e0f29258ce861de4baf",
+      "patched": "8a29f140d4b694e8a05e309f342bfce2330f93e9cc916ccbf3ebf69b0728a18e"
+    }
+  }
+}

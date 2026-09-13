@@ -1,0 +1,8 @@
+---
+import '../styles/global.scss';
+export function getStaticPaths() {
+  return ['a', 'b'].map(slug => ({ params: { slug }, cacheKey: `v1-${slug}` }));
+}
+const { slug } = Astro.params;
+---
+<html><head><title>repro</title></head><body><h1>{slug}</h1></body></html>
