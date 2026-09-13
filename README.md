@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Keep local constant calculations intact in Metro release bundles | [Metro release values](examples/metro-release-values) | Copyable source workaround; production bundle checks |
 | Keep original images referenced by cached Astro pages through repeated builds | [Astro cached images](examples/astro-cached-images) | Exact-preview patch; production build and image checks |
 | Export PDFs when an overlapping element moves above a shrinking table | [PDFme table export](examples/pdfme-table-export) | Exact-version patch recipe; PDF content and pagination checks |
 | Run Storybook tests with configuration hooks when Jest 30.5 refuses Node loader registration | [Storybook Jest configuration](examples/storybook-jest-config) | Exact-version Storybook 10.6.0 patch; TypeScript/JavaScript and repeated-run fixture |

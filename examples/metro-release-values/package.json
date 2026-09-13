@@ -1,0 +1,9 @@
+{
+  "name": "metro-release-values",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "node": "^22.13.0 || ^24.3.0 || >=26.0.0" },
+  "scripts": { "verify": "node verify.cjs" },
+  "devDependencies": { "metro": "0.87.0" },
+  "overrides": { "@babel/core": "7.29.7", "@babel/traverse": "7.29.8" }
+}
