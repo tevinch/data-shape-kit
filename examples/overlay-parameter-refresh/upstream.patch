@@ -1,0 +1,10 @@
+--- a/packages/ag-grid-react/src/reactUi/agGridReactUi.tsx
++++ b/packages/ag-grid-react/src/reactUi/agGridReactUi.tsx
+@@ -335,6 +335,7 @@
+                     case 'loadingOverlayComponent':
+                     case 'noRowsOverlayComponent':
+                     case 'activeOverlay':
++                    case 'overlayComponent':
+                         return CustomOverlayComponentWrapper;
+                     case 'statusPanel':
+                         return StatusPanelComponentWrapper;

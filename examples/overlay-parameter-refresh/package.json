@@ -1,0 +1,22 @@
+{
+  "name": "overlay-parameter-refresh",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ag-grid-community": "36.1.0",
+    "ag-grid-react": "36.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "vite": "8.2.2",
+    "puppeteer": "25.9.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "patch": "node apply-patch.mjs",
+    "test:patch": "node verify-patch.mjs",
+    "verify": "node run-checks.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
