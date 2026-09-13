@@ -207,6 +207,30 @@ function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function subtestOutput(output, name, status) {
+  const marker = `# Subtest: ${name}`;
+  const start = output.indexOf(marker);
+  if (start === -1) {
+    throw new Error(`Original run did not prove expected stock ${status}: ${name}`);
+  }
+  if (output.indexOf(marker, start + marker.length) !== -1) {
+    throw new Error(`Original run reported duplicate stock scenario: ${name}`);
+  }
+
+  const possibleEnds = [
+    output.indexOf('\n# Subtest: ', start + marker.length),
+    output.indexOf('\n1..', start + marker.length),
+  ].filter(index => index !== -1);
+  const end = possibleEnds.length ? Math.min(...possibleEnds) : output.length;
+  const record = output.slice(start, end);
+  requireOutput(
+    record,
+    new RegExp(`(?:^|\\n)${status} \\d+ - ${escapeRegExp(name)}(?:\\n|$)`),
+    `expected stock ${status}: ${name}`,
+  );
+  return record;
+}
+
 function validateKnownReproduction({code, output}) {
   assert.notEqual(code, 0, 'Original ExcelJS unexpectedly passed every regression test');
   requireOutput(output, /1\.\.15/, 'the complete 15-test run');
@@ -221,48 +245,79 @@ function validateKnownReproduction({code, output}) {
     'CONTROL worksheet names still reject case-insensitive duplicates',
     'CONTROL an ordinary hyperlink keeps its text and relationship target',
   ];
+  const sharedParser = /SharedStringXform\.parseClose \([^\n]*node_modules\/exceljs\/lib\/xlsx\/xform\/strings\/shared-string-xform\.js:\d+:\d+\)/;
+  const inlineParser = /CellXform\.parseClose \([^\n]*node_modules\/exceljs\/lib\/xlsx\/xform\/sheet\/cell-xform\.js:\d+:\d+\)/;
+  const parserDiagnostic = leading => new RegExp(
+    `Cannot create property 'richText' on string '${escapeRegExp(leading)}'`,
+  );
   const expectedFailures = [
-    'REGRESSION [shared-mixed] shared string keeps leading "" and rich-text formatting through XLSX load/write',
-    'REGRESSION [shared-mixed] shared string keeps leading " leading 空白 & " and rich-text formatting through XLSX load/write',
-    'REGRESSION [shared-mixed] shared string keeps leading "0" and rich-text formatting through XLSX load/write',
-    'REGRESSION [inline-mixed] inline string keeps leading " leading 空白 & " and rich-text formatting through XLSX load/write',
-    'REGRESSION [inline-mixed] inline string keeps leading "0" and rich-text formatting through XLSX load/write',
-    'REGRESSION [combined] the combined long-name and mixed-string workbook imports',
-    'REGRESSION [long-name] a long worksheet name imports without colliding with itself',
-    'REGRESSION [shared-hyperlink] shared hyperlink preserves its target and nested mixed rich text',
-    'REGRESSION [inline-hyperlink] inline hyperlink preserves its target and nested mixed rich text',
-    'REGRESSION [stress] 12 sheets and 671 distinct mixed strings survive load/write',
+    {
+      name: 'REGRESSION [shared-mixed] shared string keeps leading "" and rich-text formatting through XLSX load/write',
+      diagnostic: parserDiagnostic(''),
+      path: sharedParser,
+    },
+    {
+      name: 'REGRESSION [shared-mixed] shared string keeps leading " leading 空白 & " and rich-text formatting through XLSX load/write',
+      diagnostic: parserDiagnostic(' leading 空白 & '),
+      path: sharedParser,
+    },
+    {
+      name: 'REGRESSION [shared-mixed] shared string keeps leading "0" and rich-text formatting through XLSX load/write',
+      diagnostic: parserDiagnostic('0'),
+      path: sharedParser,
+    },
+    {
+      name: 'REGRESSION [inline-mixed] inline string keeps leading " leading 空白 & " and rich-text formatting through XLSX load/write',
+      diagnostic: parserDiagnostic(' leading 空白 & '),
+      path: inlineParser,
+    },
+    {
+      name: 'REGRESSION [inline-mixed] inline string keeps leading "0" and rich-text formatting through XLSX load/write',
+      diagnostic: parserDiagnostic('0'),
+      path: inlineParser,
+    },
+    {
+      name: 'REGRESSION [combined] the combined long-name and mixed-string workbook imports',
+      diagnostic: parserDiagnostic(' leading 空白 & '),
+      path: sharedParser,
+    },
+    {
+      name: 'REGRESSION [long-name] a long worksheet name imports without colliding with itself',
+      diagnostic: /Worksheet name already exists: Existing Partner Full menu Expa/,
+      path: /set name \([^\n]*node_modules\/exceljs\/lib\/doc\/worksheet\.js:\d+:\d+\)/,
+    },
+    {
+      name: 'REGRESSION [shared-hyperlink] shared hyperlink preserves its target and nested mixed rich text',
+      diagnostic: parserDiagnostic(' leading 空白 & '),
+      path: sharedParser,
+    },
+    {
+      name: 'REGRESSION [inline-hyperlink] inline hyperlink preserves its target and nested mixed rich text',
+      diagnostic: parserDiagnostic(' leading 空白 & '),
+      path: inlineParser,
+    },
+    {
+      name: 'REGRESSION [stress] 12 sheets and 671 distinct mixed strings survive load/write',
+      diagnostic: parserDiagnostic(' lead-0 & 空白 '),
+      path: sharedParser,
+    },
   ];
   for (const name of expectedPasses) {
+    subtestOutput(output, name, 'ok');
+  }
+  for (const {name, diagnostic, path: sourcePath} of expectedFailures) {
+    const record = subtestOutput(output, name, 'not ok');
     requireOutput(
-      output,
-      new RegExp(`(?:^|\\n)ok \\d+ - ${escapeRegExp(name)}(?:\\n|$)`),
-      `expected stock pass: ${name}`,
+      record,
+      diagnostic,
+      `expected stock diagnostic for: ${name}`,
+    );
+    requireOutput(
+      record.replaceAll('\\', '/'),
+      sourcePath,
+      `expected stock stack path for: ${name}`,
     );
   }
-  for (const name of expectedFailures) {
-    requireOutput(
-      output,
-      new RegExp(`(?:^|\\n)not ok \\d+ - ${escapeRegExp(name)}(?:\\n|$)`),
-      `expected stock failure: ${name}`,
-    );
-  }
-
-  requireOutput(
-    output,
-    /Cannot create property 'richText' on string[\s\S]*SharedStringXform\.parseClose/,
-    'the shared-string parser failure',
-  );
-  requireOutput(
-    output,
-    /Cannot create property 'richText' on string[\s\S]*CellXform\.parseClose/,
-    'the inline-string parser failure',
-  );
-  requireOutput(
-    output,
-    /Worksheet name already exists: Existing Partner Full menu Expa/,
-    'the current-worksheet long-name collision',
-  );
 }
 
 async function finishWithInstalledSourceCheck(
