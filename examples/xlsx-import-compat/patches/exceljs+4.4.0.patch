@@ -1,0 +1,34 @@
+diff --git a/node_modules/exceljs/lib/doc/worksheet.js b/node_modules/exceljs/lib/doc/worksheet.js
+index 13e4141..38d4cb5 100644
+--- a/node_modules/exceljs/lib/doc/worksheet.js
++++ b/node_modules/exceljs/lib/doc/worksheet.js
+@@ -169,2 +169,6 @@ class Worksheet {
+-    if (this._workbook._worksheets.find(ws => ws && ws.name.toLowerCase() === name.toLowerCase())) {
++    if (
++      this._workbook._worksheets.find(
++        ws => ws && ws !== this && ws.name.toLowerCase() === name.toLowerCase()
++      )
++    ) {
+       throw new Error(`Worksheet name already exists: ${name}`);
+diff --git a/node_modules/exceljs/lib/xlsx/xform/sheet/cell-xform.js b/node_modules/exceljs/lib/xlsx/xform/sheet/cell-xform.js
+index 4171569..5aa5d6e 100644
+--- a/node_modules/exceljs/lib/xlsx/xform/sheet/cell-xform.js
++++ b/node_modules/exceljs/lib/xlsx/xform/sheet/cell-xform.js
+@@ -411,2 +411,6 @@ class CellXform extends BaseXform {
+       case 'r':
++        if (typeof this.model.value === 'string') {
++          const leadingText = this.model.value;
++          this.model.value = {richText: leadingText ? [{text: leadingText}] : []};
++        }
+         this.model.value = this.model.value || {};
+diff --git a/node_modules/exceljs/lib/xlsx/xform/strings/shared-string-xform.js b/node_modules/exceljs/lib/xlsx/xform/strings/shared-string-xform.js
+index e23cfde..40e7c9a 100644
+--- a/node_modules/exceljs/lib/xlsx/xform/strings/shared-string-xform.js
++++ b/node_modules/exceljs/lib/xlsx/xform/strings/shared-string-xform.js
+@@ -75,2 +75,6 @@ class SharedStringXform extends BaseXform {
+           case 'r': {
++            if (typeof this.model === 'string') {
++              const leadingText = this.model;
++              this.model = {richText: leadingText ? [{text: leadingText}] : []};
++            }
+             let rt = this.model.richText;

@@ -1,0 +1,1 @@
+{"name":"xlsx-import-compat","version":"0.1.0","private":true,"type":"commonjs","scripts":{"test":"node verify.mjs","reproduce":"node verify.mjs --original"},"dependencies":{"exceljs":"4.4.0","jszip":"3.10.1"}}

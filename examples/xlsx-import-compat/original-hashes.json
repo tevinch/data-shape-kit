@@ -1,0 +1,10 @@
+{
+  "exceljs": {
+    "version": "4.4.0",
+    "files": {
+      "lib/xlsx/xform/strings/shared-string-xform.js": "08f5ef625a74dbad9896b9989843a3b9814730eedb2848ac196f204c48676dfe",
+      "lib/xlsx/xform/sheet/cell-xform.js": "918a4beee95625afe5f350e89796c60dd3486cf60e4cbb4093dbc071901e12a0",
+      "lib/doc/worksheet.js": "54f2bcd8105c0b5ed671ccd60c8b26112c19758d53af2b8b4e0431f20de89f01"
+    }
+  }
+}
