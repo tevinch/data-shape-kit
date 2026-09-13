@@ -20,7 +20,6 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Import mixed rich text and long worksheet names from XLSX files | [ExcelJS import compatibility](examples/xlsx-import-compat) | ExcelJS 4.4.0 patch; generated load/write regression fixture |
 | Replace repeated whole-paragraph DOCX blocks without deleting content between them | [DOCX repeated blocks](examples/docx-repeated-blocks) | docx 9.7.1 patch; generated ESM and CommonJS regression fixture |
 | Merge a following paragraph into a list item with one Delete while preserving adjacent isolating frames | [Isolated list Delete](examples/isolated-list-delete) | Copyable Tiptap extension; 3.31.3 regression fixture and browser comparison |
-| End a React Aria keyboard drag cleanly when its source item unmounts | [Keyboard drag cleanup](examples/keyboard-drag-cleanup) | Exact-version React Aria 3.52.1 patch; Chromium and Firefox regression fixture |
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |
 | Import literal identifiers without losing zeros or strings such as NA | [Identifier Column](examples/identifier-import) | Python; standard-library CSV and optional XLSX/QR examples |
