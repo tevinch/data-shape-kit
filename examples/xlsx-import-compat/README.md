@@ -9,7 +9,7 @@ An exact-version patch and generated regression fixture for ExcelJS 4.4.0 import
 Use Node.js 24 and Git; tested with Node.js 24.19.0. Extract the ZIP, enter its `xlsx-import-compat` directory, then run:
 
 ```sh
-npm ci --ignore-scripts
+npm ci --ignore-scripts --no-audit --no-fund
 npm test
 ```
 

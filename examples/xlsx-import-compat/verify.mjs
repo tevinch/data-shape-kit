@@ -265,11 +265,29 @@ function validateKnownReproduction({code, output}) {
   );
 }
 
+async function finishWithInstalledSourceCheck(
+  beforeHashes,
+  failures,
+  {changedMessage, aggregateMessage},
+) {
+  try {
+    const afterHashes = await validateInstallation(root);
+    assert.deepEqual(afterHashes, beforeHashes, changedMessage);
+    console.log('PASS [isolation] original installed ExcelJS source hashes unchanged');
+  } catch (error) {
+    failures.push(error);
+  }
+
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1) throw new AggregateError(failures, aggregateMessage);
+}
+
 async function runPatchedVerification() {
   const beforeHashes = await validateInstallation(root);
-  const verificationRoot = await mkdtemp(path.join(os.tmpdir(), 'xlsx-import-compat-'));
-  let failure;
+  const failures = [];
+  let verificationRoot;
   try {
+    verificationRoot = await mkdtemp(path.join(os.tmpdir(), 'xlsx-import-compat-'));
     console.log(`Node ${process.version}`);
     console.log(
       `Versions: exceljs@${await packageVersion(root, 'exceljs')}, jszip@${await packageVersion(root, 'jszip')}`,
@@ -283,45 +301,44 @@ async function runPatchedVerification() {
     console.log('RUN [tests] patched temporary installation');
     await runTests(isolatedRoot);
   } catch (error) {
-    failure = error;
-  } finally {
-    await rm(verificationRoot, {recursive: true, force: true});
-    console.log(`CLEAN [temporary] ${path.basename(verificationRoot)}`);
+    failures.push(error);
   }
 
-  try {
-    const afterHashes = await validateInstallation(root);
-    assert.deepEqual(
-      afterHashes,
-      beforeHashes,
-      'Original installed ExcelJS source hashes changed during verification',
-    );
-    console.log('PASS [isolation] original installed ExcelJS source hashes unchanged');
-  } catch (error) {
-    failure = failure
-      ? new AggregateError([failure, error], 'Verification and isolation failed')
-      : error;
+  if (verificationRoot) {
+    try {
+      await rm(verificationRoot, {recursive: true, force: true});
+      console.log(`CLEAN [temporary] ${path.basename(verificationRoot)}`);
+    } catch (error) {
+      failures.push(error);
+    }
   }
 
-  if (failure) throw failure;
+  await finishWithInstalledSourceCheck(beforeHashes, failures, {
+    changedMessage: 'Original installed ExcelJS source hashes changed during verification',
+    aggregateMessage: 'Verification and isolation failed',
+  });
   console.log('PASS 15 XLSX import compatibility scenarios');
 }
 
 async function runOriginalReproduction() {
   const beforeHashes = await validateInstallation(root);
-  console.log(`Node ${process.version}`);
-  console.log(
-    `Versions: exceljs@${await packageVersion(root, 'exceljs')}, jszip@${await packageVersion(root, 'jszip')}`,
-  );
-  console.log('RUN [tests] original unmodified installation');
-  const result = await runTests(root, {allowFailure: true});
-  const afterHashes = await validateInstallation(root);
-  assert.deepEqual(
-    afterHashes,
-    beforeHashes,
-    'Original installed ExcelJS source hashes changed during reproduction',
-  );
-  console.log('PASS [isolation] original installed ExcelJS source hashes unchanged');
+  const failures = [];
+  let result;
+  try {
+    console.log(`Node ${process.version}`);
+    console.log(
+      `Versions: exceljs@${await packageVersion(root, 'exceljs')}, jszip@${await packageVersion(root, 'jszip')}`,
+    );
+    console.log('RUN [tests] original unmodified installation');
+    result = await runTests(root, {allowFailure: true});
+  } catch (error) {
+    failures.push(error);
+  }
+
+  await finishWithInstalledSourceCheck(beforeHashes, failures, {
+    changedMessage: 'Original installed ExcelJS source hashes changed during reproduction',
+    aggregateMessage: 'Reproduction and isolation failed',
+  });
   validateKnownReproduction(result);
   console.error(
     `KNOWN REPRODUCTION: stock ExcelJS reached all scenarios and reproduced all three target failure paths; test exit code ${result.code}`,
