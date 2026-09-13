@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Navegación de 12 meses</title>
+  <link rel="stylesheet" href="/bundle.css">
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #243247; background: #f5f7fa; }
+    body { margin: 0; }
+    main { max-width: 1120px; margin: 40px auto; padding: 0 24px; }
+    h1 { margin-bottom: 12px; font-size: 30px; font-weight: 650; }
+    p { line-height: 1.6; }
+    .details { display: flex; gap: 24px; flex-wrap: wrap; margin: 22px 0; font-size: 14px; }
+    #calendar { background: white; border: 1px solid #dce2ea; border-radius: 8px; padding: 18px; }
+    #period { font-variant-numeric: tabular-nums; }
+    .note { color: #526175; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Navegación de 12 meses</h1>
+    <p>Usa los botones del calendario para cambiar de periodo, volver a hoy o pasar a la vista mensual.</p>
+    <div class="details"><span id="mode"></span><span id="period" aria-live="polite"></span></div>
+    <div id="calendar"></div>
+    <p class="note">Datos de ejemplo. La fecha de «hoy» está fijada en el 13 de septiembre de 2026 para poder repetir la comprobación.</p>
+  </main>
+  <script type="module" src="/bundle.js"></script>
+</body>
+</html>
