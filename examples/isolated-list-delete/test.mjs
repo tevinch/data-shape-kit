@@ -108,10 +108,66 @@ const AttributedParagraph = TiptapNode.create({
   },
 })
 
+const IsolatingOrderedList = TiptapNode.create({
+  name: 'orderedList',
+  group: 'block',
+  content: 'listItem+',
+  isolating: true,
+  addAttributes() {
+    return {
+      start: { default: 1 },
+      type: { default: null },
+    }
+  },
+  parseHTML() {
+    return [{ tag: 'ol' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['ol', HTMLAttributes, 0]
+  },
+})
+
+const IsolatingListItem = TiptapNode.create({
+  name: 'listItem',
+  content: 'paragraph block*',
+  defining: true,
+  isolating: true,
+  parseHTML() {
+    return [{ tag: 'li' }]
+  },
+  renderHTML() {
+    return ['li', 0]
+  },
+})
+
+const IsolatingParagraph = TiptapNode.create({
+  name: 'paragraph',
+  group: 'block',
+  content: 'inline*',
+  isolating: true,
+  parseHTML() {
+    return [{ tag: 'p' }]
+  },
+  renderHTML() {
+    return ['p', 0]
+  },
+})
+
 function createEditor(
   content,
-  { documentContent = 'block+', attributedParagraph = false } = {},
+  {
+    documentContent = 'block+',
+    attributedParagraph = false,
+    isolatingListItem = false,
+    isolatingOrderedList = false,
+    isolatingParagraph = false,
+  } = {},
 ) {
+  assert.equal(
+    attributedParagraph && isolatingParagraph,
+    false,
+    'select only one custom paragraph schema',
+  )
   const TestDocument = TiptapNode.create({
     name: 'doc',
     topNode: true,
@@ -123,10 +179,17 @@ function createEditor(
       StarterKit.configure({
         document: false,
         trailingNode: false,
-        ...(attributedParagraph ? { paragraph: false } : {}),
+        ...((attributedParagraph || isolatingParagraph)
+          ? { paragraph: false }
+          : {}),
+        ...(isolatingListItem ? { listItem: false } : {}),
+        ...(isolatingOrderedList ? { orderedList: false } : {}),
       }),
       TestDocument,
       ...(attributedParagraph ? [AttributedParagraph] : []),
+      ...(isolatingParagraph ? [IsolatingParagraph] : []),
+      ...(isolatingListItem ? [IsolatingListItem] : []),
+      ...(isolatingOrderedList ? [IsolatingOrderedList] : []),
       Frame,
       Page,
       Wrapper,
@@ -525,6 +588,74 @@ if (original) {
       ],
     }
     const editor = createEditor(input)
+    setTextSelection(editor, textblockEnd(editor.state.doc, 'A'))
+
+    assert.equal(pressDelete(editor), true)
+    assert.deepEqual(json(editor), input)
+  })
+
+  test('protects a following paragraph outside an isolating ordered list', () => {
+    const input = {
+      type: 'doc',
+      content: [
+        frame('one', [list('orderedList', [[paragraph('A')]]), paragraph('B')]),
+      ],
+    }
+    const editor = createEditor(input, { isolatingOrderedList: true })
+    setTextSelection(editor, textblockEnd(editor.state.doc, 'A'))
+
+    assert.equal(pressDelete(editor), true)
+    assert.deepEqual(json(editor), input)
+  })
+
+  test('protects a following paragraph outside an isolating list item', () => {
+    const input = {
+      type: 'doc',
+      content: [
+        frame('one', [list('orderedList', [[paragraph('A')]]), paragraph('B')]),
+      ],
+    }
+    const editor = createEditor(input, { isolatingListItem: true })
+    setTextSelection(editor, textblockEnd(editor.state.doc, 'A'))
+
+    assert.equal(pressDelete(editor), true)
+    assert.deepEqual(json(editor), input)
+  })
+
+  test('protects a following paragraph outside an isolating current paragraph', () => {
+    const input = {
+      type: 'doc',
+      content: [
+        frame('one', [list('orderedList', [[paragraph('A')]]), paragraph('B')]),
+      ],
+    }
+    const editor = createEditor(input, { isolatingParagraph: true })
+    setTextSelection(editor, textblockEnd(editor.state.doc, 'A'))
+
+    assert.equal(pressDelete(editor), true)
+    assert.deepEqual(json(editor), input)
+  })
+
+  test('protects an isolating following paragraph after a non-isolating final heading', () => {
+    const input = {
+      type: 'doc',
+      content: [
+        frame('one', [
+          list('orderedList', [
+            [
+              paragraph('intro'),
+              {
+                type: 'heading',
+                attrs: { level: 2 },
+                content: [{ type: 'text', text: 'A' }],
+              },
+            ],
+          ]),
+          paragraph('B'),
+        ]),
+      ],
+    }
+    const editor = createEditor(input, { isolatingParagraph: true })
     setTextSelection(editor, textblockEnd(editor.state.doc, 'A'))
 
     assert.equal(pressDelete(editor), true)

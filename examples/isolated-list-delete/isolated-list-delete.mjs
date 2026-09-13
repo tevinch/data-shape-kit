@@ -26,7 +26,7 @@ function findContext($from) {
   if (item.lastChild !== $from.parent) return null
 
   let isolatingDepth = null
-  for (let depth = itemDepth - 1; depth > 0; depth -= 1) {
+  for (let depth = $from.depth; depth > 0; depth -= 1) {
     if ($from.node(depth).type.spec.isolating) {
       isolatingDepth = depth
       break
@@ -68,13 +68,19 @@ function handleDelete(editor) {
   const parent = $from.node(parentDepth)
   const listIndex = $from.index(parentDepth)
   const following = parent.maybeChild(listIndex + 1)
+  const followingPos = $from.after(context.listDepth)
 
   if (following?.type.name === 'paragraph') {
+    const insideBoundary =
+      followingPos >= $from.start(context.isolatingDepth) &&
+      followingPos + following.nodeSize <= $from.end(context.isolatingDepth)
+
+    if (following.type.spec.isolating || !insideBoundary) return true
+
     const appended = $from.parent.content.append(following.content)
 
     if ($from.parent.type.validContent(appended)) {
       const caret = $from.pos
-      const followingPos = $from.after(context.listDepth)
       const tr = state.tr.delete(
         followingPos,
         followingPos + following.nodeSize,

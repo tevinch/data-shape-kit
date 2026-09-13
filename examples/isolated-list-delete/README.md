@@ -45,12 +45,13 @@ The included fixture pins `@tiptap/core` and `@tiptap/starter-kit` to **3.31.3**
 
 ## Verification
 
-The 17 tests exercise actual Tiptap editors, including the complete document shape, inline marks and hard breaks, empty paragraphs, nested containers, boundary protection, native fallback, and undo/redo. A Chrome check of the included fixture also verified one forward Delete, one native undo, and one native redo. The original editor loses the second frame; the extension produces `AB` in one list-item paragraph and preserves the second frame's JSON.
+The 21 tests exercise actual Tiptap editors, including the complete document shape, inline marks and hard breaks, empty paragraphs, nested containers, nearest-boundary protection, native fallback, and undo/redo. A Chrome check of the included fixture also verified one forward Delete, one native undo, and one native redo. The original editor loses the second frame; the extension produces `AB` in one list-item paragraph and preserves the second frame's JSON.
 
 ## Scope
 
 - Standard `orderedList` / `bulletList` containers and `listItem` nodes, with a collapsed caret at the end of a list item's textblock.
 - A compatible following paragraph in the list's immediate parent is appended only inside the nearest isolating ancestor. Empty following paragraphs are removed without reaching into another frame.
+- The nearest boundary is resolved from the caret textblock upward, so an isolating paragraph, list item, or list remains intact. An isolating following paragraph also remains intact.
 - Existing list-item joins inside the frame and ordinary editing outside isolating containers continue through Tiptap's handlers. Selections that explicitly cover text also use the existing handlers.
 - This extension handles the **forward Delete key**. It does not replace Backspace, modified shortcuts, direct calls to `joinItemForward`, arbitrary transactions, collaborative operations, or custom/task-list keymaps. It does not recover content already lost.
 - Incompatible following blocks are not converted to text. Other extensions and custom schemas can affect native fallback behavior; use the supplied checks with your application's schema before adoption.
