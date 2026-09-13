@@ -80,11 +80,14 @@ try {
         await expectRows(page, expectedRows);
         assert.equal(await note(page), directive === 'show' ? 'Draft note kept' : 'Draft note');
         step = 'clear and reload';
+        const draftBeforeClear = await note(page);
         await request(page, '#clear', 'empty: 0 source rows');
         await expectRows(page, []);
         await page.waitForSelector('#content .n-empty');
+        assert.equal(await note(page), draftBeforeClear, 'clearing rows must preserve child state');
         await request(page, '#load', 'loaded: 8 source rows');
         await expectRows(page, expectedRows);
+        assert.equal(await note(page), draftBeforeClear, 'reloading rows must preserve child state');
         assert.deepEqual(errors, []);
         await page.screenshot({ path: fileURLToPath(new URL(`.checks/${mode}-${directive}-${hidden}.png`, import.meta.url)), fullPage: true });
         results.push({ mode, directive, initiallyHidden: hidden, passed: true });

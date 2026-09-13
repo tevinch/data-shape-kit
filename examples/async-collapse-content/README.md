@@ -62,7 +62,7 @@ npm run verify -- before
 
 The comparison command intentionally returns a failing exit status when the original pattern leaves displayed rows stale. Results and screenshots are written to `.checks/`; generated production files go to `dist/`.
 
-Verified on 2026-09-13 with Chrome/152.0.7977.83 on macOS: all four production-browser cases passed. The original pattern failed in all four cases: initially visible tables stayed empty, while initially hidden tables retained the first response after replacement. These are scripted browser checks, not human manual validation.
+Verified on 2026-09-13 with Chrome/152.0.7977.83 on macOS: all four production-browser cases passed. The original pattern failed in all four cases: initially visible tables stayed empty, while initially hidden tables retained the first response after replacement.
 
 The fixture pins Naive UI 2.45.3, Vue 3.5.42, Vite 8.2.2 and Puppeteer 25.9.0. Checks cover both display directives, initially visible and hidden content, eight-row loading, replacement, a hidden update followed by reopening, clearing and reloading, and child state. They exercise array replacement, matching the reported asynchronous response. Other browsers, server rendering and third-party wrapper components need their own checks.
 
