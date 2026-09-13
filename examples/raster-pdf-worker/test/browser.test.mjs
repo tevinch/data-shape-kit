@@ -6,8 +6,9 @@ import { startServer } from '../server.mjs';
 
 test('raster exports finish, release their workers and remain usable after errors', { timeout: 120000 }, async () => {
   const server = await startServer({ checks: true });
-  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+  let browser;
   try {
+    browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
     const page = await browser.newPage();
     const workers = new Set(); let created = 0; let closed = 0;
     page.on('worker', worker => {
@@ -85,5 +86,7 @@ test('raster exports finish, release their workers and remain usable after error
     const report = { chrome: browser.version(), node: process.version, created, closed, retainedHeap, reports };
     await writeFile('.checks/report.json', JSON.stringify(report, null, 2) + '\n');
     console.log(JSON.stringify(report));
-  } finally { await browser.close(); await server.close(); }
+  } finally {
+    try { await browser?.close(); } finally { await server.close(); }
+  }
 });
