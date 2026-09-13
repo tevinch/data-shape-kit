@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raster PDF export</title>
+<style>
+  :root { color-scheme: light; font-family: system-ui, sans-serif; color: #193344; background: #eef3f6; }
+  body { max-width: 660px; margin: 8vh auto; padding: 24px; }
+  main { background: white; border: 1px solid #d6e1e7; border-radius: 18px; padding: 36px; }
+  h1 { margin-top: 0; font-size: 30px; }
+  p { line-height: 1.6; } label { display: block; margin: 24px 0; }
+  button, a { font: inherit; } button { padding: 11px 18px; margin-right: 8px; border: 1px solid #236681; border-radius: 8px; background: #236681; color: white; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  #cancel { background: white; color: #236681; } a { color: #175b78; }
+  #status { min-height: 48px; } .note { color: #526575; font-size: 14px; }
+</style>
+<main>
+  <h1>Raster PDF export</h1>
+  <p>Create a five-page sample report from images. Everything runs locally in this browser.</p>
+  <label><input id="protected" type="checkbox"> Use the sample document password</label>
+  <p class="note">When selected, open the sample PDF with <code>sample-view</code>.</p>
+  <button id="export" type="button">Export 5 pages</button><button id="cancel" type="button" disabled>Cancel</button>
+  <p id="status" role="status">Ready to export.</p>
+  <a id="download" download="raster-report.pdf" hidden>Download PDF</a>
+  <p class="note">Repeat the export to create a fresh file. The previous download link is released when a new export starts.</p>
+</main>
+<script type="module" src="/assets/main.js"></script>
+</html>

@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
 | Navigate custom 12-month FullCalendar views without Spanish hint errors | [Calendar navigation](examples/calendar-navigation) | Three public configuration options; complete browser example |
 | Refresh AG Grid React overlay text and actions without losing the visible overlay’s local state | [Overlay parameter refresh](examples/overlay-parameter-refresh) | Exact-version 36.1.0 patch; ESM/CommonJS production browser checks |
 | Refresh asynchronous table data inside a Naive UI collapse without losing child state on updates | [Async collapse content](examples/async-collapse-content) | Copyable render-function workaround; production browser comparison |

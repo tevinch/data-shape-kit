@@ -1,0 +1,14 @@
+{
+  "name": "raster-pdf-worker-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "demo": "node server.mjs",
+    "test": "node --test test/browser.test.mjs"
+  },
+  "dependencies": { "jspdf": "4.2.1" },
+  "devDependencies": { "esbuild": "0.28.2", "playwright": "1.62.1" }
+}
