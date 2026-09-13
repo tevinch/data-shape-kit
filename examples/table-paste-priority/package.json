@@ -1,0 +1,17 @@
+{
+  "name": "table-paste-priority",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node verify.mjs",
+    "reproduce": "node browser.test.mjs",
+    "apply": "node apply-patch.mjs"
+  },
+  "dependencies": {
+    "@limetech/lime-elements": "40.2.2",
+    "playwright": "1.62.1"
+  }
+}

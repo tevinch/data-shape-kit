@@ -1,0 +1,31 @@
+{
+  "package": "@limetech/lime-elements",
+  "version": "40.2.2",
+  "sourceCommit": "0f35e1954c0df289a5b77f2c7f8e59f36da8441a",
+  "files": {
+    "dist/esm/limel-prosemirror-adapter.entry.js": {
+      "original": "fb6c3882a06459bed8c0253936180411719faf5913a91806a0fba21c83a9a784",
+      "patched": "14797ac13f15f6a3edb4fb33a1247c709986afae0a4b67b4f6c3618fad6a9100"
+    },
+    "dist/cjs/limel-prosemirror-adapter.cjs.entry.js": {
+      "original": "63ed7e710311c74cec4655b5cecfa287ef07975fadb58a46ce509832e52809a7",
+      "patched": "5d59fc8f9c3b445f3aa84e54532c8a6fe9ca37f2d9a0f5460402279d1e187f76"
+    },
+    "dist/lime-elements/p-6c826c25.entry.js": {
+      "original": "36fb760575405a2547d9d8df93e7aba9943a4526ebb0a93df1f27a47ff05435d",
+      "patched": "498bd435be53c9fbdb5260a25edbc5d49acc78b1eff6302c33b1825d069d6db6"
+    },
+    "dist/collection/components/text-editor/prosemirror-adapter/plugins/table-paste-plugin.js": {
+      "original": "9c8c4ac1c39a4f7db88262e7ccd19ae21372214268f3e7ab0e5dc3fe7afff5a0",
+      "patched": "2455806fe29a6bb42d632952a601de1e8170d4e55d9787a32f051cc969bc609b"
+    },
+    "dist/collection/components/text-editor/prosemirror-adapter/plugins/link/link-plugin.js": {
+      "original": "17334aa25060987273d8b5a7a0da8abd13a2a08ce8d0dc115c61cf2d5d46d97c",
+      "patched": "ab58592837fbb3b9470a6da8f421b7d577f1390c960abe0f76f7eb73dccf28e8"
+    },
+    "dist/collection/components/text-editor/prosemirror-adapter/plugins/image/inserter.js": {
+      "original": "9817748b26594b9a6240c00e741154416ed4146340215f112d9371f6c9237556",
+      "patched": "cd89b4b349c3b6cdb9cbe8f2c18d42c5ded2b6437ec30204e24bad7b351e9ef7"
+    }
+  }
+}

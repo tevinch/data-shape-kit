@@ -1,0 +1,116 @@
+diff --git a/src/components/text-editor/prosemirror-adapter/editor-config.ts b/src/components/text-editor/prosemirror-adapter/editor-config.ts
+--- a/src/components/text-editor/prosemirror-adapter/editor-config.ts
++++ b/src/components/text-editor/prosemirror-adapter/editor-config.ts
+@@ -128,6 +128,13 @@
+         }),
+         keymap(menuCommandFactory.buildKeymap()),
+         createTriggerPlugin(triggerCharacters, contentConverter),
++        // Paste ownership: structural table rules, then explicit cell-grid
++        // replacement, own table-bearing slices. The link/image shortcuts
++        // decline those slices; ordinary image files and URL text keep their
++        // existing handlers, with accepted image files ahead of URL text.
++        // Image transformPasted still enforces a configured
++        // no-upload policy, removing image leaves without removing their table.
++        // Other event and keyboard handlers retain their registration order.
+         createLinkPlugin(onNewLinkSelection),
+         createImageInserterPlugin(onImagePasted, inlineImages),
+         createImageViewPlugin(language),
+diff --git a/src/components/text-editor/prosemirror-adapter/plugins/image/inserter.ts b/src/components/text-editor/prosemirror-adapter/plugins/image/inserter.ts
+--- a/src/components/text-editor/prosemirror-adapter/plugins/image/inserter.ts
++++ b/src/components/text-editor/prosemirror-adapter/plugins/image/inserter.ts
+@@ -1,3 +1,4 @@
++import { containsPastedTable } from '../table-paste-plugin';
+ import { Plugin, PluginKey } from 'prosemirror-state';
+ import { EditorView } from 'prosemirror-view';
+ import { createFileInfo } from '../../../../../util/files';
+@@ -15,6 +16,36 @@
+ 
+ type ImagePastedCallback = (data: ImageInserter) => CustomEvent<ImageInserter>;
+ 
++/** Use the existing image-file predicate, including its Excel/table exclusions. */
++export const hasPastedImageFile = (clipboardData: DataTransfer | null): boolean => {
++    return !!clipboardData && [...clipboardData.files].some((file) =>
++        isImageFile(file, clipboardData)
++    );
++};
++
++/** Preserve table wrappers while enforcing the host's no-new-image setting. */
++const filterPastedTableImages = (
++    slice: Slice,
++    inlineImages?: InlineImages
++): Slice => {
++    if (!containsPastedTable(slice) || !inlineImages || inlineImages.upload) {
++        return slice;
++    }
++    const withoutImages = (fragment: Fragment): Fragment => {
++        const children: Node[] = [];
++        // eslint-disable-next-line unicorn/no-array-for-each
++        fragment.forEach((child) => {
++            if (child.type.name !== 'image') {
++                children.push(
++                    child.isLeaf ? child : child.copy(withoutImages(child.content))
++                );
++            }
++        });
++        return Fragment.fromArray(children);
++    };
++    return new Slice(withoutImages(slice.content), slice.openStart, slice.openEnd);
++};
++
+ export const createImageInserterPlugin = (
+     imagePastedCallback: ImagePastedCallback,
+     inlineImages?: InlineImages
+@@ -22,7 +53,13 @@
+     return new Plugin({
+         key: pluginKey,
+         props: {
++            transformPasted: (slice) => {
++                return filterPastedTableImages(slice, inlineImages);
++            },
+             handlePaste: (view, event, slice) => {
++                if (containsPastedTable(slice)) {
++                    return false;
++                }
+                 return processPasteEvent(view, event, slice, inlineImages);
+             },
+             handleDOMEvents: {
+diff --git a/src/components/text-editor/prosemirror-adapter/plugins/link/link-plugin.ts b/src/components/text-editor/prosemirror-adapter/plugins/link/link-plugin.ts
+--- a/src/components/text-editor/prosemirror-adapter/plugins/link/link-plugin.ts
++++ b/src/components/text-editor/prosemirror-adapter/plugins/link/link-plugin.ts
+@@ -1,3 +1,5 @@
++import { hasPastedImageFile } from '../image/inserter';
++import { containsPastedTable } from '../table-paste-plugin';
+ import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+ import { EditorView } from 'prosemirror-view';
+ import { Mark, Fragment, Node, Schema } from 'prosemirror-model';
+@@ -418,7 +420,10 @@
+     return new Plugin({
+         key: linkPluginKey,
+         props: {
+-            handlePaste: (view, event) => {
++            handlePaste: (view, event, slice) => {
++                if (containsPastedTable(slice) || hasPastedImageFile(event.clipboardData)) {
++                    return false;
++                }
+                 return processPasteEvent(view, event);
+             },
+             handleDOMEvents: {
+diff --git a/src/components/text-editor/prosemirror-adapter/plugins/table-paste-plugin.ts b/src/components/text-editor/prosemirror-adapter/plugins/table-paste-plugin.ts
+--- a/src/components/text-editor/prosemirror-adapter/plugins/table-paste-plugin.ts
++++ b/src/components/text-editor/prosemirror-adapter/plugins/table-paste-plugin.ts
+@@ -141,3 +141,15 @@
+         (block) => block.type.spec.tableRole === 'table'
+     );
+ };
++
++/** Detect table, row and cell slices before content-specific paste shortcuts. */
++export const containsPastedTable = (slice: Slice): boolean => {
++    let found = false;
++    slice.content.descendants((node) => {
++        if (node.type.spec.tableRole) {
++            found = true;
++        }
++        return !found;
++    });
++    return found;
++};

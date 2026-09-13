@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Table paste reproduction</title>
+<link rel="stylesheet" href="./package/dist/lime-elements/lime-elements.css"><style>body{font:16px system-ui;padding:24px;max-width:1000px}limel-text-editor{display:block;min-height:260px}pre{white-space:pre-wrap}</style>
+<h1>Table paste reproduction</h1><limel-text-editor content-type="html" ui="no-toolbar"></limel-text-editor><pre id="result"></pre>
+<script type="module">
+if(new URLSearchParams(location.search).get('loader')==='bundle') {
+ await import('./package/dist/lime-elements/lime-elements.esm.js');
+} else {
+ const {defineCustomElements}=await import('./package/dist/loader/index.js');
+ await defineCustomElements();
+}
+const editor=document.querySelector('limel-text-editor');
+editor.contentType='html';
+const query=new URLSearchParams(location.search);
+if(query.get('config')==='upload') editor.inlineImages={upload:async()=>'/dot.svg'};
+if(query.get('config')==='no-upload') editor.inlineImages={tagName:'fixture-image',getUrl:id=>'/dot.svg?id='+encodeURIComponent(id)};
+editor.value='<p>BEFORE</p><table><tbody><tr><td><p>ORIGINAL A</p></td><td><p>ORIGINAL B</p></td></tr><tr><td><p>KEEP C</p></td><td><p>KEEP D</p></td></tr></tbody></table><p>AFTER</p>';
+if(query.has('empty')) editor.value='<p>BEFORE</p><p>AFTER</p>';
+if(query.has('existing')) editor.value=editor.value.replace('ORIGINAL A','ORIGINAL A<fixture-image image-id="existing-id" alt="existing"></fixture-image>');
+window.lastValue=editor.value;
+window.changeCount=0;
+window.legacyImageEvents=0;
+editor.addEventListener('imagePasted',()=>window.legacyImageEvents++);
+editor.addEventListener('change',event=>{window.changeCount++;window.lastValue=event.detail;document.querySelector('#result').textContent=event.detail;});
+</script></html>

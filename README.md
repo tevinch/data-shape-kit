@@ -16,6 +16,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Read the current plain-text paste event in a Glide grid | [Glide paste adapter](examples/glide-plain-text-paste) | Copyable adapter; your application owns validation and writes |
 | Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Preserve merged cells when table paste fails while creating its selection | [Merged-cell paste patch](examples/merged-cell-paste) | Exact-version ProseMirror 1.8.5 patch; Tiptap 3.31.3 regression fixture |
+| Preserve Lime editor table structure with links and images while respecting the no-upload setting | [Table paste priority](examples/table-paste-priority) | Exact-version Lime Elements 40.2.2 patch; repeated-paste browser checks |
 | Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Tiptap 3.31.3 patches; runnable ESM and CommonJS regression fixture |
 | Import mixed rich text and long worksheet names from XLSX files | [ExcelJS import compatibility](examples/xlsx-import-compat) | ExcelJS 4.4.0 patch; generated load/write regression fixture |
 | Replace repeated whole-paragraph DOCX blocks without deleting content between them | [DOCX repeated blocks](examples/docx-repeated-blocks) | docx 9.7.1 patch; generated ESM and CommonJS regression fixture |
