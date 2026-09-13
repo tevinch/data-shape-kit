@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Isolated list Delete</title>
+    <style>
+      body { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; font: 16px/1.5 system-ui, sans-serif; color: #182231; background: #f8fafc; }
+      h1 { margin-bottom: .5rem; }
+      .examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 1rem; }
+      .example { padding: 1rem; border: 1px solid #b3bece; background: white; border-radius: .5rem; }
+      button { font: inherit; padding: .4rem .7rem; margin: 0 .4rem .6rem 0; cursor: pointer; }
+      button:focus-visible, .tiptap:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+      .tiptap { min-height: 170px; padding: .25rem; }
+      .tiptap section { border: 2px solid #667d9b; padding: 0 .6rem; margin: .5rem 0; border-radius: .3rem; }
+      .tiptap p, .tiptap ol { margin: .5rem 0; }
+      pre { overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+      .result { min-height: 3rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Keep Delete inside the current frame</h1>
+    <p>Compare Tiptap 3.31.3 with the optional <code>IsolatedListDelete</code> extension. Both editors keep StarterKit's ListKeymap enabled.</p>
+    <p>Choose <strong>Place cursor after A</strong>, then press forward Delete once (Fn + Delete on a Mac keyboard). The expected result is one list item <strong>AB</strong> in the first frame; the second frame remains <strong>C</strong>. Use Undo to restore the original document.</p>
+    <div class="examples" id="examples"></div>
+    <p>This fixture uses invented text and makes no data requests. It does not recover content already lost in another editor. See the <a href="https://github.com/tevinch/data-shape-kit/tree/main/examples/isolated-list-delete">source and setup guide</a> for supported versions and scope.</p>
+    <script type="module" src="./bundle.js"></script>
+  </body>
+</html>

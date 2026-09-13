@@ -17,6 +17,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Preserve merged cells when table paste fails while creating its selection | [Merged-cell paste patch](examples/merged-cell-paste) | Exact-version ProseMirror 1.8.5 patch; Tiptap 3.31.3 regression fixture |
 | Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Tiptap 3.31.3 patches; runnable ESM and CommonJS regression fixture |
+| Merge a following paragraph into a list item with one Delete while preserving adjacent isolating frames | [Isolated list Delete](examples/isolated-list-delete) | Copyable Tiptap extension; 3.31.3 regression fixture and browser comparison |
 | End a React Aria keyboard drag cleanly when its source item unmounts | [Keyboard drag cleanup](examples/keyboard-drag-cleanup) | Exact-version React Aria 3.52.1 patch; Chromium and Firefox regression fixture |
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |
