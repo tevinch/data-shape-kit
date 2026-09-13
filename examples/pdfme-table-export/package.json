@@ -1,0 +1,20 @@
+{
+  "name": "pdfme-table-export",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "verify": "node verify-workflow.mjs && node verify-installer.mjs"
+  },
+  "dependencies": {
+    "@pdfme/common": "6.1.12",
+    "@pdfme/generator": "6.1.12",
+    "@pdfme/schemas": "6.1.12"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "5.4.296"
+  }
+}

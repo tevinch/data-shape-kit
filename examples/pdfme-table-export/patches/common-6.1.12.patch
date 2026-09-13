@@ -1,0 +1,11 @@
+--- a/node_modules/@pdfme/common/dist/index.js
++++ b/node_modules/@pdfme/common/dist/index.js
+@@ -1007,7 +1007,7 @@
+ function placeUnitsOnPages(schema, dynamicLayout, startGlobalY, contentHeight, paddingTop, pages) {
+ 	const dynamicHeights = dynamicLayout.heights;
+ 	let currentUnitIndex = 0;
+-	let currentPageIndex = Math.floor(startGlobalY / contentHeight);
++	let currentPageIndex = Math.max(0, Math.floor(startGlobalY / contentHeight));
+ 	let currentYInPage = startGlobalY % contentHeight;
+ 	if (currentYInPage < 0) currentYInPage = 0;
+ 	let actualGlobalEndY = 0;

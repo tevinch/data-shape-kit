@@ -1,0 +1,10 @@
+{
+  "package": "@pdfme/common",
+  "version": "6.1.12",
+  "files": {
+    "dist/index.js": {
+      "original": "bd4f0ff0395b9441193a77da8455fe0e9ad52a16281e514678574e40ff5439be",
+      "patched": "3cc282292c933efb2810f4e79dafa0a2171faf05a650a7adc2995ad8be21d3a9"
+    }
+  }
+}
