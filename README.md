@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Run Storybook tests with configuration hooks when Jest 30.5 refuses Node loader registration | [Storybook Jest configuration](examples/storybook-jest-config) | Exact-version Storybook 10.6.0 patch; TypeScript/JavaScript and repeated-run fixture |
 | Parse or copy spreadsheet text while preserving quoted line breaks, empty cells and leading zeros | [Clipboard Table](javascript/clipboard-table) | Copyable JavaScript module; browser or Node.js |
 | Turn a copied spreadsheet selection into comma-separated CSV | [Browser playground](https://tevinch.github.io/data-shape-kit/) | No installation; copy or download CSV |
 | Convert CSV or tab-separated text into Markdown tables | [Markdown Table](javascript/markdown-table) | Versioned GitHub package; Node.js 20+ for installation |

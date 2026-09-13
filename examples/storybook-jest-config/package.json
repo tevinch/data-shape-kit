@@ -1,0 +1,24 @@
+{
+  "name": "storybook-jest-config",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "storybook build --quiet --disable-telemetry",
+    "apply": "node apply-patch.mjs",
+    "test": "node verify.mjs",
+    "verify:workflow": "node verify-workflow.mjs"
+  },
+  "devDependencies": {
+    "storybook": "10.6.0",
+    "@storybook/react-webpack5": "10.6.0",
+    "@storybook/test-runner": "0.24.5",
+    "jest": "30.5.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

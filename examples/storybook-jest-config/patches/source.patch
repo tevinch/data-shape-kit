@@ -1,0 +1,23 @@
+--- a/code/core/src/shared/utils/module.ts
++++ b/code/core/src/shared/utils/module.ts
+@@ -70,7 +70,19 @@
+ ) {
+   if (!isTypescriptLoaderRegistered) {
+     const typescriptLoaderUrl = importMetaResolve('storybook/internal/bin/loader');
+-    register(typescriptLoaderUrl, import.meta.url);
++    try {
++      register(typescriptLoaderUrl, import.meta.url);
++    } catch (error) {
++      if (
++        typeof error !== 'object' ||
++        error === null ||
++        !('message' in error) ||
++        typeof error.message !== 'string' ||
++        !error.message.startsWith('module.register() is not supported in Jest:')
++      ) {
++        throw error;
++      }
++    }
+     isTypescriptLoaderRegistered = true;
+   }
+ 

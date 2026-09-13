@@ -1,0 +1,16 @@
+--- a/node_modules/storybook/dist/_node-chunks/chunk-5G6TGQDE.js
++++ b/node_modules/storybook/dist/_node-chunks/chunk-5G6TGQDE.js
+@@ -732,7 +732,12 @@
+ async function importModule(path2, { skipCache = !1 } = {}) {
+   if (!isTypescriptLoaderRegistered) {
+     let typescriptLoaderUrl = importMetaResolve("storybook/internal/bin/loader");
+-    register(typescriptLoaderUrl, import.meta.url), isTypescriptLoaderRegistered = !0;
++    try {
++      register(typescriptLoaderUrl, import.meta.url);
++    } catch (error) {
++      if (typeof error !== "object" || error === null || !("message" in error) || typeof error.message !== "string" || !error.message.startsWith("module.register() is not supported in Jest:")) throw error;
++    }
++    isTypescriptLoaderRegistered = !0;
+   }
+   let mod;
+   try {

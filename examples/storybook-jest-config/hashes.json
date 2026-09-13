@@ -1,0 +1,11 @@
+{
+  "package": "storybook",
+  "version": "10.6.0",
+  "sourceCommit": "a77777356be2aeaff89d7a2b25254db7b2318392",
+  "files": {
+    "dist/_node-chunks/chunk-5G6TGQDE.js": {
+      "original": "2e8ff56f2624baa2d597a427ebd37ae7871d6d6e786d917a0ee770943fad5c04",
+      "patched": "dc1a8e49abae1ba3a5c022dfbd1ded1a3ab8298e71710da805addb051d2fd36a"
+    }
+  }
+}
