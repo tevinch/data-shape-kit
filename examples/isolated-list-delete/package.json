@@ -1,0 +1,23 @@
+{
+  "name": "tiptap-isolated-list-delete-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build:demo": "node build-browser.mjs",
+    "demo": "node serve.mjs",
+    "reproduce": "node test.mjs --original",
+    "test": "node --test test.mjs"
+  },
+  "dependencies": {
+    "@tiptap/core": "3.31.3",
+    "@tiptap/starter-kit": "3.31.3",
+    "jsdom": "30.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
