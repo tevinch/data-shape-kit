@@ -1,0 +1,72 @@
+--- a/packages/svelte/src/internal/client/reactivity/batch.js
++++ b/packages/svelte/src/internal/client/reactivity/batch.js
+@@ -1257,7 +1257,7 @@
+  * @returns {void}
+  */
+ export function schedule_effect(effect) {
+-	/** @type {Batch} */ (current_batch).schedule(effect);
++	Batch.ensure().schedule(effect);
+ }
+ 
+ /** @type {Source<number>[]} */
+--- /dev/null
++++ b/packages/svelte/tests/runtime-runes/samples/effect-self-schedule-after-flush/Child.svelte
+@@ -0,0 +1,16 @@
++<script>
++	import { flushSync } from 'svelte';
++	let x = $state(0);
++
++	$effect(() => {
++		console.log(x);
++		if (x === 0) {
++			x = 1;
++			flushSync();
++		}
++	});
++</script>
++
++<p>{x}</p>
++<button data-increment onclick={() => x++}>increment</button>
++<button data-reset onclick={() => (x = 0)}>reset</button>
+--- /dev/null
++++ b/packages/svelte/tests/runtime-runes/samples/effect-self-schedule-after-flush/_config.js
+@@ -0,0 +1,29 @@
++import { tick } from 'svelte';
++import { test } from '../../test';
++
++export default test({
++	mode: ['client', 'hydrate'],
++	async test({ assert, target, logs }) {
++		for (let i = 0; i < 3; i++) {
++			logs.length = 0;
++			target.querySelector('button[data-toggle]')?.click();
++			await tick();
++			assert.equal(target.querySelector('p')?.textContent, '1');
++			assert.deepEqual(logs, [0, 1]);
++
++			target.querySelector('button[data-increment]')?.click();
++			await tick();
++			assert.equal(target.querySelector('p')?.textContent, '2');
++			assert.deepEqual(logs, [0, 1, 2]);
++
++			target.querySelector('button[data-reset]')?.click();
++			await tick();
++			assert.equal(target.querySelector('p')?.textContent, '1');
++			assert.deepEqual(logs, [0, 1, 2, 0, 1]);
++
++			target.querySelector('button[data-toggle]')?.click();
++			await tick();
++			assert.equal(target.querySelector('p'), null);
++		}
++	}
++});
+--- /dev/null
++++ b/packages/svelte/tests/runtime-runes/samples/effect-self-schedule-after-flush/main.svelte
+@@ -0,0 +1,7 @@
++<script>
++	import Child from './Child.svelte';
++	let show = $state(false);
++</script>
++
++<button data-toggle onclick={() => (show = !show)}>toggle</button>
++{#if show}<Child />{/if}

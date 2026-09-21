@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Restore the settling effect run after an inner Svelte flush clears the current batch | [Svelte effect recovery](examples/svelte-effect-recovery) | Exact-version 5.57.1 patch; repeated-interaction browser checks |
 | Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | libcupsfilters source patch; conversion and pixel checks |
 | Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
 | Navigate custom 12-month FullCalendar views without Spanish hint errors | [Calendar navigation](examples/calendar-navigation) | Three public configuration options; complete browser example |

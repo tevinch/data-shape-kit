@@ -1,0 +1,13 @@
+{
+  "name": "svelte-effect-recovery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": { "test": "node verify.mjs" },
+  "devDependencies": {
+    "esbuild": "0.27.4",
+    "playwright": "1.62.1",
+    "svelte": "5.57.1"
+  }
+}
