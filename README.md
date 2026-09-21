@@ -1,6 +1,6 @@
 # Data Shape Kit
 
-Free MIT-licensed tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps, line sampling, JSONL imports and PDF contents. Choose a module for your application or try the browser playground. Each tool has its own setup; JavaScript modules do not require Python.
+Free tools for spreadsheet text, Markdown tables, local file checks, form validation, table selection, calendar arithmetic, workday schedules, chart gaps, line sampling, JSONL imports and PDF contents. Choose a module for your application or try the browser playground. Each tool documents its setup and license; JavaScript modules do not require Python.
 
 Start with [three free components for spreadsheet paste, remote field checks and JSONL imports](docs/component-collection.md), each with a fixed download and a short runnable example.
 
@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | libcupsfilters source patch; conversion and pixel checks |
 | Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
 | Navigate custom 12-month FullCalendar views without Spanish hint errors | [Calendar navigation](examples/calendar-navigation) | Three public configuration options; complete browser example |
 | Refresh AG Grid React overlay text and actions without losing the visible overlay’s local state | [Overlay parameter refresh](examples/overlay-parameter-refresh) | Exact-version 36.1.0 patch; ESM/CommonJS production browser checks |
