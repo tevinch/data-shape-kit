@@ -99,7 +99,9 @@ If you control the R export, its documented [`na` argument](https://stat.ethz.ch
 
 ## Why this exists
 
-[OpenNSIS issue #7](https://github.com/un-fao/OpenNSIS/issues/7) requests configurable missing markers after R-exported `NA` values prevent successful import. At [upstream revision 2186370](https://github.com/un-fao/OpenNSIS/blob/2186370ccb94656e836e38e58e5d91f8baf95dfd/sis-api/main.py#L2674), upload preserves parsed strings; the [numeric-observation validation](https://github.com/un-fao/OpenNSIS/blob/2186370ccb94656e836e38e58e5d91f8baf95dfd/sis-api/main.py#L3718) skips empty strings but attempts to parse other values as numbers. This offers a separate preparation step for selected observation columns. It does **not** implement the requested options inside OpenNSIS or verify an end-to-end database import.
+[OpenNSIS issue #7](https://github.com/un-fao/OpenNSIS/issues/7) originally reported rejected R-exported `NA` values. It is now closed: the maintainer [confirmed the fix](https://github.com/un-fao/OpenNSIS/issues/7#issuecomment-5757955209) in [commit d743c3d](https://github.com/un-fao/OpenNSIS/commit/d743c3d1b08884114b8cee49138a7554f4cc852d). Validation and import recognize `NA`, `NaN`, `N/A` and `null` in non-text columns, report counts per column, and preserve literal tokens in text columns. For those markers, prefer the built-in handling in a deployment containing that commit.
+
+The maintainer explicitly left configurable sentinels such as `-9999` out of scope. This helper remains an optional preparation step when a specific column declares such a sentinel missing, or when preparing CSVs for another receiver. The end-to-end OpenNSIS import result was reported by its maintainer; it has not been independently run here. This module does not add settings to OpenNSIS.
 
 An independent [CSV text-coercion report](https://github.com/starlight-ml/dance_crm/issues/1) shows the opposite need: `NA`-like strings in text fields must stay literal. These reports motivate per-column policy; they do not measure how common the problem is. Avoid whole-file search-and-replace, which can change identifiers and parts of ordinary text.
 

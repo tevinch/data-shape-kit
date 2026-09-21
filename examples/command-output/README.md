@@ -42,7 +42,7 @@ This wrapper is for finite commands. Capture finishes before preview begins, so 
 
 The retained file can grow to the command's complete output. The 120-line preview is neither a byte limit nor a storage limit. Because output is redirected to a file, programs may buffer or format it differently than they do in a terminal. Always inspect the log for messages after line 120.
 
-This is an invocation workaround for the early pipe closure described in [Vitest #11241](https://github.com/vitest-dev/vitest/issues/11241). It avoids sending a live command directly through `head`; it does not repair Vitest's IPC handling or reproduce or fix the reported OOM race. The contributor's [worker IPC patch](https://github.com/vitest-dev/vitest/compare/main...Gaurav1112:fix/worker-dead-ipc-loop) and [orphan reproduction](https://github.com/Gaurav1112/vitest-11241-repro) remain relevant upstream work.
+This is an invocation workaround for the early pipe closure discussed in [Vitest #11241](https://github.com/vitest-dev/vitest/issues/11241). It avoids sending a live command directly through `head`; it does not repair Vitest's IPC handling or reproduce or fix the reported OOM race. The issue was closed on 18 September 2026 after a request for a working minimal reproduction. The maintainer [could not reproduce the supplied case and rejected the proposed IPC fix](https://github.com/vitest-dev/vitest/issues/11241#issuecomment-5662146773). Do not treat that closure or the earlier linked proposal as a verified lifecycle fix. This wrapper remains useful only for its documented finite-command capture behavior.
 
 ## Run checks
 

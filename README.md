@@ -15,8 +15,8 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Refresh AG Grid React overlay text and actions without losing the visible overlay’s local state | [Overlay parameter refresh](examples/overlay-parameter-refresh) | Exact-version 36.1.0 patch; ESM/CommonJS production browser checks |
 | Refresh asynchronous table data inside a Naive UI collapse without losing child state on updates | [Async collapse content](examples/async-collapse-content) | Copyable render-function workaround; production browser comparison |
 | Keep local constant calculations intact in Metro release bundles | [Metro release values](examples/metro-release-values) | Copyable source workaround; production bundle checks |
-| Keep original images referenced by cached Astro pages through repeated builds | [Astro cached images](examples/astro-cached-images) | Exact-preview patch; production build and image checks |
-| Export PDFs when an overlapping element moves above a shrinking table | [PDFme table export](examples/pdfme-table-export) | Exact-version patch recipe; PDF content and pagination checks |
+| Keep original images referenced by cached Astro pages through repeated builds | [Astro cached images](examples/astro-cached-images) | Official fix in Astro 7.3.3; older preview patch and checks |
+| Export PDFs when an overlapping element moves above a shrinking table | [PDFme table export](examples/pdfme-table-export) | Official fix in PDFme 6.1.13; older patch and PDF checks |
 | Run Storybook tests with configuration hooks when Jest 30.5 refuses Node loader registration | [Storybook Jest configuration](examples/storybook-jest-config) | Exact-version Storybook 10.6.0 patch; TypeScript/JavaScript and repeated-run fixture |
 | Parse or copy spreadsheet text while preserving quoted line breaks, empty cells and leading zeros | [Clipboard Table](javascript/clipboard-table) | Copyable JavaScript module; browser or Node.js |
 | Turn a copied spreadsheet selection into comma-separated CSV | [Browser playground](https://tevinch.github.io/data-shape-kit/) | No installation; copy or download CSV |

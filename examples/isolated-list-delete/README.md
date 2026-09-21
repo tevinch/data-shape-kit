@@ -58,7 +58,9 @@ The 21 tests exercise actual Tiptap editors, including the complete document sha
 
 ## Upstream status and license
 
-The underlying report is [Tiptap #8321](https://github.com/ueberdosis/tiptap/issues/8321), and [PR #8332](https://github.com/ueberdosis/tiptap/pull/8332) is the existing upstream boundary-guard proposal. This is an independent extension for stable 3.31.3, with an explicit check for the requested one-key paragraph merge. It is not an official release or an accepted upstream fix. Check upstream status before adding a temporary compatibility extension.
+As of 22 September 2026, [Tiptap #8321](https://github.com/ueberdosis/tiptap/issues/8321) is closed: [PR #8332](https://github.com/ueberdosis/tiptap/pull/8332) merged into `main`, and [PR #8362](https://github.com/ueberdosis/tiptap/pull/8362) merged the boundary protection into `release/v3`. The npm `latest` versions of `@tiptap/core` and `@tiptap/extension-list` were still **3.31.3** when checked, so the merge alone does not establish an available stable package fix.
+
+This independent extension and fixture remain pinned to 3.31.3. Before adopting it, check for an official release containing the fix. When upgrading, remove the extension and verify both adjacent-frame preservation and the one-key `AB` paragraph merge with your schema; the upstream boundary guard alone is not evidence that the latter interaction matches this example.
 
 The original extension, fixture and tests are [MIT licensed](LICENSE). Tiptap dependencies retain their own licenses.
 

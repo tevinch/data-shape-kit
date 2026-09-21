@@ -1,5 +1,7 @@
 # Keep PDF pages when resources contain duplicate names
 
+**Upstream review — 22 September 2026:** The source change is now submitted as [libcupsfilters PR #254](https://github.com/OpenPrinting/libcupsfilters/pull/254). It is open for review, not merged or released. The original reporter has offered an Arch/Canon MF230 printing-chain test; a successful result from that environment has not yet been reported.
+
 This source patch lets libcupsfilters continue when PDFio reports a recoverable warning. It fixes the tested case where repeated references to the same image caused a PDF conversion to return zero pages, or to keep the pages but lose their images.
 
 The problem is tracked in [libcupsfilters #230](https://github.com/OpenPrinting/libcupsfilters/issues/230). PDFio's error callback must return `true` to continue a warning; the affected callback always returned `false`. The patch also forwards warnings and errors through the filter's supplied logger and preserves the requested error-sheet behavior.

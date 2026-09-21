@@ -1,5 +1,7 @@
 # Overlay parameter refresh
 
+**Upstream status — 22 September 2026:** [Issue #15182](https://github.com/ag-grid/ag-grid/issues/15182) was closed after being entered into AG Grid’s backlog as **AG-18512**. The [official pipeline](https://www.ag-grid.com/pipeline/?searchQuery=AG-18512) currently schedules it for **36.3.0**; that is a plan, not a shipped fix. npm `latest` is 36.2.0. This patch remains restricted to 36.1.0; it has not been validated on 36.2.0 and must not be forced onto another version. Check the official changelog before upgrading or retiring it.
+
 Update a custom AG Grid React overlay's text and actions while it is visible, using the existing `overlayComponentParams` option. This small patch is for **ag-grid-react 36.1.0**, with the default reactive custom components enabled.
 
 [Download the example and patch](../../downloads/overlay-parameter-refresh-v0.1.0.zip?raw=true), or copy this directory. The code is free to use and adapt.

@@ -2,7 +2,7 @@
 
 A small, dependency-free C# helper and 15 executable checks for a specific clipboard convention: an external payload ends its last row with CRLF, while a bare final LF can represent an intentional blank row. Copy `ClipboardRows.cs` and `LICENSE` into your project.
 
-The motivating report is [RadzenSpreadsheet #2707](https://github.com/radzenhq/radzen-blazor/issues/2707). Its author describes an extra row being cleared after an Excel paste and identifies two row-counting paths. This example adds a reusable boundary helper and regression cases for the proposed convention. It is not a released Radzen fix.
+The motivating report was [RadzenSpreadsheet #2707](https://github.com/radzenhq/radzen-blazor/issues/2707), about an extra row being cleared after an Excel paste. Upstream closed it with [commit 091d9e5](https://github.com/radzenhq/radzen-blazor/commit/091d9e54185390295b122fd574aee85f2dc50c4b). For Radzen applications, prefer an official package that contains that change; no particular released package version is established by this guide. The standalone helper and checks below remain a reusable example of the stated row-boundary convention, not a change that every current Radzen installation still needs.
 
 ## Use the original payload
 

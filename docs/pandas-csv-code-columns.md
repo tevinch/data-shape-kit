@@ -95,7 +95,9 @@ The [Samples integration](https://github.com/DOI-USGS/dataretrieval-python/pull/
 
 The maintainer [accepted the behavior and noted the breaking change](https://github.com/DOI-USGS/dataretrieval-python/pull/419#issuecomment-5607344671): affected Samples code and identifier columns now contain strings instead of inferred numbers. Before upgrading, review filters, joins, sorting and exports that assumed numeric identifier columns. Compare against the original code text, such as `"00060"`, and keep both sides of a join consistent. Do not convert identifiers back to numbers merely to restore the previous dtype; that would discard significant zeros again. The explicit count-field exception lets Samples measurements and counts retain numeric inference.
 
-Merging is separate from releasing. When checked on September 10, 2026, the [latest GitHub release listed was v1.3.0](https://github.com/DOI-USGS/dataretrieval-python/releases/tag/v1.3.0), published on August 15, before this merge. Check the release notes for the version you install; this guide does not claim that an ordinary package upgrade already includes the change. The helper above remains independently copyable. If an older import or cache has already lost zeros, read the original CSV again with the intended text-column policy.
+The maintainer subsequently merged [PR #420](https://github.com/DOI-USGS/dataretrieval-python/pull/420), extending the shared reader from #419 to additional code columns across the package.
+
+Merging is separate from releasing. When checked again on September 22, 2026, the [latest GitHub release listed was v1.3.0](https://github.com/DOI-USGS/dataretrieval-python/releases/tag/v1.3.0), published on August 15, before this merge. Check the release notes for the version you install; this guide does not claim that an ordinary package upgrade already includes the change. The helper above remains independently copyable. If an older import or cache has already lost zeros, read the original CSV again with the intended text-column policy.
 
 ## Buy me a coffee, if this helped
 

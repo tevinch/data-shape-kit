@@ -1,5 +1,7 @@
 # Keep original images in Astro's incremental builds
 
+**Update — 22 September 2026:** [Astro 7.3.3](https://github.com/withastro/astro/releases/tag/astro%407.3.3) includes the official fix for both stale CSS and missing original images in incremental builds, through [PR #17994](https://github.com/withastro/astro/pull/17994). Prefer that release over the preview patch below. Remove the temporary patch command, install the official release through your normal dependency workflow, and rebuild twice to check your cached pages and images. The example below remains a record of the older preview workaround; it has not been rerun against 7.3.3.
+
 If a cached page uses `<img src={photo.src}>` and another page optimizes the same image with `<Image>`, a repeat build can delete the original PNG while the cached HTML still points to it. This recipe preserves that original image through repeated cache restores.
 
 It adds per-page image reference tracking to the [Astro preview linked in #17974](https://github.com/withastro/astro/issues/17974#issuecomment-5631533670). That preview already handles the Sass partial change in the original report. The added patch handles the [remaining image problem reported by elevatebart](https://github.com/withastro/astro/issues/17974#issuecomment-5632948538).
@@ -43,7 +45,7 @@ To undo, run `npm ci` with your saved lockfile. Review this temporary patch when
 
 Each rendered page records the source paths it reads outside image processing, including reads already seen on another page. Those references travel with the page's cached output. Restoring the page replays them before image cleanup. The collector uses Astro's existing render scope, keeping concurrent pages separate. A cache entry without reference metadata is rebuilt instead of reused.
 
-The [source diff](patches/source.patch) targets the upstream [`cb815d8` source](https://github.com/withastro/astro/tree/cb815d8). In a matching checkout, use `git apply --check` before applying it. No upstream merge or release is implied. The separate CSS work in [#17976](https://github.com/withastro/astro/pull/17976) belongs to its authors.
+The [source diff](patches/source.patch) targets the upstream [`cb815d8` source](https://github.com/withastro/astro/tree/cb815d8). In a matching checkout, use `git apply --check` before applying it. This records the older preview patch; the official release listed above is the preferred route now. The separate CSS work in [#17976](https://github.com/withastro/astro/pull/17976) belongs to its authors.
 
 Verification covers scripted static production builds with the default image service, external stylesheets and build concurrency 4. SSR adapters, custom image services, custom prerenderers, other package versions and the full upstream test suite have not been verified. A custom prerenderer that omits the added metadata will rebuild its pages. The broader CSS chunk regrouping and function-valued preprocessor cases from the original discussion are outside these tests.
 
