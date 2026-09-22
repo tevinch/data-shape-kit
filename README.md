@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Reset stale Streamlit selection and draft edits when the served data changes | [Table state after refresh](examples/data-revision-grid) | Complete Python example; Streamlit 1.64.0 |
 | Restore the settling effect run after an inner Svelte flush clears the current batch | [Svelte effect recovery](examples/svelte-effect-recovery) | Exact-version 5.57.1 patch; repeated-interaction browser checks |
 | Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | Source PR under review; original reporter confirms Canon printing |
 | Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
