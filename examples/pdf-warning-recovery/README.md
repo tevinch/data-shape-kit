@@ -1,6 +1,6 @@
 # Keep PDF pages when resources contain duplicate names
 
-**Upstream review — 22 September 2026:** The source change is now submitted as [libcupsfilters PR #254](https://github.com/OpenPrinting/libcupsfilters/pull/254). It is open for review, not merged or released. The original reporter has offered an Arch/Canon MF230 printing-chain test; a successful result from that environment has not yet been reported.
+**Upstream review — 22 September 2026:** The source change is submitted as [libcupsfilters PR #254](https://github.com/OpenPrinting/libcupsfilters/pull/254), which remains open and unmerged. The original reporter has now [confirmed successful physical printing](https://github.com/OpenPrinting/libcupsfilters/pull/254#issuecomment-5775682101) on Arch Linux with a Canon MF230: both plain and fit-scaled jobs completed, with all pages and repeated images present. This is the reporter's validation of that setup; the patch is not an official release.
 
 This source patch lets libcupsfilters continue when PDFio reports a recoverable warning. It fixes the tested case where repeated references to the same image caused a PDF conversion to return zero pages, or to keep the pages but lose their images.
 
@@ -45,7 +45,11 @@ The included independently generated fixture draws the same red image three time
 - A non-PDF header returning failure and reaching the error logger.
 - Duplicate names pointing to different objects, with the compatibility limit below checked explicitly.
 
-The regression command fails on unpatched 2.2.1. The patched 2.2.1 and current `pdftopdf.c`/`ipp-options.c` sources were checked with PDFio 1.6.5, CUPS 2.3.4 and a targeted native build on macOS arm64. This does not establish a full `make check` result, a Linux distribution build, or physical printer behavior. Other malformed-PDF paths are outside this patch's coverage.
+The regression command fails on unpatched 2.2.1. The patched 2.2.1 and current `pdftopdf.c`/`ipp-options.c` sources were checked with PDFio 1.6.5, CUPS 2.3.4 and a targeted native build on macOS arm64. Those local checks do not establish a full `make check` result or physical printer behavior. Other malformed-PDF paths are outside this patch's coverage.
+
+Separately, [jasonvanwyk tested PR commit `ae2f1f4`](https://github.com/OpenPrinting/libcupsfilters/pull/254#issuecomment-5775593915) on Arch Linux with CUPS 2.4.19, cups-filters 2.0.1, PDFio 1.6.5 and Ghostscript 10.07.1. For the original cairo fixture, plain and fit output retained two pages and five image paints; two-up retained one page and all five paints. The Canon raster stage completed without errors. His subsequent physical-print check covered plain and fit jobs through cupsd and the Canon UFR II driver: both completed without the reported processing hang, producing four correct pages in total. Physical two-up printing was not reported.
+
+His test also found that `cupsfilter` removes `LD_LIBRARY_PATH`, so using that wrapper can accidentally test the installed library. The included driver calls the filter function directly and does not install a library or change the printing service. The reporter's fit output had a small horizontal offset also present in unpatched master; this patch does not address that separate layout behavior.
 
 ## Conflicting values still need care
 

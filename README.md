@@ -9,7 +9,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | What you need | Start here | Setup |
 | --- | --- | --- |
 | Restore the settling effect run after an inner Svelte flush clears the current batch | [Svelte effect recovery](examples/svelte-effect-recovery) | Exact-version 5.57.1 patch; repeated-interaction browser checks |
-| Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | libcupsfilters source patch; conversion and pixel checks |
+| Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | Source PR under review; original reporter confirms Canon printing |
 | Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
 | Navigate custom 12-month FullCalendar views without Spanish hint errors | [Calendar navigation](examples/calendar-navigation) | Three public configuration options; complete browser example |
 | Refresh AG Grid React overlay text and actions without losing the visible overlay’s local state | [Overlay parameter refresh](examples/overlay-parameter-refresh) | Exact-version 36.1.0 patch; ESM/CommonJS production browser checks |
@@ -27,7 +27,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Copy a selected rectangle of editor table cells as CSV | [ProseMirror selection example](examples/prosemirror-copy-csv) | Tiptap / ProseMirror; optional React copy control |
 | Preserve merged cells when table paste fails while creating its selection | [Merged-cell paste patch](examples/merged-cell-paste) | Exact-version ProseMirror 1.8.5 patch; Tiptap 3.31.3 regression fixture |
 | Preserve Lime editor table structure with links and images while respecting the no-upload setting | [Table paste priority](examples/table-paste-priority) | Exact-version Lime Elements 40.2.2 patch; repeated-paste browser checks |
-| Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Tiptap 3.31.3 patches; runnable ESM and CommonJS regression fixture |
+| Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Upstream source fixes merged; temporary 3.31.3 patches and checks |
 | Import mixed rich text and long worksheet names from XLSX files | [ExcelJS import compatibility](examples/xlsx-import-compat) | ExcelJS 4.4.0 patch; generated load/write regression fixture |
 | Replace repeated whole-paragraph DOCX blocks without deleting content between them | [DOCX repeated blocks](examples/docx-repeated-blocks) | docx 9.7.1 patch; generated ESM and CommonJS regression fixture |
 | Merge a following paragraph into a list item with one Delete while preserving adjacent isolating frames | [Isolated list Delete](examples/isolated-list-delete) | Copyable Tiptap extension; 3.31.3 regression fixture and browser comparison |
