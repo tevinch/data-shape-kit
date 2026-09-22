@@ -1,0 +1,59 @@
+{
+  "date": "2026-09-22",
+  "pdfjsVersion": "6.3.289",
+  "browser": "Chrome on macOS",
+  "input": "reading-sample.pdf; three pages, two repeated needle matches per page",
+  "preparedModuleSha256": "c10ed305e9a0285de4acac0692abd6d223c1d88fd8be2b3db905d99f40062365",
+  "baseline": {
+    "plainEmbed": "Search completed and selected text became visible, but outer panel and document offsets changed.",
+    "iframe": "Search completed, but child panel, child document, parent panel and parent document offsets changed.",
+    "matchOnlyChange": "Small pages in PAGE mode still moved the outer panel until the earlier page-navigation helper was bounded."
+  },
+  "finalChecks": [
+    {
+      "host": "plain embed; packaged example",
+      "rotatedRepeatedSearches": 72,
+      "hostSettingSearches": 24,
+      "allSearchesCompleted": true,
+      "allSelectedSpansVisible": true,
+      "allRecordedOuterOffsetsUnchanged": true,
+      "renderedRotationAndPageOwnershipVerified": true,
+      "paddingAlignmentVerified": true,
+      "smoothScrollingObserved": true
+    },
+    {
+      "host": "same-origin iframe inside a second scrollable document",
+      "rotatedRepeatedSearches": 72,
+      "hostSettingSearches": 24,
+      "allSearchesCompleted": true,
+      "allSelectedSpansVisible": true,
+      "allRecordedOuterOffsetsUnchanged": true,
+      "renderedRotationAndPageOwnershipVerified": true,
+      "paddingAlignmentVerified": true,
+      "smoothScrollingObserved": true,
+      "iframeAndParentClippingBoundsChecked": true
+    }
+  ],
+  "rotationDegrees": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "rotationScales": [
+    "page-width",
+    1.8
+  ],
+  "hostSettings": [
+    "PAGE scroll mode; scale0.25; no viewer overflow",
+    "20% top scroll padding; asymmetric10%/5% horizontal padding",
+    "calc(10% + 12px) top padding; smooth scrolling"
+  ],
+  "unverified": [
+    "Firefox",
+    "Safari",
+    "full upstream build/reference suite",
+    "original reporter environment"
+  ],
+  "sourcePatch": "git apply --check and actual apply succeeded against v6.3.289 source; resulting four JavaScript files passed syntax checks"
+}

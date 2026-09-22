@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Embedded PDF search check</title>
+<link rel="stylesheet" href="./runtime/web/pdf_viewer.css">
+<style>
+body{margin:20px;font:15px system-ui;color:#172536}button,input{font:inherit;padding:7px;margin:4px}#toolbar{position:sticky;top:0;background:white;z-index:9;padding:5px;border-bottom:1px solid #aab}#outer{height:420px;width:900px;max-width:95vw;overflow:auto;border:3px solid #789;position:relative}#before{height:450px;background:#f1f5fa;padding:10px;box-sizing:border-box}#frameBox{height:350px;width:720px;position:relative;border:2px solid #789;margin-left:35px}#viewerContainer{position:absolute;inset:0;overflow:auto;background:#ddd}#after{height:700px;padding:12px;background:#f1f5fa}pre{white-space:pre-wrap;overflow-wrap:anywhere}#bottom{height:700px}
+</style>
+<h1>Embedded PDF search check</h1><p style="position:absolute;right:24px;top:4px"><a href="?mode=baseline">Original viewer</a> · <a href="?mode=scoped">Scoped scrolling</a> · <a href="host.html?mode=scoped">Iframe example</a></p>
+<div id="toolbar"><button id="run" disabled>Run off-screen search</button><button id="matrix" disabled>Check rotations and repeat navigation</button><button id="edges" disabled>Check fitted pages and host settings</button><input id="query" value="needle" aria-label="Search term"><button id="next" disabled>Next match</button><button id="previous" disabled>Previous match</button><button id="rotate" disabled>Rotate 90 degrees</button><p id="status" role="status">Loading</p></div>
+<div style="height:10px">Content before the reading panel</div>
+<div id="outer"><div id="before">Content inside the outer scrolling panel</div><div id="frameBox"><div id="viewerContainer"><div id="viewer" class="pdfViewer"></div></div></div><div id="after">Content after the PDF</div></div>
+<pre id="report"></pre><div id="bottom"></div>
+<script type="module">
+const pdfjsLib = await import('./runtime/build/pdf.mjs');
+const scoped = new URLSearchParams(location.search).get('mode') !== 'baseline';
+const { EventBus, PDFViewer, PDFLinkService, PDFFindController } = await import(scoped ? './runtime/web/pdf_viewer.scoped.mjs' : './runtime/web/pdf_viewer.mjs');
+pdfjsLib.GlobalWorkerOptions.workerSrc = './runtime/build/pdf.worker.mjs';
+const outer = document.querySelector('#outer');
+const container = document.querySelector('#viewerContainer');
+const eventBus = new EventBus();
+const linkService = new PDFLinkService({ eventBus });
+const findController = new PDFFindController({ eventBus, linkService });
+let scrollMatchCalls=0;
+const scrollMatchIntoView=findController.scrollMatchIntoView;
+findController.scrollMatchIntoView=function(args){scrollMatchCalls++;return scrollMatchIntoView.call(this,args);};
+const viewer = new PDFViewer({ container, eventBus, linkService, findController });
+linkService.setViewer(viewer);
+let events = { find:0, textMatches:0, findState:0, textLayers:0 };
+eventBus.on('find', () => events.find++);
+eventBus.on('updatetextlayermatches', () => events.textMatches++);
+eventBus.on('updatefindcontrolstate', () => events.findState++);
+eventBus.on('textlayerrendered', () => events.textLayers++);
+const frame = () => new Promise(resolve => requestAnimationFrame(resolve));
+async function frames(n=8){for(let i=0;i<n;i++)await frame();}
+async function until(test){const start=performance.now();while(!test()){if(performance.now()-start>15000)throw Error('Timed out waiting for actual search highlight');await frame();}}
+const ready = new Promise(resolve => eventBus.on('pagesinit',resolve));
+const documentProxy = await pdfjsLib.getDocument({url:'./reading-sample.pdf',standardFontDataUrl:'./runtime/standard_fonts/',cMapUrl:'./runtime/cmaps/',cMapPacked:true,wasmUrl:'./runtime/wasm/'}).promise;
+viewer.setDocument(documentProxy);linkService.setDocument(documentProxy,null);
+await ready;viewer.currentScale=1.2;
+await until(()=>document.querySelector('.textLayer'));
+await frames();
+let attempt=0;
+function positions(){const host=parent!==window?{hostOuterTop:parent.document.querySelector('#hostOuter').scrollTop,hostOuterLeft:parent.document.querySelector('#hostOuter').scrollLeft,hostDocumentTop:parent.document.scrollingElement.scrollTop,hostDocumentLeft:parent.document.scrollingElement.scrollLeft}:{};return{...host,outerTop:outer.scrollTop,outerLeft:outer.scrollLeft,documentTop:document.scrollingElement.scrollTop,documentLeft:document.scrollingElement.scrollLeft,viewerTop:container.scrollTop,viewerLeft:container.scrollLeft};}
+function dispatch(query,type='',findPrevious=false){eventBus.dispatch('find',{source:document.querySelector('#query'),type,query,caseSensitive:false,entireWord:false,highlightAll:true,findPrevious,matchDiacritics:false});}
+function selectedObservation(){
+ const element=document.querySelector('.textLayer .highlight.selected');
+ const r=element?.getBoundingClientRect(),c=container.getBoundingClientRect();
+ const box={top:c.top+container.clientTop,left:c.left+container.clientLeft,bottom:c.top+container.clientTop+container.clientHeight,right:c.left+container.clientLeft+container.clientWidth};
+ let hostVisible=true;if(parent!==window&&r){const f=frameElement.getBoundingClientRect(),h=parent.document.querySelector('#hostOuter').getBoundingClientRect();hostVisible=r.top+f.top>=Math.max(f.top,h.top+3,0)-1&&r.bottom+f.top<=Math.min(f.bottom,h.bottom-3,parent.innerHeight)+1&&r.left+f.left>=Math.max(f.left,h.left+3,0)-1&&r.right+f.left<=Math.min(f.right,h.right-3,parent.innerWidth)+1;}
+ return{hostVisible,pageNumber:Number(element?.closest('.page')?.dataset.pageNumber),selected:{...findController.selected},text:element?.textContent,rotation:viewer.pagesRotation,scale:viewer.currentScale,pageRotationAttribute:element?.closest('.textLayer')?.getAttribute('data-main-rotation'),rect:r?{top:r.top,left:r.left,bottom:r.bottom,right:r.right,width:r.width,height:r.height}:null,container:box,visible:!!r&&r.bottom>box.top&&r.top<box.bottom&&r.right>box.left&&r.left<box.right,fullyVisible:!!r&&r.top>=box.top-1&&r.bottom<=box.bottom+1&&r.left>=box.left-1&&r.right<=box.right+1};
+}
+async function run(){
+ document.querySelector('#status').textContent='Searching through the real PDF viewer…';
+ const result={version:pdfjsLib.version,mode:scoped?'scoped':'baseline',attempt:++attempt,pageCount:documentProxy.numPages};
+ try{
+  dispatch('');await until(()=>!document.querySelector('.highlight.selected'));viewer.scrollMode=0;viewer.pagesRotation=0;viewer.currentScale=1.2;viewer.currentPageNumber=1;
+  await frames();container.scrollTop=0;container.scrollLeft=0;outer.scrollTop=420;outer.scrollLeft=0;document.scrollingElement.scrollTop=70;if(parent!==window){parent.document.querySelector('#hostOuter').scrollTop=340;parent.document.scrollingElement.scrollTop=40;}await frames();
+  const before=positions(),eventsBefore={...events};
+  dispatch('targetgamma');
+  await until(()=>findController.selected.pageIdx===2&&document.querySelector('.textLayer .highlight.selected')?.textContent==='targetgamma');
+  await frames(12);
+  const after=positions(),match=selectedObservation();
+  Object.assign(result,{before,after,match,eventsBefore,eventsAfter:{...events},outerUnchanged:before.outerTop===after.outerTop&&before.outerLeft===after.outerLeft,documentUnchanged:before.documentTop===after.documentTop&&before.documentLeft===after.documentLeft});
+  if(events.find<=eventsBefore.find||events.textMatches<=eventsBefore.textMatches||!match.visible)throw Error('Search did not complete with a visible selected match');
+  result.searchCompleted=true;
+  document.querySelector('#status').textContent=result.outerUnchanged&&result.documentUnchanged?'No outer movement observed':'Reproduced: selected match visible, outer page moved';
+ }catch(error){result.error=String(error);document.querySelector('#status').textContent=String(error);}
+ document.querySelector('#report').textContent=JSON.stringify(result,null,2);
+ // The result stays in this page; no result data is sent elsewhere.
+}
+document.querySelector('#run').addEventListener('click',run);
+async function settled(){let last='',same=0;const samples=[];for(let i=0;i<240;i++){await frame();const p=positions(),key=JSON.stringify(p);samples.push(p);same=key===last?same+1:0;last=key;if(same>=8)return samples;}throw Error('Scrolling did not settle');}
+async function matrix(){
+ const result={version:pdfjsLib.version,mode:scoped?'scoped':'baseline',attempt:++attempt,kind:'matrix',embedded:parent!==window,pageCount:documentProxy.numPages,cases:[]};
+ try{
+  viewer.scrollMode=0;container.style.scrollPadding='';container.style.scrollBehavior='';
+  for(const rotation of [0,90,180,270]){
+   for(const scale of ['page-width',1.8]){
+    dispatch('');await until(()=>!document.querySelector('.highlight.selected'));
+    viewer.pagesRotation=rotation;viewer.currentScaleValue=scale;viewer.currentPageNumber=1;
+    await until(()=>document.querySelector('.page[data-page-number="1"] .textLayer'));
+    await frames(12);
+    container.scrollTop=0;container.scrollLeft=0;outer.scrollTop=420;outer.scrollLeft=0;document.scrollingElement.scrollTop=70;
+    if(parent!==window){parent.document.querySelector('#hostOuter').scrollTop=340;parent.document.scrollingElement.scrollTop=40;}
+    await frames();
+    for(const [step,index] of [0,1,2,3,4,5,0,5,4].entries()){
+     const before=positions(),eventsBefore={...events},callsBefore=scrollMatchCalls;
+     const previous=step>=7;
+     dispatch('needle',step===0?'':'again',previous);
+     await until(()=>findController.selected.pageIdx===Math.floor(index/2)&&findController.selected.matchIdx===index%2&&document.querySelector('.highlight.selected')?.textContent==='needle');
+     await settled();
+     const after=positions(),match=selectedObservation();
+     const unchanged=Object.keys(before).filter(k=>!k.startsWith('viewer')).every(k=>before[k]===after[k]);
+     const complete=events.find>eventsBefore.find&&events.textMatches>eventsBefore.textMatches&&scrollMatchCalls>callsBefore&&match.fullyVisible&&match.rotation===rotation&&Number(match.pageRotationAttribute)===rotation&&match.pageNumber===Math.floor(index/2)+1&&match.hostVisible;
+     const item={rotation,scale,step,index,previous,before,after,eventsBefore,eventsAfter:{...events},callsBefore,callsAfter:scrollMatchCalls,match,unchanged,complete};result.cases.push(item);
+     if(!complete)throw Error(`Incomplete navigation at rotation ${rotation}, scale ${scale}, step ${step}`);
+     if(scoped&&!unchanged)throw Error(`Outer movement at rotation ${rotation}, scale ${scale}, step ${step}`);
+     document.querySelector('#status').textContent=`Checked ${result.cases.length} completed search operations`;
+    }
+   }
+  }
+  result.passed=true;document.querySelector('#status').textContent=`PASS — ${result.cases.length} searches, all rotations and repeated navigation`;
+ }catch(error){result.error=String(error);document.querySelector('#status').textContent=String(error);}
+ document.querySelector('#report').textContent=JSON.stringify(result,null,2);
+ // The result stays in this page; no result data is sent elsewhere.
+}
+document.querySelector('#matrix').addEventListener('click',matrix);
+async function edges(){
+ const result={version:pdfjsLib.version,mode:scoped?'scoped':'baseline',attempt:++attempt,kind:'host-settings',embedded:parent!==window,cases:[]};
+ try{
+  for(const config of [{name:'fitted-page-no-overflow',mode:3,scale:0.25,padding:'0px',behavior:'auto'}, {name:'percentage-padding',mode:0,scale:1.2,padding:'20% 5% 0px 10%',behavior:'auto'}, {name:'calculated-padding-smooth',mode:0,scale:1.2,padding:'calc(10% + 12px) 5% 0px 10%',behavior:'smooth'}]){
+   container.style.scrollBehavior='auto';container.style.scrollPadding=config.padding;
+   dispatch('');await until(()=>!document.querySelector('.highlight.selected'));
+   viewer.scrollMode=config.mode;viewer.pagesRotation=0;viewer.currentScaleValue=config.scale;viewer.currentPageNumber=1;await frames(12);
+   container.scrollTop=0;container.scrollLeft=0;outer.scrollTop=420;document.scrollingElement.scrollTop=70;
+   if(parent!==window){parent.document.querySelector('#hostOuter').scrollTop=340;parent.document.scrollingElement.scrollTop=40;}
+   await frames();container.style.scrollBehavior=config.behavior;
+   for(const [step,index] of [0,1,2,3,4,5,0,5].entries()){
+    const before=positions(),eventsBefore={...events},callsBefore=scrollMatchCalls;
+    const dimensions={height:container.clientHeight,scrollHeight:container.scrollHeight,width:container.clientWidth,scrollWidth:container.scrollWidth};
+    if(config.mode===3&&(dimensions.height!==dimensions.scrollHeight||dimensions.width!==dimensions.scrollWidth))throw Error('Fitted-page fixture unexpectedly overflows');
+    dispatch('needle',step===0?'':'again',step===7);
+    await until(()=>findController.selected.pageIdx===Math.floor(index/2)&&findController.selected.matchIdx===index%2&&document.querySelector('.highlight.selected')?.textContent==='needle');
+    const samples=await settled(),after=positions(),match=selectedObservation();
+    const unchanged=Object.keys(before).filter(k=>!k.startsWith('viewer')).every(k=>before[k]===after[k]);
+    const complete=events.find>eventsBefore.find&&events.textMatches>eventsBefore.textMatches&&scrollMatchCalls>callsBefore&&match.fullyVisible&&match.hostVisible&&match.pageNumber===Math.floor(index/2)+1&&Number(match.pageRotationAttribute)===0;
+    const style=getComputedStyle(container),topInset=match.rect.top-match.container.top;
+    const desiredInset=config.name==='percentage-padding'?container.clientHeight*0.2+50:container.clientHeight*0.1+12+50;
+    const aligned=config.mode===3||Math.abs(topInset-desiredInset)<1||after.viewerTop===0||after.viewerTop===container.scrollHeight-container.clientHeight;
+    result.cases.push({config,step,index,dimensions,before,after,match,unchanged,complete,aligned,topInset,desiredInset,computedPadding:style.scrollPaddingTop,computedBehavior:style.scrollBehavior,intermediateScrollPositions:new Set(samples.map(p=>p.viewerTop+':'+p.viewerLeft)).size,eventsBefore,eventsAfter:{...events},callsBefore,callsAfter:scrollMatchCalls});
+    if(!complete||!aligned)throw Error(`Incomplete ${config.name} step ${step}`);
+    if(scoped&&!unchanged)throw Error(`Outer movement in ${config.name} step ${step}`);
+    document.querySelector('#status').textContent=`Checked ${result.cases.length} host-setting search operations`;
+   }
+  }
+  const smooth=result.cases.filter(x=>x.config.behavior==='smooth');
+  if(!smooth.some(x=>x.intermediateScrollPositions>2))throw Error('No evidence that smooth scrolling actually ran');
+  result.passed=true;document.querySelector('#status').textContent=`PASS — ${result.cases.length} fitted-page and host-setting searches`;
+ }catch(error){result.error=String(error);document.querySelector('#status').textContent=String(error);}
+ document.querySelector('#report').textContent=JSON.stringify(result,null,2);
+ // The result stays in this page; no result data is sent elsewhere.
+}
+document.querySelector('#edges').addEventListener('click',edges);
+document.querySelector('#next').addEventListener('click',()=>dispatch(document.querySelector('#query').value,'again'));
+document.querySelector('#previous').addEventListener('click',()=>dispatch(document.querySelector('#query').value,'again',true));
+document.querySelector('#rotate').addEventListener('click',()=>viewer.pagesRotation=(viewer.pagesRotation+90)%360);
+document.querySelectorAll('button').forEach(x=>x.disabled=false);
+document.querySelector('#status').textContent=`Ready — PDF.js ${pdfjsLib.version}, ${documentProxy.numPages} pages`;
+</script>
+</html>

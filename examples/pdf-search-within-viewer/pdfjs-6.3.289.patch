@@ -1,0 +1,116 @@
+--- a/web/pdf_find_controller.js
++++ b/web/pdf_find_controller.js
+@@ -19,6 +19,7 @@
+ 
+ import { getNormalizeWithNFKC, isEntireWord } from "./pdf_find_utils.js";
+ import { binarySearchFirstItem } from "./ui_utils.js";
++import { scrollSearchMatch } from "./scroll_search_match.js";
+ import { internalOpt } from "./internal_evt.js";
+ 
+ const FindState = {
+@@ -577,7 +578,7 @@
+       return;
+     }
+     this._scrollMatches = false; // Ensure that scrolling only happens once.
+-    element.scrollIntoView({ block: "start", inline: "center" });
++    scrollSearchMatch(element, this._linkService.pdfViewer.container);
+   }
+ 
+   #reset() {
+--- a/web/pdf_viewer.js
++++ b/web/pdf_viewer.js
+@@ -1498,7 +1498,7 @@
+         pageSpot = { left: 0, top: 0 };
+       }
+     }
+-    scrollIntoView(div, pageSpot);
++    scrollIntoView(div, pageSpot, this.container);
+ 
+     // Ensure that the correct *initial* document position is set, when any
+     // OpenParameters are used, for documents with non-default Scroll/Spread
+--- a/web/ui_utils.js
++++ b/web/ui_utils.js
+@@ -77,7 +77,7 @@
+  * @param {number} [spot.left]
+  * @param {number} [spot.top]
+  */
+-function scrollIntoView(element, spot) {
++function scrollIntoView(element, spot, scrollContainer = null) {
+   // Assuming offsetParent is available (it's not available when viewer is in
+   // hidden iframe or object). We have to scroll: if the offsetParent is not set
+   // producing the error. See also animationStarted.
+@@ -89,6 +89,7 @@
+   let offsetY = element.offsetTop + element.clientTop;
+   let offsetX = element.offsetLeft + element.clientLeft;
+   while (
++    parent !== scrollContainer &&
+     parent.clientHeight === parent.scrollHeight &&
+     parent.clientWidth === parent.scrollWidth
+   ) {
+--- /dev/null
++++ b/web/scroll_search_match.js
+@@ -0,0 +1,64 @@
++/* Copyright 2026 Tevinch
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++// Scroll the selected PDF search span inside its explicit viewer container.
++function scrollSearchMatch(element, container) {
++  if (!container || !container.contains(element)) {
++    throw new Error("Search match must belong to the PDF viewer container");
++  }
++  const target = element.getBoundingClientRect();
++  const viewport = container.getBoundingClientRect();
++  if (!container.offsetWidth || !container.offsetHeight) {
++    return;
++  }
++  const scaleX = viewport.width / container.offsetWidth;
++  const scaleY = viewport.height / container.offsetHeight;
++  if (!scaleX || !scaleY) {
++    return;
++  }
++  const targetStyle = getComputedStyle(element);
++  const containerStyle = getComputedStyle(container);
++  const pixels = value => Number.parseFloat(value) || 0;
++  const padding = (value, size) => {
++    if (value === "auto") return 0;
++    if (value.endsWith("%")) return pixels(value) * size / 100;
++    if (/^-?[\d.]+px$/.test(value)) return pixels(value);
++    const box = element.ownerDocument.createElement("div");
++    const probe = element.ownerDocument.createElement("div");
++    box.style.cssText = `all:initial;position:fixed;top:0;left:0;width:${size}px;height:${size}px;visibility:hidden;pointer-events:none;contain:strict;`;
++    box.setAttribute("aria-hidden", "true");
++    probe.style.cssText = "all:initial;position:absolute;left:0;width:0;height:0;";
++    probe.style.top = value;
++    box.append(probe);
++    element.ownerDocument.body.append(box);
++    try {
++      return pixels(getComputedStyle(probe).top);
++    } finally {
++      box.remove();
++    }
++  };
++  const paddingLeft = padding(containerStyle.scrollPaddingLeft, container.clientWidth);
++  const paddingRight = padding(containerStyle.scrollPaddingRight, container.clientWidth);
++  const top = container.scrollTop +
++    (target.top - viewport.top) / scaleY - container.clientTop -
++    pixels(targetStyle.scrollMarginTop) - padding(containerStyle.scrollPaddingTop, container.clientHeight);
++  const left = container.scrollLeft +
++    (target.left + target.right - 2 * viewport.left) / (2 * scaleX) -
++    container.clientLeft - container.clientWidth / 2 +
++    (pixels(targetStyle.scrollMarginRight) - pixels(targetStyle.scrollMarginLeft) - paddingLeft + paddingRight) / 2;
++  container.scrollTo({ top, left, behavior: "auto" });
++}
++
++export { scrollSearchMatch };

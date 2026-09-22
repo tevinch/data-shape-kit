@@ -1,0 +1,4 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Embedded reading panel</title>
+<style>body{margin:0;padding-top:80px;font:15px system-ui}#hostOuter{height:760px;overflow:auto;width:1050px;border:3px solid #568;margin:20px}iframe{display:block;width:1000px;height:780px;border:0}#before{height:300px;background:#eee}#after{height:700px}#footer{height:600px}</style>
+<div id="hostOuter"><div id="before">Content before the embedded reading panel</div><iframe id="reading" title="PDF reading panel"></iframe><div id="after">Content after the embedded reading panel</div></div><div id="footer"></div>
+<script>document.querySelector('iframe').src='./?mode='+ (new URLSearchParams(location.search).get('mode')==='scoped'?'scoped':'baseline');</script>

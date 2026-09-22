@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Keep embedded PDF searches from moving the surrounding page | [PDF search within the viewer](examples/pdf-search-within-viewer) | PDF.js 6.3.289 source patch and runnable browser example |
 | Keep detail when larger Docling PDF exports remain blurry | [PDF image detail](examples/pdf-image-detail) | Configuration guide; Docling 2.129.0 and docling-parse 7.21.0 |
 | Reset stale Streamlit selection and draft edits when the served data changes | [Table state after refresh](examples/data-revision-grid) | Complete Python example; Streamlit 1.64.0 |
 | Restore the settling effect run after an inner Svelte flush clears the current batch | [Svelte effect recovery](examples/svelte-effect-recovery) | Exact-version 5.57.1 patch; repeated-interaction browser checks |
