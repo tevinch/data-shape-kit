@@ -22,6 +22,10 @@ React documents how [keys control identity](https://react.dev/learn/preserving-a
 
 This fixes the demonstrated application pattern; it is not a patch to React Hook Form. The example retains its default `shouldUnregister: false` behavior: previously entered named fields remain in form data when hidden. If your application intentionally removes inactive fields, treat that as a separate data policy and test it explicitly.
 
+## Issue follow-up
+
+On September 28, 2026, the original reporter [acknowledged the explanation](https://github.com/react-hook-form/react-hook-form/issues/13801#issuecomment-5866834994) and [closed the issue as completed](https://github.com/react-hook-form/react-hook-form/issues/13801#event-31977894246). They did not provide a separate test sequence or environment. The browser observations below remain the verification evidence for this example.
+
 ## Run the comparison
 
 Download [the source ZIP](../../downloads/conditional-field-identity-source.zip?raw=true), or use this directory with Node.js 20 or newer:

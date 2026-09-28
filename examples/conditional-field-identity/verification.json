@@ -58,6 +58,15 @@
   "limits": [
     "Recorded UI observations, not an automated test runner.",
     "No custom inputs, Controller, field arrays, different unregister policy or cross-browser claim.",
-    "Reporter adoption not confirmed."
-  ]
+    "The reporter acknowledged the explanation and closed the issue; separate adoption or test details were not reported."
+  ],
+  "externalFeedback": {
+    "date": "2026-09-28",
+    "reporter": "bchenSyd",
+    "source": "https://github.com/react-hook-form/react-hook-form/issues/13801#issuecomment-5866834994",
+    "closure": "https://github.com/react-hook-form/react-hook-form/issues/13801#event-31977894246",
+    "result": "Acknowledged the explanation and closed the issue as completed.",
+    "separateAdoptionConfirmed": false,
+    "testDetailsProvided": false
+  }
 }
