@@ -13,8 +13,8 @@ from streamlit.testing.v1 import AppTest
 
 class GridSession:
     def __init__(self, source=None):
-        self.at = (AppTest.from_string(source) if source else
-                   AppTest.from_file(Path(__file__).with_name('app.py'))).run()
+        self.at = (AppTest.from_string(source, default_timeout=10) if source else
+                   AppTest.from_file(Path(__file__).with_name('app.py'), default_timeout=10)).run()
         self.values = {}
         self.check()
 
