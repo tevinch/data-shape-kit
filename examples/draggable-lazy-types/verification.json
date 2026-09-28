@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-09-28",
+  "upstreamBase": "40829e3eae98ff91d0219d7648c2aa431cbdfefb",
+  "upstreamVersion": "4.7.2",
+  "packageVersion": "4.7.2-lazy-types.0",
+  "unofficial": true,
+  "node": "24.19.0",
+  "platform": "macOS arm64",
+  "archiveSha256": "625baa2c6ff388f0f561b6d45bf622d170a6567cae0e9bb98bf8ea814c70dbd2",
+  "checks": {
+    "make lint": "pass, React18+19 source configurations",
+    "yarn test": "204 passed, 11 files, 0 skipped",
+    "make build": "pass, CJS/UMD/ESM and declaration contract",
+    "browser tests": "not run",
+    "before correction": "new lazy-import regressions fail with TypeScript2322 in React18 and19",
+    "runtime comparison": "both modified components emit identical JS to base excluding comments"
+  },
+  "consumers": [
+    {
+      "module": "NodeNext",
+      "skipLibCheck": false,
+      "status": "pass",
+      "versions": {
+        "react": "18.3.1",
+        "react-dom": "18.3.1",
+        "@types/react": "18.3.31",
+        "@types/react-dom": "18.3.7",
+        "typescript": "5.9.3"
+      }
+    },
+    {
+      "module": "NodeNext",
+      "skipLibCheck": false,
+      "status": "pass",
+      "versions": {
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "@types/react": "19.3.0",
+        "@types/react-dom": "19.3.0",
+        "typescript": "5.9.3"
+      }
+    }
+  ],
+  "sourceCommit": "929b5a0b246bcfb672f19e6fb6ba20edd3cc0d3c",
+  "sourceUrl": "https://github.com/tevinch/react-draggable/commit/929b5a0b246bcfb672f19e6fb6ba20edd3cc0d3c",
+  "pullRequest": "https://github.com/react-grid-layout/react-draggable/pull/825"
+}
