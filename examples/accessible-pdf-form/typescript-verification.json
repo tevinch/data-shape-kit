@@ -1,0 +1,14 @@
+{
+  "pdfkit": "0.20.2",
+  "typesPdfkit": "0.17.6",
+  "typescript": "7.0.2",
+  "strictBefore": "TS2322 for PDF/UA",
+  "strictAfter": "pass; unsupported subset and non-boolean tagged value remain rejected",
+  "runtime": "completed one-page PDF stream; expected text, language, MarkInfo and PDF/UA-1 metadata confirmed",
+  "veraPDF": {
+    "jobEndStatus": "normal",
+    "profileName": "PDF/UA-1 validation profile",
+    "statement": "PDF file is compliant with Validation Profile requirements.",
+    "isCompliant": "true"
+  }
+}

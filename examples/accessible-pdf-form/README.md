@@ -48,6 +48,36 @@ These options alone do not make an arbitrary document accessible. [PDFKit's acce
 
 For Node bundles, follow [PDFKit's font-registration guidance](https://github.com/foliojs/pdfkit#bundling-for-node). The verification included a local CommonJS esbuild bundle with registered Helvetica metrics; no AWS deployment was performed.
 
+## TypeScript and the PDF UA option
+
+PDFKit 0.20.2 already accepts `subset: 'PDF/UA'`. The separate `@types/pdfkit` 0.17.6 declarations omit that literal from `PDFKit.Mixins.PDFSubsets`, which causes the error discussed in [PDFKit #1804](https://github.com/foliojs/pdfkit/issues/1804). For these versions, a temporary assertion on this supported literal allows the documented option while retaining checks on the other options:
+
+```ts
+import PDFDocument = require('pdfkit');
+
+const doc = new PDFDocument({
+  subset: 'PDF/UA' as PDFKit.Mixins.PDFSubsets,
+  tagged: true,
+  lang: 'en-US',
+  displayTitle: true,
+  info: { Title: 'Accessible document' },
+});
+```
+
+Use this assertion only for the known supported literal, and remove it when the declarations include `PDF/UA`. It does not change PDFKit's runtime or make arbitrary subset strings valid. Metadata and a subset setting alone do not establish document accessibility.
+
+The standalone [TypeScript example](typescript-example.ts) generates a tagged paragraph with an embedded font. It uses the published 0.20.2 package and does not use form fields or require the source repair above. To run it in a separate directory with an embeddable font file:
+
+```sh
+npm install --save-exact pdfkit@0.20.2
+npm install --save-dev --save-exact @types/pdfkit@0.17.6 typescript@7.0.2
+npx tsc --ignoreConfig --strict --target ES2022 --module Node16 --moduleResolution Node16 --outDir compiled typescript-example.ts
+node compiled/typescript-example.js /path/to/your-font.ttf
+verapdf --flavour ua1 typed-pdfua.pdf
+```
+
+In the [type verification](typescript-verification.json), the original literal failed with TS2322; the scoped assertion compiled under strict mode, while unsupported unasserted subsets and a non-boolean `tagged` value remained errors. The emitted JavaScript completed PDF generation. The sample using the upstream Roboto fixture passed veraPDF 1.30.2's PDF/UA-1 profile. Validate your own content and fonts separately.
+
 ## Verification and limits
 
 The [verification record](verification.json) lists the exact tools and results. Regression tests inspect serialized widget references, distinct page and structure parents, field hierarchy, Unicode names, absent values and explicit zero sizes. The upstream unit and visual suite was run with four workers. A run with unrestricted workers timed out in four visual tests; no test timeout was increased.
