@@ -1,0 +1,278 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index dfa5638..3455b93 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,7 @@
+ 
+ ### Unreleased
+ 
++- Add `alternateName` and `structParent` options to form annotations so tagged form widgets can have an accessible name and belong to a `Form` structure element. Retain the annotation's page when its structure is finalized after a page change. Honor an explicit `fontSize` when the field uses the default form font. Fixes #1803
+ - Fix the Node build throwing once a bundler inlines it into an application bundle, `Cannot find module '#standard-fonts/Helvetica'` on the first document from an ESM bundle and `Invalid URL` while importing a CommonJS one, because the standard font metrics and the PDF/A ICC profile were resolved relative to pdfkit's own package directory at import time. Both are now resolved on first use, a standard font that cannot be loaded names itself and the fix in its error, and `registerStdFonts` is exported from the Node build as it already was from the browser build, so a bundle can register the fonts it uses from `pdfkit/standard-fonts/<Name>`. The Node build now requires the standard fonts by a path relative to the built file, which replaces the `#standard-fonts/*` import mapping and lets an ESM bundle load them from a copy of `js/standard-fonts` next to it. Fixes #1801
+ - Fix `doc.list()` drawing the label of a `numbered` or `lettered` item with the line wrapper's own options object, which threw `unsupported number: NaN` for `align` `center` and `right`, applied a word spacing derived from the previous line to the label for `align` `justify`, and sized the underline, strike, link and goTo of every label after the first from the previous item's text
+ - Add a `hidden` option to form annotation methods, for a field that should start hidden (e.g. one an interactive action reveals later) instead of the usual default of visible and printable
+diff --git a/docs/forms.md b/docs/forms.md
+index ab024eb..e48b965 100644
+--- a/docs/forms.md
++++ b/docs/forms.md
+@@ -43,6 +43,9 @@ information on `name` in the **Field Names** section below.
+ The following `options` are accepted by all form annotation methods:
+ 
+ - `parent` [_PDFReference_] - Parent field returned by `formField`.
++- `structParent` [_PDFStructureElement_] - Structure element returned by `doc.struct()`.
++  Use a separate `Form` element for each widget in a tagged PDF. This is distinct
++  from `parent`, which controls the form field hierarchy.
+ - `required` [_boolean_] - The field must have a value by the time the form is submitted.
+ - `noExport` [_boolean_] - The field will not be exported if a form is submitted.
+ - `readOnly` [_boolean_] - The user may not change the value of the field, and
+@@ -51,10 +54,14 @@ The following `options` are accepted by all form annotation methods:
+ - `value` [_number|string_] - The field's value.
+ - `defaultValue` [_number|string_] - The default value to which the field
+   reverts if a reset-form action is executed.
++- `alternateName` [_string_] - Alternate field name (`TU`), used as the field's
++  accessible name or tooltip. Use a meaningful description, not just the
++  internal field name.
+ - `backgroundColor` - Field background color.
+ - `borderColor` - Field border color.
+ - `fontSize` [_number_] - Sets the font size used in the field appearance string.
+-  The default, `0`, means auto sizing.
++  The default, `0`, means auto sizing. An explicit size applies even when the
++  field uses the default form font.
+ - `hidden` [_boolean_] - Builds the field starting hidden, instead of the
+   usual default of visible and printable, for a field an interactive action
+   (see `onClick` below) will reveal later.
+diff --git a/lib/mixins/acroform.js b/lib/mixins/acroform.js
+index 5fb5557..6494928 100644
+--- a/lib/mixins/acroform.js
++++ b/lib/mixins/acroform.js
+@@ -18,7 +18,7 @@ const FIELD_JUSTIFY = {
+   center: 1,
+   right: 2,
+ };
+-const VALUE_MAP = { value: 'V', defaultValue: 'DV' };
++const VALUE_MAP = { value: 'V', defaultValue: 'DV', alternateName: 'TU' };
+ const FORMAT_SPECIAL = {
+   zip: '0',
+   zipPlus4: '1',
+@@ -320,7 +320,10 @@ export default {
+     }
+ 
+     // Add Field annot to page, and get it's ref
+-    this.annotate(x, y, w, h, fieldDict);
++    this.annotate(x, y, w, h, {
++      ...fieldDict,
++      structParent: options.structParent,
++    });
+     let annotRef = this.page.annotations[this.page.annotations.length - 1];
+ 
+     return this._addToParent(annotRef);
+@@ -411,14 +414,17 @@ export default {
+       _acroform.fonts[_font.id] = formFontRef(this, _font);
+     }
+ 
+-    // add current font to field's resource dict (RD) if not the default acroform font
+-    if (_acroform.defaultFont !== _font.name) {
++    // add current font to field's resource dict (DR) if not the default acroform font
++    const isDefaultFont = _acroform.defaultFont === _font.name;
++    if (!isDefaultFont) {
+       pdfObject.DR = { Font: {} };
++      pdfObject.DR.Font[_font.id] = formFontRef(this, _font);
++    }
+ 
++    if (!isDefaultFont || options.fontSize != null) {
+       // Get the fontSize option. If not set use auto sizing
+       const fontSize = options.fontSize || 0;
+ 
+-      pdfObject.DR.Font[_font.id] = formFontRef(this, _font);
+       pdfObject.DA = new String(`/${_font.id} ${fontSize} Tf 0 g`);
+     }
+   },
+diff --git a/lib/mixins/annotations.js b/lib/mixins/annotations.js
+index ee82ab2..d1c145e 100644
+--- a/lib/mixins/annotations.js
++++ b/lib/mixins/annotations.js
+@@ -28,7 +28,7 @@ export default {
+     this.page.annotations.push(ref);
+ 
+     if (typeof structParent?.add === 'function') {
+-      const annotRef = new PDFAnnotationReference(ref);
++      const annotRef = new PDFAnnotationReference(ref, this.page.dictionary);
+       structParent.add(annotRef);
+     }
+ 
+diff --git a/lib/structure_annotation.js b/lib/structure_annotation.js
+index fe5ddbf..2df274e 100644
+--- a/lib/structure_annotation.js
++++ b/lib/structure_annotation.js
+@@ -1,6 +1,7 @@
+ class PDFAnnotationReference {
+-  constructor(annotationRef) {
++  constructor(annotationRef, pageRef = annotationRef.document.page.dictionary) {
+     this.annotationRef = annotationRef;
++    this.pageRef = pageRef;
+   }
+ }
+ 
+diff --git a/lib/structure_element.js b/lib/structure_element.js
+index 04e16f1..d5b2478 100644
+--- a/lib/structure_element.js
++++ b/lib/structure_element.js
+@@ -262,11 +262,10 @@ class PDFStructureElement {
+     }
+ 
+     if (child instanceof PDFAnnotationReference) {
+-      const pageRef = this.document.page.dictionary;
+       const objr = {
+         Type: 'OBJR',
+         Obj: child.annotationRef,
+-        Pg: pageRef,
++        Pg: child.pageRef,
+       };
+       this.dictionary.data.K.push(objr);
+     }
+diff --git a/tests/unit/acroform.spec.js b/tests/unit/acroform.spec.js
+index c2c60ed..8fd184f 100644
+--- a/tests/unit/acroform.spec.js
++++ b/tests/unit/acroform.spec.js
+@@ -30,6 +30,142 @@ describe('acroform', () => {
+     });
+   });
+ 
++  test.each(['Request number', 'Référence №', ''])(
++    'alternateName writes a text string: %s',
++    (alternateName) => {
++      doc.initForm();
++      const options = Object.freeze({ alternateName });
++      const docData = logData(doc);
++      doc.formText('request', 10, 20, 100, 24, options);
++      const widget = doc.page.annotations.at(-1);
++      expect(widget.data.TU).toBeInstanceOf(String);
++      expect(String(widget.data.TU)).toBe(alternateName);
++      expect(objectBody(docData, widget.id)).toContain('/TU (');
++      expect(objectBody(docData, widget.id)).not.toContain('/alternateName');
++      doc.end();
++    },
++  );
++
++  test('omitted alternateName does not invent a tooltip', () => {
++    doc.initForm();
++    doc.formText('request', 10, 20, 100, 24);
++    expect(doc.page.annotations.at(-1).data).not.toHaveProperty('TU');
++    doc.end();
++  });
++
++  test.each([0, 9])(
++    'explicit fontSize %s applies to the default form font',
++    (fontSize) => {
++      doc.font('Helvetica').initForm();
++      const docData = logData(doc);
++      doc.formText('request', 10, 20, 100, 24, Object.freeze({ fontSize }));
++      const widget = doc.page.annotations.at(-1);
++      expect(objectBody(docData, widget.id)).toContain(
++        `/DA (/F1 ${fontSize} Tf 0 g)`,
++      );
++      expect(widget.data).not.toHaveProperty('DR');
++      doc.end();
++    },
++  );
++
++  test('omitted size inherits the default appearance', () => {
++    doc.font('Helvetica').initForm();
++    doc.formText('request', 10, 20, 100, 24);
++    expect(doc.page.annotations.at(-1).data).not.toHaveProperty('DA');
++    doc.end();
++  });
++
++  test.each([undefined, 0, 9])(
++    'non-default font retains resources and size %s',
++    (fontSize) => {
++      doc.font('Helvetica').initForm();
++      doc.font('Courier');
++      doc.formText('request', 10, 20, 100, 24, { fontSize });
++      const widget = doc.page.annotations.at(-1);
++      expect(String(widget.data.DA)).toBe(`/F2 ${fontSize ?? 0} Tf 0 g`);
++      doc.end();
++      expect(widget.data.DR.Font.F2).toBe(
++        doc._root.data.AcroForm.data.DR.Font.F2,
++      );
++    },
++  );
++
++  test('form widgets are attached to their own structure elements and parent tree', () => {
++    doc = new PDFDocument({ tagged: true, compress: false });
++    doc.initForm();
++    const docData = logData(doc);
++    const page = doc.page.dictionary;
++    const forms = [];
++    const widgets = [];
++    for (const name of ['request', 'department']) {
++      const form = doc.struct('Form');
++      doc.addStructure(form);
++      doc.formText(
++        name,
++        10,
++        20 + forms.length * 30,
++        100,
++        24,
++        Object.freeze({ structParent: form }),
++      );
++      forms.push(form);
++      widgets.push(doc.page.annotations.at(-1));
++    }
++    expect(widgets[0].data.StructParent).not.toBe(widgets[1].data.StructParent);
++    for (let i = 0; i < widgets.length; i++) {
++      expect(doc.getStructParentTree().get(widgets[i].data.StructParent)).toBe(
++        forms[i].dictionary,
++      );
++      expect(doc._root.data.AcroForm.data.Fields).toContain(widgets[i]);
++    }
++    doc.end();
++    for (let i = 0; i < widgets.length; i++) {
++      const formBody = objectBody(docData, forms[i].dictionary.id);
++      expect(formBody).toContain('/S /Form');
++      expect(formBody).toContain('/Type /OBJR');
++      expect(formBody).toContain(`/Obj ${widgets[i].id} 0 R`);
++      expect(formBody).toContain(`/Pg ${page.id} 0 R`);
++      const widgetBody = objectBody(docData, widgets[i].id);
++      expect(widgetBody).toContain(
++        `/StructParent ${widgets[i].data.StructParent}`,
++      );
++      expect(widgetBody).not.toContain('/structParent');
++    }
++  });
++
++  test('delayed form structure finalization retains each widget page and field parent', () => {
++    doc = new PDFDocument({ tagged: true, compress: false });
++    doc.initForm();
++    const docData = logData(doc);
++    const fieldParent = doc.formField('request');
++    const entries = [];
++    for (const name of ['number', 'department']) {
++      const form = doc.struct('Form');
++      doc.addStructure(form);
++      const page = doc.page.dictionary;
++      doc.formText(name, 10, 20, 100, 24, {
++        parent: fieldParent,
++        structParent: form,
++      });
++      entries.push({ form, page, widget: doc.page.annotations.at(-1) });
++      doc.addPage();
++    }
++    doc.end();
++    for (const { form, page, widget } of entries) {
++      expect(objectBody(docData, form.dictionary.id)).toContain(
++        `/Pg ${page.id} 0 R`,
++      );
++      expect(objectBody(docData, form.dictionary.id)).toContain(
++        `/Obj ${widget.id} 0 R`,
++      );
++      expect(widget.data.Parent).toBe(fieldParent);
++      expect(fieldParent.data.Kids).toContain(widget);
++      expect(doc.getStructParentTree().get(widget.data.StructParent)).toBe(
++        form.dictionary,
++      );
++    }
++  });
++
+   test('named JavaScript', () => {
+     const expected = [
+       '2 0 obj',

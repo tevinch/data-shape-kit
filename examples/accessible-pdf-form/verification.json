@@ -1,0 +1,67 @@
+{
+  "date": "2026-09-28",
+  "base": "563aba49416d9a5444fd8fa09ea2501d3629d2e4",
+  "sourceRevision": "221f89d54cbaf2a6cbf71f1bf5221bfd55fc6efc",
+  "tools": {
+    "node": "24.19.0",
+    "vitest": "4.1.10",
+    "veraPDF": "1.30.2",
+    "pypdf": "6.10.0",
+    "esbuild": "0.28.2"
+  },
+  "tests": {
+    "upstreamFiles": 61,
+    "passed": 536,
+    "failed": 0,
+    "command": "yarn test --maxWorkers=4",
+    "defaultWorkerRun": "4 visual test timeouts; retained timeout 8000ms and limited workers",
+    "addedCases": 12,
+    "baselineNewFailures": 6,
+    "additionalMultipageRegression": "failed before page capture; passed after",
+    "lint": "passed",
+    "build": "passed",
+    "packageResolution": "passed"
+  },
+  "generation": {
+    "pages": 2,
+    "fields": [
+      "requestNumber",
+      "department"
+    ],
+    "veraPDFProfile": "ua1",
+    "passedRules": 106,
+    "failedRules": 0,
+    "passedChecks": 593,
+    "failedChecks": 0,
+    "rendering": "both pages inspected; initial values visible, no clipping",
+    "commonJSBundledPDFUA": "passed106rules593checks"
+  },
+  "roundtrip": {
+    "method": "pypdf update_page_form_field_values; not flattened",
+    "cycles": 2,
+    "passedInvariants": [
+      "field and widget values agree",
+      "original text and both pages preserved",
+      "OBJR references actual widget page",
+      "parent tree remains linked",
+      "metadata retained",
+      "appearance streams present"
+    ],
+    "postEditPDFUA": false,
+    "postEditFailedRule": "7.21.4.1-1"
+  },
+  "additionalEmbeddedFormFontProbe": {
+    "postEditFailedRules": [
+      "7.21.3.1-1",
+      "7.21.7-1"
+    ],
+    "initialPopplerRendering": "incorrect prefilled appearance; not used in supplied sample"
+  },
+  "limits": [
+    "Not a stable upstream release",
+    "No reporter adoption confirmed",
+    "No human screen reader validation",
+    "No AWS deployment",
+    "No claim of conformance after arbitrary editing"
+  ]
+}

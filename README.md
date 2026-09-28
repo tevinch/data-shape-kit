@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Generate tagged PDF form widgets with accessible names and correct page references | [Accessible PDF form](examples/accessible-pdf-form) | PDFKit source patch and two-page generation example |
 | Open, edit and save XFA PDF forms containing bold and italic text | [XFA rich text](examples/xfa-rich-text) | PDF.js 6.3.289 source patch, worker repair and two-page browser example |
 | Keep embedded PDF searches from moving the surrounding page | [PDF search within the viewer](examples/pdf-search-within-viewer) | PDF.js 6.3.289 source patch and runnable browser example |
 | Keep detail when larger Docling PDF exports remain blurry | [PDF image detail](examples/pdf-image-detail) | Configuration guide; Docling 2.129.0 and docling-parse 7.21.0 |
