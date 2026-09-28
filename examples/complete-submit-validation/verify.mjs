@@ -190,6 +190,40 @@ async function successListeners(api) {
   } finally { save.resolve(); await pending; f.dispose(); }
 }
 
+async function sameMessageSource(api, asynchronous = false) {
+  const cause = asynchronous ? 'onSubmitAsync' : 'onSubmit';
+  const f = fixture(api, {
+    form: events => ({ validators: { onSubmit: ({ value }) => {
+      events.form++;
+      return value.b ? undefined : { fields: { a: 'Required' } };
+    } } }),
+    a: events => ({ validators: { [cause]: ({ value, fieldApi }) => {
+      events.field++;
+      const error = fieldApi.form.state.values.b && !value ? 'Required' : undefined;
+      return asynchronous ? Promise.resolve(error) : error;
+    } } }),
+  });
+  try {
+    await f.form.handleSubmit();
+    assert.equal(f.a.state.meta.errorMap.onSubmit, 'Required');
+    assert.equal(f.a.state.meta.errorSourceMap.onSubmit, 'form');
+    f.b.handleChange('ready');
+    await f.form.handleSubmit();
+    assert.equal(f.events.field, 2, 'fresh field validation actually ran');
+    assert.equal(f.events.saves.length, 0, 'identical text must not let an invalid field save');
+    assert.equal(f.events.form, 2, 'form validation still completes');
+    assert.equal(f.a.state.meta.errorMap.onSubmit, 'Required');
+    assert.equal(f.a.state.meta.errorSourceMap.onSubmit, 'field');
+    assert.equal(f.events.invalid, 2);
+    f.a.handleChange('Alice');
+    await f.form.handleSubmit();
+    assert.deepEqual(f.events.saves, [{ value: { a: 'Alice', b: 'ready' }, meta: undefined }]);
+    assert.equal(f.events.field, 3);
+    assert.equal(f.events.form, 3);
+    assert.deepEqual(f.a.state.meta.errors, []);
+  } finally { f.dispose(); }
+}
+
 const scenarios = [
   ['repeated form-only submit and actual save', repeated],
   ['mixed submit, field precedence and actual save', api => mixed(api)],
@@ -200,6 +234,8 @@ const scenarios = [
   ['unspecified option retains field gate', api => defaultGate(api, undefined)],
   ['whole-form scalar error still blocks saving', scalarError],
   ['valid save, metadata and listeners exactly once', successListeners],
+  ['same text changes from form to fresh field failure', api => sameMessageSource(api)],
+  ['same text changes from form to async field failure', api => sameMessageSource(api, true)],
 ];
 
 try {

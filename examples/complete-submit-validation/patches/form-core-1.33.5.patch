@@ -187,3 +187,51 @@
      dontUpdateFormErrorMap?: boolean;
      filterFieldNames?: (fieldName: DeepKeys<TFormData>) => boolean;
      group?: AnyFormGroupApi;
+--- a/src/FieldApi.ts
++++ b/src/FieldApi.ts
+@@ -1318,7 +1318,12 @@
+           })
+ 
+         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+-        if (field.state.meta.errorMap?.[errorMapKey] !== newErrorValue) {
++        if (
++          field.state.meta.errorMap?.[errorMapKey] !== newErrorValue ||
++          (field.form.options.canSubmitWhenInvalid &&
++            cause === 'submit' &&
++            field.state.meta.errorSourceMap?.[errorMapKey] !== newSource)
++        ) {
+           field.setMeta((prev) => ({
+             ...prev,
+             errorMap: {
+--- a/dist/esm/FieldApi.js
++++ b/dist/esm/FieldApi.js
+@@ -275,7 +275,12 @@
+             formLevelError,
+             fieldLevelError
+           });
+-          if (field.state.meta.errorMap?.[errorMapKey] !== newErrorValue) {
++          if (
++            field.state.meta.errorMap?.[errorMapKey] !== newErrorValue ||
++            (field.form.options.canSubmitWhenInvalid &&
++              cause === "submit" &&
++              field.state.meta.errorSourceMap?.[errorMapKey] !== newSource)
++          ) {
+             field.setMeta((prev) => ({
+               ...prev,
+               errorMap: {
+--- a/dist/cjs/FieldApi.cjs
++++ b/dist/cjs/FieldApi.cjs
+@@ -277,7 +277,12 @@
+             formLevelError,
+             fieldLevelError
+           });
+-          if (field.state.meta.errorMap?.[errorMapKey] !== newErrorValue) {
++          if (
++            field.state.meta.errorMap?.[errorMapKey] !== newErrorValue ||
++            (field.form.options.canSubmitWhenInvalid &&
++              cause === "submit" &&
++              field.state.meta.errorSourceMap?.[errorMapKey] !== newSource)
++          ) {
+             field.setMeta((prev) => ({
+               ...prev,
+               errorMap: {

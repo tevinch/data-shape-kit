@@ -12,8 +12,8 @@ Use Node 24, npm and Git. From this directory:
 
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
-npm run reproduce  # expected nonzero: original package fails 15 of 27 checks
-npm test           # patched source, ESM and CommonJS: 27 of 27 checks pass
+npm run reproduce  # expected nonzero: original package fails 21 of 33 checks
+npm test           # patched source, ESM and CommonJS: 33 of 33 checks pass
 npm run build
 python3 -m http.server 8772 --bind 127.0.0.1 --directory dist
 ```
@@ -54,11 +54,11 @@ const form = useForm({
 })
 ```
 
-Keep the usual `form.handleSubmit()` path. `canSubmitWhenInvalid` permits attempting validation; the patch does **not** permit saving invalid values. It does not clear errors indiscriminately or call application submission handlers directly. Each admitted submission runs the field stage and form stage once; existing dynamic/change/blur strategies can also run validators on their own events.
+Keep the usual `form.handleSubmit()` path. `canSubmitWhenInvalid` permits attempting validation; the patch does **not** permit saving invalid values. It also refreshes a field error’s source during opted-in submission when its text matches an earlier form error. It does not clear errors indiscriminately or call application submission handlers directly. Each admitted submission runs the field stage and form stage once; existing dynamic/change/blur strategies can also run validators on their own events.
 
 ## Scope and evidence
 
-The mounted-field tests cover repeated submissions, mixed `onSubmit` and `onDynamic` rules, `revalidateLogic`, stale form blur errors, controlled asynchronous field/form validators, same-field error priority, whole-form errors, invalid callbacks, metadata and successful submission listeners. They run against compiled TypeScript source and the distributed ESM/CommonJS entry points. The default and false settings retain their original field-error gate.
+The mounted-field tests cover repeated submissions, mixed `onSubmit` and `onDynamic` rules, `revalidateLogic`, stale form blur errors, controlled asynchronous field/form validators, same-field error priority, identical-message source changes, whole-form errors, invalid callbacks, metadata and successful submission listeners. They run against compiled TypeScript source and the distributed ESM/CommonJS entry points. The default and false settings retain their original field-error gate.
 
 Software-operated Chrome checks additionally reproduced the original repeated/mixed failures and completed both corrected workflows in the React demo: empty errors, correct saved values and one successful save. This is not human manual validation, React Native validation or confirmation from the original reporters.
 
