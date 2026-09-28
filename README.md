@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Bundle relative CSS imports while keeping root image and font URLs | [CSS root URLs](examples/css-root-urls) | esbuild CLI options or a small resolver; complete build and checks |
 | Show all current field and form errors, then save after correcting them | [Complete submit validation](examples/complete-submit-validation) | TanStack Form 1.33.5 source patch; explicit opt-in and runnable React comparison |
 | Keep saved values out of a different conditional React Hook Form field | [Conditional field identity](examples/conditional-field-identity) | Two stable input keys; runnable save/return comparison |
 | Keep a TinyMCE table when typing over text dragged from its left edge | [Table edge input](examples/table-edge-input) | Public-event guard; TinyMCE 8.9.2 and browser checks |

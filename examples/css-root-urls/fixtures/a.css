@@ -1,0 +1,6 @@
+@import "b.css";
+@import "nested/c.css" screen;
+
+.card {
+  background-image: url("/images/epic.png?v=1#preview");
+}

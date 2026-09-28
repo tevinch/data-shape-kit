@@ -1,0 +1,6 @@
+@font-face {
+  font-family: "Example";
+  src: url("/fonts/example.woff2?v=2") format("woff2");
+}
+
+.message { color: navy; }
