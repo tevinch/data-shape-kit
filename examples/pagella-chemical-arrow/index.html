@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Pagella chemical arrow</title><style>body{font:18px system-ui;max-width:950px;margin:40px auto}section{border:1px solid #ccc;padding:20px;margin:20px 0}pre{font-size:12px;white-space:pre-wrap}button{padding:10px}</style><script>window.MathJax = {
+  "loader": {
+    "load": [
+      "input/tex",
+      "[tex]/amscd",
+      "[tex]/bbox",
+      "[tex]/braket",
+      "[tex]/cancel",
+      "[tex]/cases",
+      "[tex]/centernot",
+      "[tex]/colortbl",
+      "[tex]/empheq",
+      "[tex]/gensymb",
+      "[tex]/mathtools",
+      "[tex]/mhchem",
+      "[tex]/physics",
+      "[tex]/tagformat",
+      "[tex]/textcomp",
+      "[tex]/upgreek",
+      "[tex]/verb",
+      "ui/safe"
+    ]
+  },
+  "options": {
+    "skipHtmlTags": [
+      "script",
+      "noscript",
+      "style",
+      "textarea",
+      "pre",
+      "code",
+      "annotation",
+      "annotation-xml",
+      "tt",
+      "nowiki",
+      "kbd",
+      "syntaxhighlight",
+      "plantuml"
+    ],
+    "ignoreHtmlClass": [
+      "tex2jax_ignore",
+      "diff"
+    ],
+    "menuOptions": {
+      "settings": {
+        "zoom": "DoubleClick",
+        "semantics": true
+      },
+      "annotationTypes": {
+        "TeX": [
+          "application/x-tex"
+        ],
+        "OpenMath": [
+          "OpenMath"
+        ]
+      }
+    }
+  },
+  "tex": {
+    "packages": [
+      "ams",
+      "amscd",
+      "base",
+      "bbox",
+      "braket",
+      "cancel",
+      "cases",
+      "centernot",
+      "colortbl",
+      "empheq",
+      "gensymb",
+      "mathtools",
+      "mhchem",
+      "newcommand",
+      "physics",
+      "require",
+      "tagformat",
+      "textcomp",
+      "textmacros",
+      "upgreek",
+      "verb"
+    ],
+    "inlineMath": [
+      [
+        "\\(",
+        "\\)"
+      ]
+    ],
+    "displayMath": [
+      [
+        "$$",
+        "$$"
+      ],
+      [
+        "\\[",
+        "\\]"
+      ]
+    ],
+    "tags": "ams",
+    "maxBuffer": 10240,
+    "macros": []
+  },
+  "chtml": {
+    "scale": 1.25
+  },
+  "output": {
+    "font": "mathjax-pagella"
+  }
+};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script><h1>Pagella chemical arrow</h1><p id="untouched">Existing paragraph: sodium and water.</p><section id="formula"><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <semantics>
+    <mrow>
+      <mrow data-mjx-texclass="REL">
+        <mrow data-mjx-texclass="NONE"></mrow>
+        <mover>
+          <mo data-mjx-texclass="ORD" stretchy="true" minsize="2em">&#xE409;</mo>
+          <mpadded width="+0.778em" lspace="0.278em" voffset="-.2em" height="-.2em">
+            <mi>x</mi>
+            <mspace depth=".2em"></mspace>
+          </mpadded>
+        </mover>
+      </mrow>
+    </mrow>
+    <annotation encoding="application/x-tex"> \mhchemxRightleftharpoons x </annotation>
+  </semantics>
+</math>
+</section><script>if (new URLSearchParams(location.search).has("original")) document.querySelector("#formula mo").removeAttribute("minsize");</script><section id="ordinary"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi><mo>=</mo><mn>2</mn></math></section><p><a href="?original">Original MathML</a> · <a href="?">With minsize</a></p><pre id="skipped">Unprocessed code: \(x + 1\)</pre><button id="repeat">Repeat original formula</button><button id="long">Use a longer label</button><pre id="status">Waiting for MathJax startup</pre><script>
+const original=document.querySelector('#formula').innerHTML;
+let cycles=0;
+function report(){
+ const mj=window.MathJax;
+ const font=mj.startup?.document?.outputJax?.font;
+ const arrow=document.querySelector('#formula mjx-stretchy-h');
+ const label=document.querySelector('#formula mjx-over');
+ const errors=[...document.querySelectorAll('mjx-merror, [data-mjx-error]')].map(x=>({text:x.textContent,title:x.getAttribute('title')}));
+ const checks={
+  version:mj.version==='4.1.3',
+  font:font?.constructor?.NAME==='MathJaxPagella',
+  safeLoaded:!!mj._?.ui?.safe && !!mj.startup?.document?.safe,
+  mhchemLoaded:!!mj._?.input?.tex?.mhchem,
+  formulaRendered:!!arrow && arrow.getBoundingClientRect().width>0 && arrow.querySelectorAll('mjx-beg, mjx-end').length===2,
+  labelRendered:!!label && label.getBoundingClientRect().height>0,
+  noOutputError:errors.length===0,
+  ordinaryFormula:document.querySelector('#ordinary mjx-math')?.textContent.replace(/\s/g,'')==='𝑦=2',
+  paragraph:document.querySelector('#untouched').textContent==='Existing paragraph: sodium and water.',
+  skippedCode:document.querySelector('#skipped').querySelectorAll('mjx-container').length===0
+ };
+ document.querySelector('#status').textContent=JSON.stringify({passed:Object.values(checks).every(Boolean),checks,cycles,arrowWidth:arrow?.getBoundingClientRect().width??null,labelText:label?.textContent??null,errors},null,2);
+}
+const observer=setInterval(report,500);
+async function render(long){await MathJax.startup.promise;const box=document.querySelector('#formula');MathJax.typesetClear([box]);box.innerHTML=long?original.replace('<mi>x</mi>','<mtext>reaction conditions</mtext>'):original;await MathJax.typesetPromise([box]);cycles++;report();}
+document.querySelector('#repeat').onclick=()=>render(false);
+document.querySelector('#long').onclick=()=>render(true);
+window.addEventListener('pagehide',()=>clearInterval(observer));
+</script></html>

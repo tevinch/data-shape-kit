@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-28T04:55:02.883232+00:00",
+  "method": "Software-operated Chrome on macOS; locally served HTML; rendered output inspected",
+  "mathjax": "4.1.3",
+  "pagellaFont": "4.1.3",
+  "mhchemFontExtension": "4.1.3 at test time; original loader URL is not version-pinned",
+  "issue": "https://github.com/mathjax/MathJax/issues/3613",
+  "change": "Add minsize=\"2em\" to the U+E409 mo; retain original configuration",
+  "htmlSHA256": "0873a5acae34105cd46314349334cfd42b872f53111b04f2c20461564c524869",
+  "checks": [
+    {
+      "step": "initial",
+      "passed": true,
+      "checks": {
+        "version": true,
+        "font": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "formulaRendered": true,
+        "labelRendered": true,
+        "noOutputError": true,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "cycles": 0,
+      "arrowWidthCSSPixels": 49.1015625,
+      "label": "𝑥",
+      "errors": []
+    },
+    {
+      "step": "long-label",
+      "passed": true,
+      "checks": {
+        "version": true,
+        "font": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "formulaRendered": true,
+        "labelRendered": true,
+        "noOutputError": true,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "cycles": 1,
+      "arrowWidthCSSPixels": 160.296875,
+      "label": "reaction conditions",
+      "errors": []
+    },
+    {
+      "step": "repeat-short-1",
+      "passed": true,
+      "checks": {
+        "version": true,
+        "font": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "formulaRendered": true,
+        "labelRendered": true,
+        "noOutputError": true,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "cycles": 2,
+      "arrowWidthCSSPixels": 49.1015625,
+      "label": "𝑥",
+      "errors": []
+    },
+    {
+      "step": "repeat-short-2",
+      "passed": true,
+      "checks": {
+        "version": true,
+        "font": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "formulaRendered": true,
+        "labelRendered": true,
+        "noOutputError": true,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "cycles": 3,
+      "arrowWidthCSSPixels": 49.1015625,
+      "label": "𝑥",
+      "errors": []
+    },
+    {
+      "step": "original-negative-control",
+      "passed": false,
+      "checks": {
+        "version": true,
+        "font": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "formulaRendered": false,
+        "labelRendered": false,
+        "noOutputError": false,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "cycles": 0,
+      "arrowWidthCSSPixels": null,
+      "label": null,
+      "errors": [
+        {
+          "text": "Math output error",
+          "title": "Invalid array length"
+        }
+      ]
+    }
+  ],
+  "separateDiagnostic": {
+    "method": "Instrument original createPart call without changing its arguments or return value",
+    "W": -0.5733175336435923,
+    "Wx": 0.273,
+    "computedCount": -1,
+    "variant": "-mhchem",
+    "explicitFontExtensionFixesError": false
+  },
+  "limits": [
+    "No reporter adoption confirmation",
+    "No Firefox/Ubuntu validation",
+    "No upstream source repair",
+    "No claim of speech or braille correction"
+  ]
+}
