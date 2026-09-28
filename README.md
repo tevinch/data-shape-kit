@@ -10,9 +10,9 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | --- | --- | --- |
 | Keep embedded PDF searches from moving the surrounding page | [PDF search within the viewer](examples/pdf-search-within-viewer) | PDF.js 6.3.289 source patch and runnable browser example |
 | Keep detail when larger Docling PDF exports remain blurry | [PDF image detail](examples/pdf-image-detail) | Configuration guide; Docling 2.129.0 and docling-parse 7.21.0 |
-| Reset stale Streamlit selection and draft edits when the served data changes | [Table state after refresh](examples/data-revision-grid) | Complete Python example; Streamlit 1.64.0 |
+| Reset stale Streamlit selection and draft edits when the served data changes | [Table state after refresh](examples/data-revision-grid) | Streamlit 1.64.0 example; reporter confirms wrong-row selection workaround |
 | Restore the settling effect run after an inner Svelte flush clears the current batch | [Svelte effect recovery](examples/svelte-effect-recovery) | Exact-version 5.57.1 patch; repeated-interaction browser checks |
-| Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | Source PR under review; original reporter confirms Canon printing |
+| Keep PDF pages and repeated images when PDFio reports duplicate-resource warnings | [PDF warning recovery](examples/pdf-warning-recovery) | Source repair merged; original reporter confirms Canon printing; release pending |
 | Release each image-based PDF export context after receiving the file | [Raster PDF Worker](examples/raster-pdf-worker) | Complete browser example; jsPDF 4.2.1 |
 | Navigate custom 12-month FullCalendar views without Spanish hint errors | [Calendar navigation](examples/calendar-navigation) | Three public configuration options; complete browser example |
 | Refresh AG Grid React overlay text and actions without losing the visible overlay’s local state | [Overlay parameter refresh](examples/overlay-parameter-refresh) | Exact-version 36.1.0 patch; ESM/CommonJS production browser checks |
@@ -32,7 +32,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Preserve Lime editor table structure with links and images while respecting the no-upload setting | [Table paste priority](examples/table-paste-priority) | Exact-version Lime Elements 40.2.2 patch; repeated-paste browser checks |
 | Preserve pipe-containing table text and backtick-containing inline code through Markdown export/import | [Markdown round-trip patches](examples/markdown-roundtrip) | Upstream source fixes merged; temporary 3.31.3 patches and checks |
 | Import mixed rich text and long worksheet names from XLSX files | [ExcelJS import compatibility](examples/xlsx-import-compat) | ExcelJS 4.4.0 patch; generated load/write regression fixture |
-| Replace repeated whole-paragraph DOCX blocks without deleting content between them | [DOCX repeated blocks](examples/docx-repeated-blocks) | docx 9.7.1 patch; generated ESM and CommonJS regression fixture |
+| Replace repeated whole-paragraph DOCX blocks without deleting content between them | [DOCX repeated blocks](examples/docx-repeated-blocks) | Official fix in docx 9.8.0; 46 output checks and an older 9.7.1 patch |
 | Merge a following paragraph into a list item with one Delete while preserving adjacent isolating frames | [Isolated list Delete](examples/isolated-list-delete) | Copyable Tiptap extension; 3.31.3 regression fixture and browser comparison |
 | Handle an external CRLF terminator while retaining intentional blank rows | [C# row-boundary example](examples/dotnet-clipboard-rows) | Copyable helper and checks; Radzen integration notes |
 | Keep CSV codes as text while measurements and counts stay numeric | [Pandas code columns](docs/pandas-csv-code-columns.md) | Python; a two-pass pandas helper with an explicit count-field exception |

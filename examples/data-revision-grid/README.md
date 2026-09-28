@@ -6,6 +6,8 @@ A table's selected positions and pending cell edits can outlive the data they re
 
 Download the [complete example](../../downloads/data-revision-grid-v0.1.0.zip), or use the files in this folder.
 
+**Reporter feedback — 23 September 2026:** The original reporter [confirmed that resetting state avoids the wrong-row selection in their example](https://github.com/streamlit/streamlit/issues/17026#issuecomment-5795047669). They still want application-supplied stable row IDs so selection can survive a refresh, and raised an explicit update/apply step as a possible improvement. That remaining workflow is not provided by this example; the confirmation covers the selection workaround, not the editor checks below.
+
 ## Run
 
 Use Python 3.12 in a fresh virtual environment:
@@ -67,7 +69,7 @@ Software-operated Chrome checks on macOS separately reproduced the original wron
 - Enter a fresh TICK-102 note and save, then insert another row and reverse again: the saved note and closed status remain on TICK-102; other existing notes remain unchanged.
 - Open the ticket-ID cell: its input is disabled. The visible editor has no index or add-row control.
 
-These are local software-operated browser checks, not human manual validation, cross-browser coverage or confirmation from the original reporter.
+These are local software-operated browser checks, not human manual validation or cross-browser coverage. The separate reporter confirmation above covers their wrong-row selection example only.
 
 ## License
 

@@ -1,16 +1,16 @@
 # Keep PDF pages when resources contain duplicate names
 
-**Upstream review — 22 September 2026:** The source change is submitted as [libcupsfilters PR #254](https://github.com/OpenPrinting/libcupsfilters/pull/254), which remains open and unmerged. The original reporter has now [confirmed successful physical printing](https://github.com/OpenPrinting/libcupsfilters/pull/254#issuecomment-5775682101) on Arch Linux with a Canon MF230: both plain and fit-scaled jobs completed, with all pages and repeated images present. This is the reporter's validation of that setup; the patch is not an official release.
+**Upstream merged — checked 28 September 2026:** [libcupsfilters PR #254](https://github.com/OpenPrinting/libcupsfilters/pull/254) was merged into `master` on 27 September (UTC). The latest upstream release is still [2.2.1](https://github.com/OpenPrinting/libcupsfilters/releases/tag/2.2.1), which predates this repair; a merge does not establish availability in your distribution's packages. The original reporter [confirmed successful physical printing](https://github.com/OpenPrinting/libcupsfilters/pull/254#issuecomment-5775682101) on Arch Linux with a Canon MF230: both plain and fit-scaled jobs completed, with all pages and repeated images present. This is the reporter's validation of that setup.
 
 This source patch lets libcupsfilters continue when PDFio reports a recoverable warning. It fixes the tested case where repeated references to the same image caused a PDF conversion to return zero pages, or to keep the pages but lose their images.
 
 The problem is tracked in [libcupsfilters #230](https://github.com/OpenPrinting/libcupsfilters/issues/230). PDFio's error callback must return `true` to continue a warning; the affected callback always returned `false`. The patch also forwards warnings and errors through the filter's supplied logger and preserves the requested error-sheet behavior.
 
-Download the [patch and regression checks](../../downloads/pdf-warning-recovery-v0.1.0.zip?raw=true), or read the [unified diff](libcupsfilters-pdfio-warnings.patch). This is a proposed source fix for maintainers and package builders. It is not an upstream release or an installable replacement package.
+Download the [patch and regression checks](../../downloads/pdf-warning-recovery-v0.1.0.zip?raw=true), or read the [unified diff](libcupsfilters-pdfio-warnings.patch). This source patch is supplied for maintainers and package builders working with 2.2.1. It is not an upstream release or an installable replacement package.
 
 ## Apply and check
 
-Use a clean libcupsfilters **2.2.1** source tree. The patch also applies to the current filter sources at [`c5dc208`](https://github.com/OpenPrinting/libcupsfilters/commit/c5dc208c05068ed2b1428e3562516a4bd08e0f0f). Check newer upstream versions before applying it.
+Use a clean libcupsfilters **2.2.1** source tree. The patch was also checked against the pre-merge filter sources at [`c5dc208`](https://github.com/OpenPrinting/libcupsfilters/commit/c5dc208c05068ed2b1428e3562516a4bd08e0f0f). Do not reapply it to a source tree that already includes PR #254.
 
 ```sh
 cd /path/to/libcupsfilters-2.2.1
@@ -45,7 +45,7 @@ The included independently generated fixture draws the same red image three time
 - A non-PDF header returning failure and reaching the error logger.
 - Duplicate names pointing to different objects, with the compatibility limit below checked explicitly.
 
-The regression command fails on unpatched 2.2.1. The patched 2.2.1 and current `pdftopdf.c`/`ipp-options.c` sources were checked with PDFio 1.6.5, CUPS 2.3.4 and a targeted native build on macOS arm64. Those local checks do not establish a full `make check` result or physical printer behavior. Other malformed-PDF paths are outside this patch's coverage.
+The regression command fails on unpatched 2.2.1. The patched 2.2.1 and pre-merge `c5dc208` `pdftopdf.c`/`ipp-options.c` sources were checked with PDFio 1.6.5, CUPS 2.3.4 and a targeted native build on macOS arm64. Those local checks do not establish a full `make check` result or physical printer behavior. Other malformed-PDF paths are outside this patch's coverage.
 
 Separately, [jasonvanwyk tested PR commit `ae2f1f4`](https://github.com/OpenPrinting/libcupsfilters/pull/254#issuecomment-5775593915) on Arch Linux with CUPS 2.4.19, cups-filters 2.0.1, PDFio 1.6.5 and Ghostscript 10.07.1. For the original cairo fixture, plain and fit output retained two pages and five image paints; two-up retained one page and all five paints. The Canon raster stage completed without errors. His subsequent physical-print check covered plain and fit jobs through cupsd and the Canon UFR II driver: both completed without the reported processing hang, producing four correct pages in total. Physical two-up printing was not reported.
 

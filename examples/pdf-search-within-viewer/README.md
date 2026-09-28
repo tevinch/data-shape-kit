@@ -2,7 +2,7 @@
 
 Searching an embedded PDF can move the surrounding article or application panel. This example keeps navigation inside the PDF viewer while showing the selected text, including rotated pages, repeated Next/Previous operations and wraparound.
 
-It addresses [PDF.js #21997](https://github.com/mozilla/pdf.js/issues/21997) with a version-specific change for **PDF.js 6.3.289**. It uses the standard `PDFViewer`, `PDFLinkService` and `PDFFindController` integration. It is a standalone example and source patch; it is not an upstream release.
+It addresses the embedded-viewer scrolling problem tracked in [PDF.js #22009](https://github.com/mozilla/pdf.js/issues/22009) with a version-specific change for **PDF.js 6.3.289**. The original report, [#21997](https://github.com/mozilla/pdf.js/issues/21997), was closed as a duplicate on 22 September 2026. As checked on 28 September, #22009 remains open and the latest stable release is still 6.3.289. This example uses the standard `PDFViewer`, `PDFLinkService` and `PDFFindController` integration. It is a standalone example and source patch; it is not an upstream release.
 
 ## Try it
 

@@ -1,5 +1,13 @@
 # DOCX repeated block replacement
 
+**Official fix available — 28 September 2026:** [docx 9.8.0](https://github.com/dolanmiu/docx/releases/tag/9.8.0) includes the upstream repair in [PR #3540](https://github.com/dolanmiu/docx/pull/3540). Upgrade to the official release when possible. The 46 generated DOCX checks in this folder pass against unmodified 9.8.0 through both ESM and CommonJS, preserving the intervening content in the repeated-block scenarios. These are programmatic OOXML checks, not Word rendering or validation of your own templates.
+
+Remove the 9.7.1-specific patch from your application's patch configuration before upgrading, then update and commit its dependency lockfile. Do not apply this folder's patch to 9.8.0. For example, install the exact official version with `npm install --ignore-scripts --save-exact docx@9.8.0`, then run your application's document checks.
+
+To repeat the release check, use a separate copy of this fixture, install `docx@9.8.0` with the command above, and run `node --test replacement.test.mjs`. The `npm test` command below is deliberately restricted to the older 9.7.1 patch workflow and will reject 9.8.0.
+
+## For applications still pinned to 9.7.1
+
 This exact-version patch fixes `docx` 9.7.1 `patchDocument` calls where the same `PatchType.DOCUMENT` key appears in separate paragraphs. The published Node entrypoints collect all matching paragraph paths, then mutate them from the start of the document; when a replacement changes the number of siblings, later cached paths can delete intervening author content or replace the wrong block. The patch visits DOCUMENT paths in descending document order. Existing `PatchType.PARAGRAPH` traversal and the public API stay unchanged.
 
 [Download the v0.1.0 source, patch, and checks](../../downloads/docx-repeated-blocks-v0.1.0.zip?raw=true) · [Inspect the patch](patches/docx+9.7.1.patch)
@@ -70,7 +78,7 @@ Each DOCUMENT placeholder occupies and replaces a whole paragraph. This change p
 
 The suite generates DOCX archives and parses the resulting OOXML instead of simulating the replacement algorithm. In both Node module formats it checks two and three occurrences, adjacent occurrences, zero/one/multiple replacement children, `recursive` true and false, custom delimiters, split formatted runs, distinct keys, top-level table siblings, separate and nested table cells, table replacements, headers, footers, Unicode, paragraph and run styles, actual image bytes and relationships, actual hyperlink targets, single/no-match controls, and repeated PARAGRAPH behavior. The verifier also rejects a wrong package version and either modified entrypoint before applying anything, retains child/spawn/cleanup failures, and post-checks the source installation.
 
-The fixtures are generated examples; the reporter's original template was not available. Coverage does not establish behavior for every Word layout, textboxes, same-paragraph DOCUMENT semantics, browser/UMD bundles, or unrelated `patchDocument` defects. This is an adoption patch for the exact published Node files above and has not been accepted upstream.
+The fixtures are generated examples; the reporter's original template was not available. Coverage does not establish behavior for every Word layout, textboxes, same-paragraph DOCUMENT semantics, browser/UMD bundles, or unrelated `patchDocument` defects. This folder's 9.7.1 patch targets only the exact published Node files above; the upstream release contains a separate repair.
 
 [mrobst](https://github.com/dolanmiu/docx/issues/3504) identified the stale-path problem and proposed processing matches in reverse order. The patch implements that proposal for DOCUMENT replacements only. The upstream code retains the full Dolan MIT notice in [LICENSE](LICENSE), with the fixture and ordering additions also released under MIT.
 
