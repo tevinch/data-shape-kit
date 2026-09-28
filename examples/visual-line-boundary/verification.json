@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-09-28",
+  "mode": "Software-operated real Chrome browser on macOS; no human manual validation",
+  "browser": "Chrome/152.0.0.0",
+  "lexical": "0.51.0",
+  "matrix": {
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "groups": {
+      "rich_plain_direction_document_shadow_iframe": 12,
+      "span_button_space_direction": 8,
+      "same_line_and_transformed_same_line": 4,
+      "original_bug_negative_controls": 2,
+      "delegation_and_disposal": 8,
+      "two_consecutive_deletions_with_history": 2
+    }
+  },
+  "negativeControlBeforeImplementation": {
+    "total": 26,
+    "passed": 8,
+    "failed": 18,
+    "reason": "No-op extension reproduced loss of the neighbouring decorator in 18 applicable cases"
+  },
+  "evidence": {
+    "originalWorkflow": "Exact text, decorator presence, unrelated paragraph and undo/redo asserted",
+    "layout": "Boundary character and decorator rectangles independently checked",
+    "delegation": "Callback and fallback counts checked independently; disposed callback must not run",
+    "composition": "Programmatically set Lexical composition state; no real IME claim"
+  },
+  "notVerified": [
+    "Firefox",
+    "Safari",
+    "reporter adoption",
+    "human manual validation",
+    "general bidirectional or transformed text layout"
+  ],
+  "keyboardChecks": {
+    "plainForwardControlK": "requested text deleted, equation and separate paragraph retained",
+    "richBackwardCommandBackspace": "eps deleted, equation and separate paragraph retained",
+    "readonlyControlK": "content unchanged; read-only setting also retained after mode switch"
+  }
+}

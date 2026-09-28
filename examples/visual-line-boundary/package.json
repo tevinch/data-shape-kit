@@ -1,0 +1,19 @@
+{
+  "name": "visual-line-boundary-example",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild demo.js --bundle --format=esm --outfile=bundle.js",
+    "start": "node serve.mjs"
+  },
+  "dependencies": {
+    "lexical": "0.51.0",
+    "@lexical/plain-text": "0.51.0",
+    "@lexical/rich-text": "0.51.0",
+    "@lexical/history": "0.51.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Delete a visual line in Lexical without losing an inline decorator on the neighbouring line | [Visual line boundary](examples/visual-line-boundary) | Public-command extension; Lexical 0.51.0 and browser checks |
 | Render short chemical reaction arrows with MathJax Pagella | [Pagella chemical arrow](examples/pagella-chemical-arrow) | MathML minimum-width workaround; complete browser example |
 | Generate tagged PDF form widgets with accessible names and correct page references | [Accessible PDF form](examples/accessible-pdf-form) | PDFKit source patch and two-page generation example |
 | Open, edit and save XFA PDF forms containing bold and italic text | [XFA rich text](examples/xfa-rich-text) | PDF.js 6.3.289 source patch, worker repair and two-page browser example |
