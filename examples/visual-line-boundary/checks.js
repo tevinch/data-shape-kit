@@ -14,7 +14,7 @@ function equal(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 async function one(options) {
-  const { rich, backward, wide, button, space, realm, enabled, raised, guard, repeat } = options;
+  const { rich, backward, wide, button, space, realm, enabled, raised, guard, repeat, beforeTokenSpace } = options;
   const fixture = document.createElement("section");
   document.body.append(fixture);
   let host = fixture, doc = document;
@@ -32,7 +32,7 @@ async function one(options) {
   const root = doc.createElement("div");
   root.className = "editor";
   root.contentEditable = "true";
-  root.style.width = (wide ? 1e3 : backward ? 220 : 190) + "px";
+  root.style.width = (wide ? 1e3 : backward ? 220 : beforeTokenSpace === false ? 185 : 190) + "px";
   host.append(root);
   class Token extends DecoratorNode {
     static getType() {
@@ -91,22 +91,26 @@ async function one(options) {
   const removeCandidate = enabled ? registerVisualLineBoundary(editor) : () => {
   };
   editor.registerCommand = originalRegister;
+  const leftText = beforeTokenSpace === false ? left.trimEnd() : left;
   const rightText = (space ? " " : "") + right;
   const offset = backward ? space ? 4 : 3 : 2;
-  let before, leftKey, rightKey;
+  let before, leftKey, rightKey, leftEdgeLength;
   try {
     editor.update(() => {
-      const a = $createTextNode(left), b = $createTextNode(rightText);
+      const a = $createTextNode(leftText), b = $createTextNode(rightText);
+      const prefix = guard === "origin-transform" ? $createTextNode(leftText.slice(0, 6)).setStyle("color: rgb(10,20,30); transform: translateX(1px)") : null;
+      if (prefix) a.setTextContent(leftText.slice(6));
+      leftEdgeLength = a.getTextContentSize();
       leftKey = a.getKey();
       rightKey = b.getKey();
-      $getRoot().clear().append($createParagraphNode().append(a, new Token(), b), $createParagraphNode().append($createTextNode("Keep this paragraph.")));
-      (backward ? b : a).select(offset, offset);
+      $getRoot().clear().append($createParagraphNode().append(...(prefix ? [prefix, a] : [a]), new Token(), b), $createParagraphNode().append($createTextNode("Keep this paragraph.")));
+      (backward ? b : prefix || a).select(offset, offset);
       before = tree();
     }, { discrete: true, tag: HISTORY_PUSH_TAG });
     await tick();
     const token = root.querySelector(".token");
     const edgeText = editor.getElementByKey(backward ? rightKey : leftKey).firstChild;
-    const edgeOffset = backward ? space ? 1 : 0 : left.length - 1;
+    const edgeOffset = backward ? space ? 1 : 0 : leftEdgeLength - 1;
     const edgeRange = doc.createRange();
     edgeRange.setStart(edgeText, edgeOffset);
     edgeRange.setEnd(edgeText, edgeOffset + 1);
@@ -149,7 +153,7 @@ async function one(options) {
       await tick();
       repeatCorrect = equal(repeated, expectedRepeated) && equal(repeatUndo, after) && equal(repeatRedo, repeated) && calls.length === 2 && calls[0].handled && !calls[1].handled;
     }
-    const expected = wide ? [[["text", backward ? rightText.slice(offset) : left.slice(0, offset)]], [["text", "Keep this paragraph."]]] : [[["text", backward ? left : left.slice(0, offset)], ["token", "[equation]"], ["text", backward ? (space ? " " : "") + rightText.slice(offset) : rightText]], [["text", "Keep this paragraph."]]];
+    const expected = wide ? [[["text", backward ? rightText.slice(offset) : leftText.slice(0, offset)]], [["text", "Keep this paragraph."]]] : [[["text", backward ? leftText : leftText.slice(0, offset)], ["token", "[equation]"], ["text", backward ? (space ? " " : "") + rightText.slice(offset) : rightText]], [["text", "Keep this paragraph."]]];
     editor.dispatchCommand(UNDO_COMMAND, void 0);
     await tick();
     const undone = editor.getEditorState().read(tree);
@@ -173,8 +177,9 @@ async function runMatrix(output) {
   for (const backward of [false, true]) for (const button of [false, true]) for (const space of [false, true]) cases.push({ rich: true, backward, button, space, realm: "document", enabled: true, wide: false });
   for (const backward of [false, true]) for (const raised of [false, true]) cases.push({ rich: true, backward, raised, space: !backward, realm: "document", enabled: true, wide: true });
   for (const backward of [false, true]) cases.push({ rich: true, backward, space: !backward, realm: "document", enabled: false, wide: false });
-  for (const guard of ["readonly", "composition", "selection", "rtl", "transform", "foreign-selection", "isolated", "dispose"]) cases.push({ rich: true, backward: false, space: true, realm: "document", enabled: true, guard });
+  for (const guard of ["readonly", "composition", "selection", "rtl", "transform", "foreign-selection", "isolated", "dispose", "origin-transform"]) cases.push({ rich: true, backward: false, space: true, realm: "document", enabled: true, guard });
   for (const backward of [false, true]) cases.push({ rich: true, backward, space: !backward, realm: "document", enabled: true, repeat: true });
+  for (const button of [false, true]) cases.push({rich:true,backward:false,button,space:true,beforeTokenSpace:false,realm:"document",enabled:true});
   for (const item of cases) {
     try {
       results.push(await one(item));

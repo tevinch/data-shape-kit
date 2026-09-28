@@ -4,16 +4,17 @@
   "browser": "Chrome/152.0.0.0",
   "lexical": "0.51.0",
   "matrix": {
-    "total": 36,
-    "passed": 36,
+    "total": 39,
+    "passed": 39,
     "failed": 0,
     "groups": {
       "rich_plain_direction_document_shadow_iframe": 12,
       "span_button_space_direction": 8,
       "same_line_and_transformed_same_line": 4,
       "original_bug_negative_controls": 2,
-      "delegation_and_disposal": 8,
-      "two_consecutive_deletions_with_history": 2
+      "delegation_and_disposal": 9,
+      "two_consecutive_deletions_with_history": 2,
+      "forward_without_space_before_decorator": 2
     }
   },
   "negativeControlBeforeImplementation": {
@@ -39,5 +40,16 @@
     "plainForwardControlK": "requested text deleted, equation and separate paragraph retained",
     "richBackwardCommandBackspace": "eps deleted, equation and separate paragraph retained",
     "readonlyControlK": "content unchanged; read-only setting also retained after mode switch"
+  },
+  "reviewRegression": {
+    "beforeOriginGuard": {
+      "passed": 38,
+      "total": 39,
+      "failingCase": "distinct transformed origin text was handled rather than delegated"
+    },
+    "afterOriginGuard": {
+      "passed": 39,
+      "total": 39
+    }
   }
 }

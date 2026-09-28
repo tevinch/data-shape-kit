@@ -52,6 +52,7 @@ export function registerVisualLineBoundary(editor) {
     const origin = getDOMSelectionRange(domSelection, root);
     if (!origin || !root.contains(origin.startContainer) ||
         getNearestEditorFromDOMNode(origin.startContainer) !== editor) return false;
+    if (!hasOrdinaryFlow(origin.startContainer.parentElement, root, view)) return false;
 
     // Stale DOM/model selections must not be used to choose a deletion range.
     const originalPoint = $createRangeSelection();
