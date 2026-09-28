@@ -1,0 +1,30 @@
+--- a/src/core/xfa/xhtml.js
++++ b/src/core/xfa/xhtml.js
+@@ -371,12 +371,7 @@
+ class B extends XhtmlObject {
+   constructor(attributes) {
+     super(attributes, "b");
+-  }
+-
+-  [$pushGlyphs](measure) {
+-    measure.pushFont({ weight: "bold" });
+-    super[$pushGlyphs](measure);
+-    measure.popFont();
++    this.style = `font-weight:bold;${this.style}`;
+   }
+ }
+ 
+@@ -461,12 +456,7 @@
+ class I extends XhtmlObject {
+   constructor(attributes) {
+     super(attributes, "i");
+-  }
+-
+-  [$pushGlyphs](measure) {
+-    measure.pushFont({ posture: "italic" });
+-    super[$pushGlyphs](measure);
+-    measure.popFont();
++    this.style = `font-style:italic;${this.style}`;
+   }
+ }
+ 

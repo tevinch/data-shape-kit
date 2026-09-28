@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XFA rich text example</title>
+<link rel="stylesheet" href="./runtime/web/pdf_viewer.css">
+<style>
+  body { margin: 0; color: #192b3b; background: #f3f5f7; font: 16px system-ui, sans-serif; }
+  main { max-width: 980px; padding: 24px; margin: auto; }
+  h1 { margin-bottom: 8px; font-size: 26px; }
+  p { line-height: 1.5; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+  button, select { font: inherit; padding: 8px 12px; }
+  button { cursor: pointer; }
+  a { color: #1c548b; }
+  #frame { height: 540px; position: relative; border: 1px solid #b3c0cc; }
+  #viewerContainer { position: absolute; inset: 0; overflow: auto; background: #dce2e7; }
+  #status { min-height: 24px; }
+  #report { white-space: pre-wrap; overflow-wrap: anywhere; font: 14px ui-monospace, monospace; }
+</style>
+<main>
+  <h1>XFA rich text example</h1>
+  <p>Open a two-page form with bold and italic text. Edit the project note, then save and reopen it to check that the new value and original content remain.</p>
+  <p id="mode"></p>
+  <div class="controls">
+    <label for="sample">Text example</label>
+    <select id="sample">
+      <option value="nested">Bold with nested italic</option>
+      <option value="reverse">Italic with nested bold</option>
+      <option value="bold">Bold</option>
+      <option value="italic">Italic</option>
+      <option value="styled">Inherited font size</option>
+      <option value="paragraphs">Paragraph spacing</option>
+      <option value="wrapping">Long text wrapping</option>
+      <option value="overrides">Explicit normal style</option>
+      <option value="plain">Plain text control</option>
+    </select>
+    <button id="reset" disabled>Reset example</button>
+    <button id="save" disabled>Save and reopen</button>
+    <button id="download" disabled>Download current PDF</button>
+    <button id="checks" disabled>Run checks</button>
+  </div>
+  <p id="status" role="status">Preparing viewer…</p>
+  <div id="frame"><div id="viewerContainer"><div class="pdfViewer" id="viewer"></div></div></div>
+  <pre id="report" aria-live="polite"></pre>
+  <p>The examples contain no scripts or submission actions. Editing and saving happen in your browser. The original package files and input samples are retained.</p>
+  <p><a href="./README.md">Usage, source patch and limits</a> · <a href="./LICENSE">Apache-2.0 license</a></p>
+</main>
+<script type="module" src="./demo.mjs"></script>
+</html>

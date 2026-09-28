@@ -1,0 +1,62 @@
+{
+  "date": "2026-09-28",
+  "pdfjs": "6.3.289",
+  "fixtures": "Synthetic two-page XFA; no reporter document used",
+  "checks": {
+    "repairedChrome": {
+      "passed": 11,
+      "failed": 0
+    },
+    "originalChrome": {
+      "passed": 2,
+      "failed": 9
+    },
+    "repairedNodeLegacy": {
+      "passed": 11,
+      "failed": 0
+    },
+    "originalNodeLegacy": {
+      "passed": 2,
+      "failed": 9
+    },
+    "mutationWithoutBoldDefault": {
+      "passed": 5,
+      "failed": 6
+    }
+  },
+  "browserMode": "Software-operated Chrome, not human manual validation",
+  "browserObservations": {
+    "nested": {
+      "B": "700 normal",
+      "I": "700 italic",
+      "parentParagraph": "400 normal"
+    },
+    "reverse": {
+      "I": "400 italic",
+      "B": "700 italic",
+      "parentParagraph": "400 normal"
+    },
+    "explicitNormalOverrides": {
+      "B": "400 normal",
+      "I": "400 normal"
+    },
+    "saveReopenValues": [
+      "Updated project note",
+      "Second revision"
+    ],
+    "reference": {
+      "value": "REF-204",
+      "readOnly": true
+    },
+    "pagesAfterSecondSave": 2,
+    "secondPageText": "Page two: original content is still here."
+  },
+  "sourcePatch": "git apply --check against v6.3.289 src/core/xfa/xhtml.js passed",
+  "limits": [
+    "No full upstream suite",
+    "No original reporter confirmation",
+    "No Firefox or Safari verification",
+    "No Windows execution",
+    "No printing or arbitrary production PDF coverage"
+  ]
+}
