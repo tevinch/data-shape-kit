@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-09-28T09:52:09.139Z",
+  "node": "v18.20.4",
+  "platform": "darwin",
+  "verificationMode": "scripted software checks",
+  "packageVersion": "2.8.1-clock-values.0",
+  "sourceCommit": "938435d366cb0e0fbe81f56ca44d045edf2e03c5",
+  "upstreamBase": "9f2061febeeb363d03352efe33d30c33073a0242",
+  "officialReproduction": {
+    "packageVersion": "2.8.1",
+    "count": 8,
+    "last": "2008-01-01T09:03:30.000Z"
+  },
+  "sourceSuite": {
+    "passed": 391,
+    "skipped": 9,
+    "suitesPassed": 12
+  },
+  "addedTests": {
+    "total": 10,
+    "failOnBaseline": 9,
+    "preservationControlPassesOnBaseline": 1
+  },
+  "freshTarballInstall": true,
+  "commonjs": {
+    "count": 12,
+    "first": "2008-01-01T09:00:00.000Z",
+    "last": "2008-01-01T09:05:30.000Z",
+    "cacheModes": 2,
+    "queriesPerMode": 2,
+    "originalSerializationPreserved": true
+  },
+  "esmViaWebpackModuleField": {
+    "count": 12,
+    "first": "2008-01-01T09:00:00.000Z",
+    "last": "2008-01-01T09:05:30.000Z",
+    "cacheModes": 2,
+    "queriesPerMode": 2,
+    "originalSerializationPreserved": true
+  },
+  "es5": [
+    {
+      "file": "rrule.js",
+      "SetAvailable": false,
+      "ArrayFromAvailable": false,
+      "count": 12,
+      "last": "2008-01-01T09:05:30.000Z"
+    },
+    {
+      "file": "rrule.min.js",
+      "SetAvailable": false,
+      "ArrayFromAvailable": false,
+      "count": 12,
+      "last": "2008-01-01T09:05:30.000Z"
+    }
+  ],
+  "sha256": "d3f4e011e1ebfbf1b74fdc247ed36378b7cc0e60bf5d0ddfd7fb226c001600a1",
+  "bytes": 209661
+}
