@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Pagella arrows from TeX</title>
+<style>body{font:18px system-ui;max-width:950px;margin:40px auto;padding:0 18px}section{border:1px solid #ccc;padding:20px;margin:20px 0;min-height:70px}pre{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}button{padding:10px;margin:3px}</style>
+<script src="pagella-arrow-minimum.js"></script>
+<script>
+const evidence = {conversions:0,filterCalls:0,changes:0,cycles:0};
+const baseline = new URLSearchParams(location.search).has('original');
+window.MathJax = {
+  "loader": {
+    "load": [
+      "input/tex",
+      "[tex]/amscd",
+      "[tex]/bbox",
+      "[tex]/braket",
+      "[tex]/cancel",
+      "[tex]/cases",
+      "[tex]/centernot",
+      "[tex]/colortbl",
+      "[tex]/empheq",
+      "[tex]/gensymb",
+      "[tex]/mathtools",
+      "[tex]/mhchem",
+      "[tex]/physics",
+      "[tex]/tagformat",
+      "[tex]/textcomp",
+      "[tex]/upgreek",
+      "[tex]/verb",
+      "ui/safe"
+    ]
+  },
+  "options": {
+    "skipHtmlTags": [
+      "script",
+      "noscript",
+      "style",
+      "textarea",
+      "pre",
+      "code",
+      "annotation",
+      "annotation-xml",
+      "tt",
+      "nowiki",
+      "kbd",
+      "syntaxhighlight",
+      "plantuml"
+    ],
+    "ignoreHtmlClass": [
+      "tex2jax_ignore",
+      "diff"
+    ],
+    "menuOptions": {
+      "settings": {
+        "zoom": "DoubleClick",
+        "semantics": true
+      },
+      "annotationTypes": {
+        "TeX": [
+          "application/x-tex"
+        ],
+        "OpenMath": [
+          "OpenMath"
+        ]
+      }
+    }
+  },
+  "tex": {
+    "packages": [
+      "ams",
+      "amscd",
+      "base",
+      "bbox",
+      "braket",
+      "cancel",
+      "cases",
+      "centernot",
+      "colortbl",
+      "empheq",
+      "gensymb",
+      "mathtools",
+      "mhchem",
+      "newcommand",
+      "physics",
+      "require",
+      "tagformat",
+      "textcomp",
+      "textmacros",
+      "upgreek",
+      "verb"
+    ],
+    "inlineMath": [
+      [
+        "\\(",
+        "\\)"
+      ]
+    ],
+    "displayMath": [
+      [
+        "$$",
+        "$$"
+      ],
+      [
+        "\\[",
+        "\\]"
+      ]
+    ],
+    "tags": "ams",
+    "maxBuffer": 10240,
+    "macros": []
+  },
+  "chtml": {
+    "scale": 1.25
+  },
+  "output": {
+    "font": "mathjax-pagella"
+  }
+};
+if (!baseline) {
+  MathJax.chtml.preFilters = [({math}) => {
+    evidence.filterCalls++;
+    evidence.changes += setPagellaArrowMinimum(math);
+  }];
+}
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js"></script>
+<h1>Pagella arrows from TeX</h1>
+<p>Generate MathML from TeX, then render that unchanged MathML with Pagella.</p>
+<p id="untouched">Existing paragraph: sodium and water.</p>
+<section id="formula" aria-label="Chemical arrow"></section>
+<section id="ordinary"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi><mo>=</mo><mn>2</mn></math></section>
+<pre id="skipped">Unprocessed code: \(x + 1\)</pre>
+<button id="short">Regenerate short label</button>
+<button id="long">Generate longer label</button>
+<button id="tex">Render TeX directly</button>
+<button id="explicit">Render explicit 4em minimum</button>
+<button id="inherited">Render inherited 4em minimum</button>
+<p><a href="?original">Original configuration</a> · <a href="?">With automatic minimum</a></p>
+<h2>Generated input</h2><pre id="source"></pre>
+<h2>Checks</h2><pre id="status">Waiting for MathJax</pre>
+<script>
+let route='generated-mathml';
+let generated='';
+let before={filterCalls:0,changes:0,conversions:0};
+let expectedLabel='𝑥';
+let busy=false;
+function report() {
+ const mj=MathJax, box=document.querySelector('#formula');
+ const arrow=box.querySelector('mjx-stretchy-h');
+ const label=box.querySelector('mjx-over');
+ const errors=[...document.querySelectorAll('mjx-merror,[data-mjx-error]')].map(n=>({text:n.textContent,title:n.getAttribute('title')}));
+ const treeArrows=[];
+ for (const math of mj.startup.document.math) {
+   math.root.walkTree(node=>{
+     if (node.kind==='mo' && node.getText()==='\uE409') treeArrows.push(node.attributes.get('minsize'));
+   });
+ }
+ const parsed=new DOMParser().parseFromString(generated,'application/xml');
+ const sourceArrow=[...parsed.querySelectorAll('mo')].find(n=>n.textContent==='\uE409');
+ const checks={
+  version:mj.version==='4.1.3',
+  font:mj.startup.document.outputJax.font.constructor.NAME==='MathJaxPagella',
+  safeLoaded:!!mj._?.ui?.safe && !!mj.startup.document.safe,
+  mhchemLoaded:!!mj._?.input?.tex?.mhchem,
+  conversionRan:route==='direct-tex' || evidence.conversions===before.conversions+1,
+  generatedArrow:route!=='generated-mathml' || !!sourceArrow,
+  sourceHasNoAddedMinimum:route!=='generated-mathml' || !sourceArrow?.hasAttribute('minsize'),
+  filterRan:evidence.filterCalls>before.filterCalls,
+  targetMinimum:treeArrows.length===1 && treeArrows[0]===(['explicit','inherited'].includes(route)?'4em':'2em'),
+  formulaRendered:!!arrow && arrow.getBoundingClientRect().width>0 && arrow.querySelectorAll('mjx-beg,mjx-end').length===2,
+  labelRendered:!!label && label.getBoundingClientRect().height>0 && label.textContent===expectedLabel,
+  noOutputError:errors.length===0,
+  ordinaryFormula:document.querySelector('#ordinary mjx-math')?.textContent.replace(/\s/g,'')==='𝑦=2',
+  paragraph:document.querySelector('#untouched').textContent==='Existing paragraph: sodium and water.',
+  skippedCode:!document.querySelector('#skipped mjx-container')
+ };
+ document.querySelector('#status').textContent=JSON.stringify({passed:Object.values(checks).every(Boolean),route,checks,evidence:{...evidence},treeArrows,sourceMinimum:sourceArrow?.getAttribute('minsize')??null,sourceInheritedMinimum:sourceArrow?.parentElement?.getAttribute('minsize')??null,arrowWidth:arrow?.getBoundingClientRect().width??null,labelText:label?.textContent??null,errors},null,2);
+}
+async function render(kind='short') {
+ if(busy)return;
+ busy=true;
+ for(const b of document.querySelectorAll('button'))b.disabled=true;
+ try {
+  await MathJax.startup.promise;
+  const box=document.querySelector('#formula');
+  before={filterCalls:evidence.filterCalls,changes:evidence.changes,conversions:evidence.conversions};
+  expectedLabel=kind==='long'?'reaction conditions':'𝑥';
+  const tex=kind==='long'?String.raw`\mhchemxRightleftharpoons{\text{reaction conditions}}`:String.raw`\mhchemxRightleftharpoons x`;
+  MathJax.typesetClear([box]);
+  if(kind==='tex') {
+   route='direct-tex';generated='';box.textContent=String.raw`\(`+tex+String.raw`\)`;
+  } else {
+   generated=await MathJax.tex2mmlPromise(tex);evidence.conversions++;
+   route=['explicit','inherited'].includes(kind)?kind:'generated-mathml';
+   if(['explicit','inherited'].includes(kind)) {
+    const parsed=new DOMParser().parseFromString(generated,'application/xml');
+    for(const mo of parsed.querySelectorAll('mo'))if(mo.textContent==='\uE409') {
+     if(kind==='explicit')mo.setAttribute('minsize','4em');
+     else {
+      if(mo.parentElement.localName!=='mstyle')throw new Error('Expected generated mstyle');
+      mo.parentElement.setAttribute('minsize','4em');
+     }
+    }
+    generated=new XMLSerializer().serializeToString(parsed);
+   }
+   box.innerHTML=generated;
+  }
+  document.querySelector('#source').textContent=generated||tex;
+  await MathJax.typesetPromise([box]);evidence.cycles++;report();
+ } catch(error){document.querySelector('#status').textContent=JSON.stringify({passed:false,error:error.message,evidence},null,2);}
+ finally {busy=false;for(const b of document.querySelectorAll('button'))b.disabled=false;}
+}
+for(const kind of ['short','long','tex','explicit','inherited'])document.querySelector('#'+kind).onclick=()=>render(kind);
+window.addEventListener('load',()=>render('short'));
+</script></html>
