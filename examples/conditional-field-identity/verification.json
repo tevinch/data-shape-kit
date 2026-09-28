@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-28",
+  "environment": {
+    "react": "19.3.0",
+    "reactDOM": "19.3.0",
+    "reactHookForm": "7.89.0",
+    "browser": "Chrome 152",
+    "os": "macOS",
+    "mode": "software-operated browser UI; no human manual validation"
+  },
+  "sourceSHA256": {
+    "demo.jsx": "cf6a2b37e2f19b6085038a1723a2405bd0f8df9d20f00e8fd2781b10aa99077b",
+    "index.html": "31d6b2d7cdb433731d3ef128eb16f487a24433937ec254a4f8adf5a74292f7fb",
+    "package-lock.json": "c06ebe6021e56900c1e5fc1ec21cbf71cd7743ab883b6c971852da897e61d0be"
+  },
+  "originalHostedReproduction": "NSW111 \u2192 Continue \u2192 Go back \u2192 QLD shows date111",
+  "red": {
+    "date": "111",
+    "sameDOMNode": true,
+    "submittedDate": "111",
+    "submissions": 2
+  },
+  "green": {
+    "firstQLDDate": "_default_date",
+    "sameDOMNode": false,
+    "submissions": [
+      {
+        "issueState": "NSW",
+        "name": "name",
+        "number": "111"
+      },
+      {
+        "issueState": "QLD",
+        "name": "name",
+        "number": "111",
+        "date": "_default_date"
+      },
+      {
+        "issueState": "QLD",
+        "name": "Alex",
+        "number": "111",
+        "date": "2026-09-28"
+      },
+      {
+        "issueState": "NSW",
+        "name": "Alex",
+        "number": "222",
+        "date": "2026-09-28"
+      },
+      {
+        "issueState": "QLD",
+        "name": "Alex",
+        "number": "222",
+        "date": "2026-09-28"
+      }
+    ]
+  },
+  "limits": [
+    "Recorded UI observations, not an automated test runner.",
+    "No custom inputs, Controller, field arrays, different unregister policy or cross-browser claim.",
+    "Reporter adoption not confirmed."
+  ]
+}

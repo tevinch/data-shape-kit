@@ -1,0 +1,6 @@
+{
+  "name": "conditional-field-identity-example", "private": true, "type": "module", "version": "1.0.0",
+  "scripts": {"build": "esbuild demo.jsx --bundle --format=esm --outfile=dist/demo.js", "start": "node serve.mjs"},
+  "dependencies": {"react": "19.3.0", "react-dom": "19.3.0", "react-hook-form": "7.89.0"},
+  "devDependencies": {"esbuild": "0.28.2"}
+}

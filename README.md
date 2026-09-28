@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Keep saved values out of a different conditional React Hook Form field | [Conditional field identity](examples/conditional-field-identity) | Two stable input keys; runnable save/return comparison |
 | Keep a TinyMCE table when typing over text dragged from its left edge | [Table edge input](examples/table-edge-input) | Public-event guard; TinyMCE 8.9.2 and browser checks |
 | Delete a visual line in Lexical without losing an inline decorator on the neighbouring line | [Visual line boundary](examples/visual-line-boundary) | Public-command extension; Lexical 0.51.0 and browser checks |
 | Render short chemical reaction arrows with MathJax Pagella | [Pagella chemical arrow](examples/pagella-chemical-arrow) | MathML minimum-width workaround; complete browser example |
