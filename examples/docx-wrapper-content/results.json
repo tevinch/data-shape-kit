@@ -1,0 +1,54 @@
+{
+  "version": "1.13.0",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "validation": "Programmatically generated DOCX fixtures and Node.js conversion; not human validation in Microsoft Word. Directional rendering semantics are outside this text-preservation check.",
+  "results": [
+    {
+      "file": "moved-text.docx",
+      "expectedHtml": "<p>MOVED HERE</p>",
+      "actualHtml": "<p>MOVED HERE</p>",
+      "messages": [],
+      "matchesExpected": true
+    },
+    {
+      "file": "custom-xml-inline.docx",
+      "expectedHtml": "<p>INLINE CUSTOM XML</p>",
+      "actualHtml": "<p>INLINE CUSTOM XML</p>",
+      "messages": [],
+      "matchesExpected": true
+    },
+    {
+      "file": "custom-xml-block.docx",
+      "expectedHtml": "<p>BLOCK CUSTOM XML</p>",
+      "actualHtml": "<p>BLOCK CUSTOM XML</p>",
+      "messages": [],
+      "matchesExpected": true
+    },
+    {
+      "file": "direction-embedding.docx",
+      "expectedHtml": "<p>DIR TEXT</p>",
+      "actualHtml": "",
+      "messages": [
+        {
+          "type": "warning",
+          "message": "An unrecognised element was ignored: w:dir"
+        }
+      ],
+      "matchesExpected": false
+    },
+    {
+      "file": "direction-override.docx",
+      "expectedHtml": "<p>BDO TEXT</p>",
+      "actualHtml": "",
+      "messages": [
+        {
+          "type": "warning",
+          "message": "An unrecognised element was ignored: w:bdo"
+        }
+      ],
+      "matchesExpected": false
+    }
+  ]
+}

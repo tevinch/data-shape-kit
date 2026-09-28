@@ -1,0 +1,7 @@
+{
+  "moved-text": "<p>MOVED HERE</p>",
+  "custom-xml-inline": "<p>INLINE CUSTOM XML</p>",
+  "custom-xml-block": "<p>BLOCK CUSTOM XML</p>",
+  "direction-embedding": "<p>DIR TEXT</p>",
+  "direction-override": "<p>BDO TEXT</p>"
+}
