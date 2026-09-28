@@ -1,0 +1,20 @@
+{
+  "name": "complete-submit-validation-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node verify.mjs --patched",
+    "reproduce": "node verify.mjs --original",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@tanstack/form-core": "1.33.5",
+    "@tanstack/react-form": "1.33.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

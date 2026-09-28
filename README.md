@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Show all current field and form errors, then save after correcting them | [Complete submit validation](examples/complete-submit-validation) | TanStack Form 1.33.5 source patch; explicit opt-in and runnable React comparison |
 | Keep saved values out of a different conditional React Hook Form field | [Conditional field identity](examples/conditional-field-identity) | Two stable input keys; runnable save/return comparison |
 | Keep a TinyMCE table when typing over text dragged from its left edge | [Table edge input](examples/table-edge-input) | Public-event guard; TinyMCE 8.9.2 and browser checks |
 | Delete a visual line in Lexical without losing an inline decorator on the neighbouring line | [Visual line boundary](examples/visual-line-boundary) | Public-command extension; Lexical 0.51.0 and browser checks |

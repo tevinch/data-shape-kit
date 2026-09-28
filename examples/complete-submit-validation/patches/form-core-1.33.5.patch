@@ -1,0 +1,189 @@
+--- a/src/FormApi.ts
++++ b/src/FormApi.ts
+@@ -928,6 +928,8 @@
+ >
+ 
+ interface ValidateOpts<TFormData> {
++  // Keep errors from the field pass during a complete submit validation.
++  preserveFieldErrors?: boolean
+   // Useful in FormGroup where validation doesn't update form error map
+   dontUpdateFormErrorMap?: boolean
+   // Filter which field names to validate, useful for FormGroup validation to filter out fields that don't start with the FormGroup name
+@@ -2045,6 +2047,14 @@
+             errorSourceMap: currentErrorMapSource,
+           } = fieldMeta
+ 
++          if (
++            validateOpts?.preserveFieldErrors &&
++            currentErrorMapSource?.[errorMapKey] === 'field' &&
++            currentErrorMap?.[errorMapKey]
++          ) {
++            continue
++          }
++
+           const newFormValidatorError = fieldErrors?.[field]
+ 
+           const { newErrorValue, newSource } =
+@@ -2269,6 +2279,14 @@
+               errorMap: currentErrorMap,
+               errorSourceMap: currentErrorMapSource,
+             } = fieldMeta
++
++            if (
++              validateOpts?.preserveFieldErrors &&
++              currentErrorMapSource?.[errorMapKey] === 'field' &&
++              currentErrorMap?.[errorMapKey]
++            ) {
++              continue
++            }
+ 
+             const newFormValidatorError = fieldErrorsFromFormValidators?.[field]
+ 
+@@ -2467,6 +2485,10 @@
+ 
+     await this.validateAllFields('submit')
+ 
++    if (this.options.canSubmitWhenInvalid) {
++      await this.validate('submit', { preserveFieldErrors: true })
++    }
++
+     if (!this.state.isFieldsValid) {
+       done()
+ 
+@@ -2488,7 +2510,9 @@
+       return
+     }
+ 
+-    await this.validate('submit')
++    if (!this.options.canSubmitWhenInvalid) {
++      await this.validate('submit')
++    }
+ 
+     // Fields are invalid, do not submit
+     if (!this.state.isValid) {
+--- a/dist/esm/FormApi.js
++++ b/dist/esm/FormApi.js
+@@ -258,6 +258,14 @@
+               errorMap: currentErrorMap,
+               errorSourceMap: currentErrorMapSource
+             } = fieldMeta;
++            if (
++              validateOpts?.preserveFieldErrors &&
++              currentErrorMapSource?.[errorMapKey] === "field" &&
++              currentErrorMap?.[errorMapKey]
++            ) {
++              continue;
++            }
++
+             const newFormValidatorError = fieldErrors?.[field];
+             const { newErrorValue, newSource } = determineFormLevelErrorSourceAndValue({
+               newFormValidatorError,
+@@ -410,6 +418,14 @@
+                 errorMap: currentErrorMap,
+                 errorSourceMap: currentErrorMapSource
+               } = fieldMeta;
++              if (
++                validateOpts?.preserveFieldErrors &&
++                currentErrorMapSource?.[errorMapKey] === "field" &&
++                currentErrorMap?.[errorMapKey]
++              ) {
++                continue;
++              }
++
+               const newFormValidatorError = fieldErrorsFromFormValidators?.[field];
+               const { newErrorValue, newSource } = determineFormLevelErrorSourceAndValue({
+                 newFormValidatorError,
+@@ -521,6 +537,9 @@
+         this.baseStore.setState((prev) => ({ ...prev, isSubmitting: false }));
+       };
+       await this.validateAllFields("submit");
++      if (this.options.canSubmitWhenInvalid) {
++        await this.validate("submit", { preserveFieldErrors: true });
++      }
+       if (!this.state.isFieldsValid) {
+         done();
+         this.options.onSubmitInvalid?.({
+@@ -537,7 +556,9 @@
+         });
+         return;
+       }
+-      await this.validate("submit");
++      if (!this.options.canSubmitWhenInvalid) {
++        await this.validate("submit");
++      }
+       if (!this.state.isValid) {
+         done();
+         this.options.onSubmitInvalid?.({
+--- a/dist/cjs/FormApi.cjs
++++ b/dist/cjs/FormApi.cjs
+@@ -260,6 +260,14 @@
+               errorMap: currentErrorMap,
+               errorSourceMap: currentErrorMapSource
+             } = fieldMeta;
++            if (
++              validateOpts?.preserveFieldErrors &&
++              currentErrorMapSource?.[errorMapKey] === "field" &&
++              currentErrorMap?.[errorMapKey]
++            ) {
++              continue;
++            }
++
+             const newFormValidatorError = fieldErrors?.[field];
+             const { newErrorValue, newSource } = utils.determineFormLevelErrorSourceAndValue({
+               newFormValidatorError,
+@@ -412,6 +420,14 @@
+                 errorMap: currentErrorMap,
+                 errorSourceMap: currentErrorMapSource
+               } = fieldMeta;
++              if (
++                validateOpts?.preserveFieldErrors &&
++                currentErrorMapSource?.[errorMapKey] === "field" &&
++                currentErrorMap?.[errorMapKey]
++              ) {
++                continue;
++              }
++
+               const newFormValidatorError = fieldErrorsFromFormValidators?.[field];
+               const { newErrorValue, newSource } = utils.determineFormLevelErrorSourceAndValue({
+                 newFormValidatorError,
+@@ -523,6 +539,9 @@
+         this.baseStore.setState((prev) => ({ ...prev, isSubmitting: false }));
+       };
+       await this.validateAllFields("submit");
++      if (this.options.canSubmitWhenInvalid) {
++        await this.validate("submit", { preserveFieldErrors: true });
++      }
+       if (!this.state.isFieldsValid) {
+         done();
+         this.options.onSubmitInvalid?.({
+@@ -539,7 +558,9 @@
+         });
+         return;
+       }
+-      await this.validate("submit");
++      if (!this.options.canSubmitWhenInvalid) {
++        await this.validate("submit");
++      }
+       if (!this.state.isValid) {
+         done();
+         this.options.onSubmitInvalid?.({
+--- a/dist/esm/FormApi.d.ts
++++ b/dist/esm/FormApi.d.ts
+@@ -307,6 +307,7 @@
+  */
+ export type AnyFormApi = FormApi<any, any, any, any, any, any, any, any, any, any, any, any>;
+ interface ValidateOpts<TFormData> {
++    preserveFieldErrors?: boolean;
+     dontUpdateFormErrorMap?: boolean;
+     filterFieldNames?: (fieldName: DeepKeys<TFormData>) => boolean;
+     group?: AnyFormGroupApi;
+--- a/dist/cjs/FormApi.d.cts
++++ b/dist/cjs/FormApi.d.cts
+@@ -307,6 +307,7 @@
+  */
+ export type AnyFormApi = FormApi<any, any, any, any, any, any, any, any, any, any, any, any>;
+ interface ValidateOpts<TFormData> {
++    preserveFieldErrors?: boolean;
+     dontUpdateFormErrorMap?: boolean;
+     filterFieldNames?: (fieldName: DeepKeys<TFormData>) => boolean;
+     group?: AnyFormGroupApi;
