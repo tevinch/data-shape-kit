@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Table edge text replacement</title>
+<style>body{font:16px system-ui;max-width:1080px;margin:24px auto;padding:0 18px;color:#17212c}button,select{font:inherit;padding:8px;margin:4px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px ui-monospace,monospace;background:#f2f5f8;padding:16px}#inline{border:1px solid #aab4bf;padding:16px;min-height:120px}h1{font-size:28px}</style>
+<h1>Table edge text replacement</h1>
+<p>Drag backward from the end of “Test” into the left margin before its table, then type a letter. The guard keeps the replacement inside the first cell.</p>
+<label>Editor mode <select id="mode"><option value="iframe">Iframe</option><option value="inline">Inline</option></select></label>
+<button id="reset">Reset example</button><button id="guard">Guard: on</button><button id="readonly">Read only: off</button><button id="prepare">Select from table edge</button><button id="checks">Run browser checks</button>
+<div id="host"><textarea id="editor"></textarea></div>
+<h2>Current editor</h2><pre id="state">Loading TinyMCE8.9.2...</pre>
+<h2>Browser checks</h2><p>Checks dispatch cancellable beforeinput events and then insert text in the real editor. They are separate from pointer and keyboard checks.</p><pre id="results">Not run.</pre>
+<script src="vendor/tinymce.min.js"></script><script type="module" src="demo.js"></script></html>

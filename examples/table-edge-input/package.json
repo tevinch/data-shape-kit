@@ -1,0 +1,8 @@
+{
+  "name": "table-edge-input-example",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {"start": "node serve.mjs", "check": "node --check table-edge-input.js && node --check checks.js && node --check demo.js"},
+  "dependencies": {"tinymce": "8.9.2"}
+}

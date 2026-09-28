@@ -1,0 +1,341 @@
+{
+  "date": "2026-09-28",
+  "environment": {
+    "tinyMCE": "8.9.2",
+    "browser": "Chrome 152",
+    "platform": "macOS",
+    "method": "software-operated browser checks"
+  },
+  "sourceSHA256": {
+    "table-edge-input.js": "997afb180850a16b86b3a3e774fabac3503669dc0186ece0ecbf5e050468db12",
+    "checks.js": "7dff41edb171f3e13bea018fa83d5c139eaf14f8acf4fcf794db533bda928548",
+    "demo.js": "1465e30b1a532aa854741eb2df91be8633cc464dab089d59c75cde19f7527008",
+    "index.html": "9fc0fb9f682115d18a2e86f251bf25262ec5e262f2d1db937103a863d816be77",
+    "package-lock.json": "6f3868ebc73aef2072d7149cf28b91c61b069161a5459a053d55602c967a552a"
+  },
+  "scripted": [
+    {
+      "mode": "iframe",
+      "total": 24,
+      "passed": 24,
+      "beforeinputEvents": 26,
+      "inputEvents": 14,
+      "results": [
+        {
+          "name": "leading edge preserves three empty-cell structure",
+          "passed": true
+        },
+        {
+          "name": "other cell content survives",
+          "passed": true
+        },
+        {
+          "name": "partial prefix leaves remaining text",
+          "passed": true
+        },
+        {
+          "name": "formatted first cell survives",
+          "passed": true
+        },
+        {
+          "name": "header cell supports replacement",
+          "passed": true
+        },
+        {
+          "name": "surrounding paragraphs survive",
+          "passed": true
+        },
+        {
+          "name": "repeated replacement completes",
+          "passed": true
+        },
+        {
+          "name": "undo and redo preserve table",
+          "passed": true
+        },
+        {
+          "name": "contained-word selection remains unchanged",
+          "passed": true
+        },
+        {
+          "name": "full-table selection still replaces the table",
+          "passed": true
+        },
+        {
+          "name": "host cancellation actually runs and prevents input",
+          "passed": true
+        },
+        {
+          "name": "composition delegates",
+          "passed": true
+        },
+        {
+          "name": "paste delegates",
+          "passed": true
+        },
+        {
+          "name": "deletion delegates",
+          "passed": true
+        },
+        {
+          "name": "collapsed range delegates",
+          "passed": true
+        },
+        {
+          "name": "readonly does not change selection or document",
+          "passed": true
+        },
+        {
+          "name": "second cell boundary delegates",
+          "passed": true
+        },
+        {
+          "name": "caption content delegates",
+          "passed": true
+        },
+        {
+          "name": "earlier footer content delegates",
+          "passed": true
+        },
+        {
+          "name": "protected content in cell delegates",
+          "passed": true
+        },
+        {
+          "name": "selection containing earlier paragraph delegates",
+          "passed": true
+        },
+        {
+          "name": "nested table delegates",
+          "passed": true
+        },
+        {
+          "name": "disposal restores baseline failure",
+          "passed": true
+        },
+        {
+          "name": "registration after disposal works",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "mode": "inline",
+      "total": 24,
+      "passed": 24,
+      "beforeinputEvents": 26,
+      "inputEvents": 14,
+      "results": [
+        {
+          "name": "leading edge preserves three empty-cell structure",
+          "passed": true
+        },
+        {
+          "name": "other cell content survives",
+          "passed": true
+        },
+        {
+          "name": "partial prefix leaves remaining text",
+          "passed": true
+        },
+        {
+          "name": "formatted first cell survives",
+          "passed": true
+        },
+        {
+          "name": "header cell supports replacement",
+          "passed": true
+        },
+        {
+          "name": "surrounding paragraphs survive",
+          "passed": true
+        },
+        {
+          "name": "repeated replacement completes",
+          "passed": true
+        },
+        {
+          "name": "undo and redo preserve table",
+          "passed": true
+        },
+        {
+          "name": "contained-word selection remains unchanged",
+          "passed": true
+        },
+        {
+          "name": "full-table selection still replaces the table",
+          "passed": true
+        },
+        {
+          "name": "host cancellation actually runs and prevents input",
+          "passed": true
+        },
+        {
+          "name": "composition delegates",
+          "passed": true
+        },
+        {
+          "name": "paste delegates",
+          "passed": true
+        },
+        {
+          "name": "deletion delegates",
+          "passed": true
+        },
+        {
+          "name": "collapsed range delegates",
+          "passed": true
+        },
+        {
+          "name": "readonly does not change selection or document",
+          "passed": true
+        },
+        {
+          "name": "second cell boundary delegates",
+          "passed": true
+        },
+        {
+          "name": "caption content delegates",
+          "passed": true
+        },
+        {
+          "name": "earlier footer content delegates",
+          "passed": true
+        },
+        {
+          "name": "protected content in cell delegates",
+          "passed": true
+        },
+        {
+          "name": "selection containing earlier paragraph delegates",
+          "passed": true
+        },
+        {
+          "name": "nested table delegates",
+          "passed": true
+        },
+        {
+          "name": "disposal restores baseline failure",
+          "passed": true
+        },
+        {
+          "name": "registration after disposal works",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "native": {
+    "iframe": {
+      "initialSelection": "native backward pointer drag: BODY offset 0 to Test text offset 4",
+      "typedS": {
+        "cells": [
+          "s",
+          "",
+          ""
+        ],
+        "beforeinput": 1,
+        "input": 1
+      },
+      "repeatA": {
+        "selection": "example button",
+        "cells": [
+          "a",
+          "",
+          ""
+        ],
+        "beforeinput": 2,
+        "input": 2
+      },
+      "undo": {
+        "cells": [
+          "s",
+          "",
+          ""
+        ]
+      },
+      "redo": {
+        "cells": [
+          "a",
+          "",
+          ""
+        ]
+      },
+      "readonlyTypeX": {
+        "cells": [
+          "a",
+          "",
+          ""
+        ],
+        "beforeinput": 3,
+        "input": 2,
+        "readonly": true
+      }
+    },
+    "inline": {
+      "initialSelection": "example button: table leading boundary to end of first-cell text",
+      "typedS": {
+        "cells": [
+          "s",
+          "",
+          ""
+        ],
+        "beforeinput": 1,
+        "input": 1
+      },
+      "repeatA": {
+        "cells": [
+          "a",
+          "",
+          ""
+        ],
+        "beforeinput": 2,
+        "input": 2
+      },
+      "undo": {
+        "cells": [
+          "s",
+          "",
+          ""
+        ]
+      },
+      "redo": {
+        "cells": [
+          "a",
+          "",
+          ""
+        ]
+      },
+      "readonlyTypeX": {
+        "cells": [
+          "a",
+          "",
+          ""
+        ],
+        "beforeinput": 3,
+        "input": 2,
+        "readonly": true
+      },
+      "freshFirstInsertionUndo": {
+        "cells": [
+          "Test",
+          "",
+          ""
+        ]
+      },
+      "freshFirstInsertionRedo": {
+        "cells": [
+          "s",
+          "",
+          ""
+        ]
+      }
+    }
+  },
+  "limits": [
+    "Scripted beforeinput plus execCommand insertion is separate from native keyboard checks.",
+    "Inline initial selection uses the example button, not native pointer drag.",
+    "Composition and out-of-scope checks test delegation only.",
+    "No Windows, Firefox, Safari, real IME, human manual validation or adoption claim."
+  ]
+}
