@@ -336,6 +336,21 @@
     "Scripted beforeinput plus execCommand insertion is separate from native keyboard checks.",
     "Inline initial selection uses the example button, not native pointer drag.",
     "Composition and out-of-scope checks test delegation only.",
-    "No Windows, Firefox, Safari, real IME, human manual validation or adoption claim."
+    "The recorded native checks were software-operated on macOS. No Windows run was performed for this example; Firefox, Safari and real IME remain unverified."
+  ],
+  "externalReports": [
+    {
+      "date": "2026-09-28",
+      "source": "https://github.com/tinymce/tinymce/issues/11252#issuecomment-5866024268",
+      "reporter": "SeanHaughey2026",
+      "role": "original issue reporter",
+      "browser": "Chrome",
+      "platform": "Windows",
+      "result": "Reporter tested the workaround and confirmed it works for the reported left-edge drag case.",
+      "limits": [
+        "Browser version and full editor configuration were not specified.",
+        "This report is separate from the scripted and native runs recorded above."
+      ]
+    }
   ]
 }
