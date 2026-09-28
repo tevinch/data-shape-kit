@@ -2,7 +2,7 @@
 
 PDFKit 0.20.2 drops the structure parent of a form widget and has no supported option for its alternate name. This source repair restores those options and honors an explicit field font size with the default form font. It also keeps each widget attached to its original page when a multipage document's structure is finalized later.
 
-The regression was reported by Robert-Krueger in [PDFKit #1803](https://github.com/foliojs/pdfkit/issues/1803). The example creates two tagged pages with editable fields, existing reference text, document metadata and an embedded font. The source patch, tests and example are free.
+The regression was reported by Robert-Krueger in [PDFKit #1803](https://github.com/foliojs/pdfkit/issues/1803). The example creates two tagged pages with editable fields, existing reference text, document metadata and an embedded font. The source patch, tests and example are free. The proposed upstream fix is [PR #1805](https://github.com/foliojs/pdfkit/pull/1805); it has not been merged or released.
 
 ## Try the source repair
 
