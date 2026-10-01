@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Resize fixed and virtual Naive UI table columns without gaps or neighbour-width changes | [Virtual column resizing](examples/virtual-column-resize) | Source correction, build/install guide and browser checks |
 | Preserve core-js feature checks while optimizing application code | [Core-js compatibility checks](examples/core-js-checks) | Rollup module configuration; actual CommonJS builds and runtime checks |
 | Bundle relative CSS imports while keeping root image and font URLs | [CSS root URLs](examples/css-root-urls) | esbuild CLI options or a small resolver; complete build and checks |
 | Show all current field and form errors, then save after correcting them | [Complete submit validation](examples/complete-submit-validation) | TanStack Form 1.33.5 source patch; explicit opt-in and runnable React comparison |
