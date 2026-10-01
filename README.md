@@ -14,7 +14,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Keep saved values out of a different conditional React Hook Form field | [Conditional field identity](examples/conditional-field-identity) | Two stable input keys; runnable save/return comparison |
 | Keep a TinyMCE table when typing over text dragged from its left edge | [Table edge input](examples/table-edge-input) | Public-event guard; TinyMCE 8.9.2 and browser checks |
 | Delete a visual line in Lexical without losing an inline decorator on the neighbouring line | [Visual line boundary](examples/visual-line-boundary) | Public-command extension; Lexical 0.51.0 and browser checks |
-| Render short chemical reaction arrows with MathJax Pagella | [Pagella chemical arrow](examples/pagella-chemical-arrow) | CHTML filter for TeX-generated MathML; complete browser examples |
+| Render short chemical reaction arrows with MathJax Pagella | [Pagella chemical arrow](examples/pagella-chemical-arrow) | Maintainer's font-data correction; complete TeX/MathML browser example |
 | Generate tagged PDF form widgets with accessible names and correct page references | [Accessible PDF form](examples/accessible-pdf-form) | PDFKit source patch and two-page generation example |
 | Open, edit and save XFA PDF forms containing bold and italic text | [XFA rich text](examples/xfa-rich-text) | PDF.js 6.3.289 source patch, worker repair and two-page browser example |
 | Keep embedded PDF searches from moving the surrounding page | [PDF search within the viewer](examples/pdf-search-within-viewer) | PDF.js 6.3.289 source patch and runnable browser example |

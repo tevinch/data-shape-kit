@@ -440,6 +440,416 @@
       "No upstream source or speech/braille repair",
       "Direct or inherited minsize/maxsize values are not overridden"
     ],
-    "checksInterpretation": "Generation-only checks are not applicable to the direct-TeX route; the explicit control intentionally sets 4em before typesetting. Counters record actual operations per displayed step. The inherited control deliberately supplies mstyle minsize4em; seven positive browser scenarios plus the no-filter negative control."
+    "checksInterpretation": "Generation-only checks are not applicable to the direct-TeX route; the explicit control intentionally sets 4em before typesetting. Counters record actual operations per displayed step. The inherited control deliberately supplies mstyle minsize4em; seven positive browser scenarios plus the no-filter negative control.",
+    "historicalSourceRevision": "bbf8bf5874d9082f25d0e3798dbc56f9e7bc3df8"
+  },
+  "recommendedExample": "fontDataFollowup",
+  "fontDataFollowup": {
+    "date": "2026-10-01T12:11:03.815897+00:00",
+    "method": "Software-operated Chrome on macOS; localhost; page status and rendered screenshot inspected",
+    "mathjax": "4.1.3",
+    "source": "https://github.com/mathjax/MathJax/issues/3613#issuecomment-5871933548",
+    "change": "Use maintainer CHTML loader-ready correction; both font minima1.3; remove per-expression filter",
+    "htmlSHA256": "fd4ac9b7d92b0147f9941ea8a1a54534bd2cfc01a4bcaa13c4be93809724bb35",
+    "cases": [
+      {
+        "case": "initial",
+        "passed": true,
+        "route": "generated-mathml",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 1,
+          "fontReadyCalls": 1,
+          "cycles": 1
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 31.9140625,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "long",
+        "passed": true,
+        "route": "generated-mathml",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 2,
+          "fontReadyCalls": 1,
+          "cycles": 2
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 160.296875,
+        "labelText": "reaction conditions",
+        "errors": []
+      },
+      {
+        "case": "short",
+        "passed": true,
+        "route": "generated-mathml",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 3,
+          "fontReadyCalls": 1,
+          "cycles": 3
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 31.9140625,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "short-again",
+        "passed": true,
+        "route": "generated-mathml",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 4,
+          "fontReadyCalls": 1,
+          "cycles": 4
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 31.9140625,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "direct-tex",
+        "passed": true,
+        "route": "direct-tex",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 4,
+          "fontReadyCalls": 1,
+          "cycles": 5
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "TeX"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 31.9140625,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "explicit",
+        "passed": true,
+        "route": "explicit",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 5,
+          "fontReadyCalls": 1,
+          "cycles": 6
+        },
+        "treeArrows": [
+          "4em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": "4em",
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 98.203125,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "inherited",
+        "passed": true,
+        "route": "inherited",
+        "arrowCodePoint": "e409",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 6,
+          "fontReadyCalls": 1,
+          "cycles": 7
+        },
+        "treeArrows": [
+          "4em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": "4em",
+        "arrowWidth": 98.203125,
+        "labelText": "𝑥",
+        "errors": []
+      },
+      {
+        "case": "reverse",
+        "passed": true,
+        "route": "generated-mathml",
+        "arrowCodePoint": "e40a",
+        "checks": {
+          "version": true,
+          "font": true,
+          "scale": true,
+          "inputRoute": true,
+          "safeLoaded": true,
+          "mhchemLoaded": true,
+          "conversionRan": true,
+          "generatedArrow": true,
+          "sourceHasNoAddedMinimum": true,
+          "fontReadyRanOnce": true,
+          "bothFontMinima": true,
+          "noExpressionFilter": true,
+          "targetMinimum": true,
+          "formulaRendered": true,
+          "labelRendered": true,
+          "noOutputError": true,
+          "ordinaryFormula": true,
+          "paragraph": true,
+          "skippedCode": true
+        },
+        "evidence": {
+          "conversions": 7,
+          "fontReadyCalls": 1,
+          "cycles": 8
+        },
+        "treeArrows": [
+          "0em"
+        ],
+        "inputJaxes": [
+          "MathML"
+        ],
+        "sourceMinimum": null,
+        "sourceInheritedMinimum": null,
+        "arrowWidth": 31.9140625,
+        "labelText": "𝑥",
+        "errors": []
+      }
+    ],
+    "originalConfiguration": {
+      "passed": false,
+      "route": "generated-mathml",
+      "arrowCodePoint": "e409",
+      "checks": {
+        "version": true,
+        "font": true,
+        "scale": true,
+        "inputRoute": true,
+        "safeLoaded": true,
+        "mhchemLoaded": true,
+        "conversionRan": true,
+        "generatedArrow": true,
+        "sourceHasNoAddedMinimum": true,
+        "fontReadyRanOnce": false,
+        "bothFontMinima": false,
+        "noExpressionFilter": true,
+        "targetMinimum": true,
+        "formulaRendered": false,
+        "labelRendered": false,
+        "noOutputError": false,
+        "ordinaryFormula": true,
+        "paragraph": true,
+        "skippedCode": true
+      },
+      "evidence": {
+        "conversions": 1,
+        "fontReadyCalls": 0,
+        "cycles": 1
+      },
+      "treeArrows": [
+        "0em"
+      ],
+      "inputJaxes": [
+        "MathML"
+      ],
+      "sourceMinimum": null,
+      "sourceInheritedMinimum": null,
+      "arrowWidth": null,
+      "labelText": null,
+      "errors": [
+        {
+          "text": "Math output error",
+          "title": "Invalid array length"
+        }
+      ]
+    },
+    "limits": [
+      "No human manual or Firefox/Ubuntu validation",
+      "No SVG validation",
+      "No original reporter adoption confirmation",
+      "No speech or braille repair",
+      "Font extension loader URL follows MathJax configuration and is not independently version-pinned"
+    ]
   }
 }
