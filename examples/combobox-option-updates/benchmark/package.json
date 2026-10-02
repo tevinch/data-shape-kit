@@ -1,0 +1,11 @@
+{
+  "name": "combobox-update-measurement",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@headlessui/react": "2.2.10",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "esbuild": "0.17.19"
+  }
+}

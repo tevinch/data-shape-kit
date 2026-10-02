@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-03",
+  "environment": { "os": "macOS 14.6", "cpu": "Apple M1", "browser": "Chrome 154.0.8037.93", "react": "19.3.0", "mode": "production, headed browser, software-operated keyboard input", "cpuThrottling": "none configured" },
+  "baseline": "@headlessui/react 2.2.10 from npm",
+  "patched": "packed source build of 62be2bdc0f1393295f9185c11d1e9da599286c57",
+  "metric": "Milliseconds from capture-phase input listener to next requestAnimationFrame callback; excludes initial opening and is not a paint-completion or INP measurement.",
+  "protocol": "One warm-up per variant and size, then five fresh page loads per variant and size. Open the ordinary list, select the input contents, press 1. Alternate baseline/patched order across trials. All measured events were trusted, each trial had exactly one input event, and before/after rendered option counts equaled the requested count. Selected value remained Item 7.",
+  "warmupMs": { "250": { "baseline": 316.4, "patched": 65.2 }, "500": { "baseline": 4559.7, "patched": 53.4 }, "1000": { "baseline": 22926.6, "patched": 469.0 } },
+  "samplesMs": {
+    "250": { "baseline": [1074.3, 947.9, 862.9, 896.6, 901.8], "patched": [67.0, 55.1, 53.7, 50.0, 55.3] },
+    "500": { "baseline": [3412.5, 5102.0, 4838.6, 4299.0, 4604.4], "patched": [203.0, 213.6, 175.2, 148.3, 162.7] },
+    "1000": { "baseline": [22411.7, 20248.1, 22685.0, 21242.2, 23185.6], "patched": [580.0, 678.2, 558.6, 534.8, 754.5] }
+  },
+  "limitations": "Single workstation with a connected browser controller and existing browser extensions, not an isolated performance lab or the reporter's Linux setup. Slow baseline input/open operations sometimes exceeded the controller response deadline; the completed page metrics were read afterward without resending the input. No timed sample was discarded. Absolute times include this environment and are not a universal speedup claim. This independent fixture includes disabled Item 0/10 and a selected Item 7; it is not the reporter's exact fixture."
+}
