@@ -1,0 +1,22 @@
+--- a/node_modules/@headlessui/react/dist/components/combobox/combobox.d.ts
++++ b/node_modules/@headlessui/react/dist/components/combobox/combobox.d.ts
+@@ -19,7 +19,7 @@
+     value?: TMultiple extends true ? EnsureArray<TValue> : TValue;
+     defaultValue?: TMultiple extends true ? EnsureArray<NoInfer<TValue>> : NoInfer<TValue>;
+     onChange?: (value: TMultiple extends true ? EnsureArray<TValue> : TValue | null) => void;
+-    by?: ByComparator<TMultiple extends true ? EnsureArray<NoInfer<TValue>>[number] : NoInfer<TValue>>;
++    by?: ByComparator<TMultiple extends true ? NoInfer<EnsureArray<TValue>[number]> : NoInfer<TValue>>;
+     /** @deprecated The `<Combobox />` is now nullable default */
+     nullable?: boolean;
+     multiple?: TMultiple;
+@@ -29,8 +29,8 @@
+     name?: string;
+     immediate?: boolean;
+     virtual?: {
+-        options: TMultiple extends true ? EnsureArray<NoInfer<TValue>> : NoInfer<TValue>[];
+-        disabled?: (value: TMultiple extends true ? EnsureArray<NoInfer<TValue>>[number] : NoInfer<TValue>) => boolean;
++        options: TMultiple extends true ? NoInfer<EnsureArray<TValue>> : NoInfer<TValue>[];
++        disabled?: (value: TMultiple extends true ? NoInfer<EnsureArray<TValue>[number]> : NoInfer<TValue>) => boolean;
+     } | null;
+     onClose?: () => void;
+     __demoMode?: boolean;

@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Type a Headless UI Combobox that combines strings and option objects | [Combobox union callbacks](examples/combobox-union-types) | 2.2.10 declaration patch and strict compiler reproduction |
 | Reduce repeated work while filtering a large Headless UI Combobox | [Combobox option updates](examples/combobox-option-updates) | Source correction, pinned build and complete selection checks |
 | Resize fixed and virtual Naive UI table columns without gaps or neighbour-width changes | [Virtual column resizing](examples/virtual-column-resize) | Source correction, build/install guide and browser checks |
 | Preserve core-js feature checks while optimizing application code | [Core-js compatibility checks](examples/core-js-checks) | Fixed in Rollup 4.64.0; upgrade check and older-version configuration |
