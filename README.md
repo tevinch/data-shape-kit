@@ -10,7 +10,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | --- | --- | --- |
 | Reduce repeated work while filtering a large Headless UI Combobox | [Combobox option updates](examples/combobox-option-updates) | Source correction, pinned build and complete selection checks |
 | Resize fixed and virtual Naive UI table columns without gaps or neighbour-width changes | [Virtual column resizing](examples/virtual-column-resize) | Source correction, build/install guide and browser checks |
-| Preserve core-js feature checks while optimizing application code | [Core-js compatibility checks](examples/core-js-checks) | Rollup module configuration; actual CommonJS builds and runtime checks |
+| Preserve core-js feature checks while optimizing application code | [Core-js compatibility checks](examples/core-js-checks) | Fixed in Rollup 4.64.0; upgrade check and older-version configuration |
 | Bundle relative CSS imports while keeping root image and font URLs | [CSS root URLs](examples/css-root-urls) | esbuild CLI options or a small resolver; complete build and checks |
 | Show all current field and form errors, then save after correcting them | [Complete submit validation](examples/complete-submit-validation) | TanStack Form 1.33.5 source patch; explicit opt-in and runnable React comparison |
 | Keep saved values out of a different conditional React Hook Form field | [Conditional field identity](examples/conditional-field-identity) | Two stable input keys; runnable save/return comparison |

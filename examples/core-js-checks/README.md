@@ -1,5 +1,21 @@
 # Preserve core-js compatibility checks with Rollup
 
+**Update, 2026-10-03:** Rollup **4.64.0** includes the upstream correction in [PR #6541](https://github.com/rollup/rollup/pull/6541), and [issue #6538 is closed](https://github.com/rollup/rollup/issues/6538). Prefer upgrading and checking your final bundle. The temporary helper below is for projects that still use the affected older version.
+
+Separate verification on 4.64.0, CommonJS plugin 29.0.3, node-resolve 16.0.3 and core-js 3.50.0 passed all four checks **without the helper**: actual primitive detections ran, repeated primitive/object operations completed, unused application code was removed, and a cached rebuild remained correct. The older-native case is a Node VM simulation, not a real older browser.
+
+To rerun that verification from the current source directory in a disposable checkout:
+
+```sh
+npm ci --ignore-scripts
+npm install --ignore-scripts --save-exact rollup@4.64.0
+node --test test-current.mjs
+```
+
+The original `npm test` and versioned ZIP remain pinned to 4.63.5 and include a test that expects the old defect. Use `test-current.mjs` for the upgrade check. Remove the temporary helper from your own configuration only after testing your supported browsers and any downstream minifier.
+
+## Older-version workaround
+
 Rollup 4.63.5 can remove calls inside a feature-detection callback passed through a property, even with the default `tryCatchDeoptimization: true`. In the tested CommonJS build of core-js 3.50.0, this drops the primitive checks for `Object.isExtensible`, `Object.isFrozen` and `Object.isSealed`. An engine that throws for these primitive arguments can then keep its incompatible native implementation.
 
 This temporary configuration keeps tree-shaking enabled for your application and disables it for the core-js modules included in the build. It uses Rollup's documented module flag; it does not patch Rollup or core-js. See the [original report](https://github.com/rollup/rollup/issues/6538).
