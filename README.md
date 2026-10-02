@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Reduce repeated work while filtering a large Headless UI Combobox | [Combobox option updates](examples/combobox-option-updates) | Source correction, pinned build and complete selection checks |
 | Resize fixed and virtual Naive UI table columns without gaps or neighbour-width changes | [Virtual column resizing](examples/virtual-column-resize) | Source correction, build/install guide and browser checks |
 | Preserve core-js feature checks while optimizing application code | [Core-js compatibility checks](examples/core-js-checks) | Rollup module configuration; actual CommonJS builds and runtime checks |
 | Bundle relative CSS imports while keeping root image and font URLs | [CSS root URLs](examples/css-root-urls) | esbuild CLI options or a small resolver; complete build and checks |
