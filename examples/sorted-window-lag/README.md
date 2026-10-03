@@ -45,11 +45,15 @@ Open [the local example](http://127.0.0.1:8797/), switch among the sort options,
 
 ## Source correction
 
+The source fix is proposed in [Vega PR #4357](https://github.com/vega/vega/pull/4357). It has not been merged or released.
+
 [`window-frame.patch`](window-frame.patch) contains the source correction and regression tests for Vega at commit `045d12611007cd65ae5ce68e4179d4ee2f150ef8`. In `vega-transforms/src/Window.js`, it prevents comparisons at `data.length` and `-1` when an empty frame passes a partition boundary. Valid peer expansion remains enabled, and the original specification needs no configuration change when using the corrected runtime.
 
 Apply the patch to a checkout of that Vega commit with `git apply`, then follow [Vega's build instructions](https://github.com/vega/vega/blob/main/CONTRIBUTING.md). This is a source correction for review, not an official released build or a replacement Deneb visual. Replacing an application's npm dependency does not update Vega bundled inside Power BI's Deneb visual. The lag-only configuration above is the immediately usable route for that report.
 
-The focused window tests, full Vega test suite, type checks, lint and production build passed. The new regression tests cover both empty-frame boundaries, equal sort keys, separate partitions, sorting changes, clearing and reinserting data, and a descending 12-row lag. The built corrected runtime also rendered all 24 bars and calculated both lag fields correctly with the original frame and default peer handling, for all three sort cases and a reversed-input refresh. These are scripted runtime and SVG checks; the interactive browser page and Power BI host have not been validated.
+The focused window tests, full Vega test suite, type checks, lint and production build passed. The new regression tests cover both empty-frame boundaries, equal sort keys, separate partitions, sorting changes, clearing and reinserting data, and a descending 12-row lag. The built corrected runtime also rendered all 24 bars and calculated both lag fields correctly with the original frame and default peer handling, for all three sort cases and a reversed-input refresh.
+
+A software-operated Chrome check of the stable-runtime example reproduced both original sorted failures, then verified all 24 bars and both lag fields with the configuration for all three sort modes, including two consecutive reversed-input refreshes. These checks do not establish human manual validation, Power BI host behavior or reporter adoption.
 
 ## License
 
