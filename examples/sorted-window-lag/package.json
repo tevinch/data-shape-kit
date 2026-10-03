@@ -1,0 +1,12 @@
+{
+  "name": "sorted-window-lag-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node verify.mjs"
+  },
+  "dependencies": {
+    "vega": "6.4.0",
+    "vega-lite": "6.4.3"
+  }
+}

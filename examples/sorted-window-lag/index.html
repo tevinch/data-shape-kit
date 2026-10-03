@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorted window lag</title>
+<style>
+body { max-width: 900px; margin: 32px auto; padding: 0 20px; color: #17263b; font: 16px/1.5 system-ui, sans-serif; }
+button, select { font: inherit; padding: 6px 10px; margin: 0 8px 8px 0; }
+#chart { overflow-x: auto; min-height: 340px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border-bottom: 1px solid #ddd; text-align: left; padding: 5px 8px; }
+</style>
+<h1>Sorted window lag</h1>
+<p>Compare the original boundary error with the lag-only configuration on Vega 6.4.0 and Vega-Lite 6.4.3. This fixture uses 24 invented monthly records, outside Power BI.</p>
+<label>Sort <select id="sort"><option value="date">Date descending</option><option value="__row__">Row descending</option><option value="">No sort</option></select></label>
+<button id="original">Run original</button>
+<button id="configured">Run with ignorePeers</button>
+<button id="update" disabled>Reverse input and refresh</button>
+<p id="status" role="status">Loading…</p>
+<div id="chart"></div>
+<table><thead><tr><th>Date</th><th>Value</th><th>Lag date</th><th>Lag value</th></tr></thead><tbody id="rows"></tbody></table>
+<p>Free example and checks: see the <a href="README.md">guide</a>.</p>
+<script src="node_modules/vega/build/vega.min.js"></script>
+<script src="node_modules/vega-lite/build/vega-lite.min.js"></script>
+<script type="module">
+import {rows, checkValues} from './fixture.mjs';
+const spec = await (await fetch('./spec.json')).json();
+const status = document.querySelector('#status');
+const update = document.querySelector('#update');
+const table = document.querySelector('#rows');
+let view, dataName, sortField, errors, input, round;
+async function refresh() {
+  update.disabled = true;
+  try {
+    view.change('dataset', vega.changeset().remove(() => true).insert(structuredClone(input)));
+    await view.runAsync();
+    if (errors.length) throw new Error(errors.join('; '));
+    const actual = view.data(dataName);
+    checkValues(actual, input, sortField);
+    const bars = document.querySelectorAll('#chart [aria-roledescription="bar"]').length;
+    if (bars !== input.length) throw new Error('The complete chart did not render');
+    table.replaceChildren(...actual.map(d => {
+      const tr = document.createElement('tr');
+      for (const value of [new Date(d.date).toISOString().slice(0, 10), d.mKPI,
+        d.date_PY == null ? '—' : new Date(d.date_PY).toISOString().slice(0, 10), d.mKPI_PY ?? '—']) {
+        const td = document.createElement('td'); td.textContent = value; tr.append(td);
+      }
+      return tr;
+    }));
+    status.textContent = `Pass: ${actual.length} records, ${bars} bars, both lag fields correct. Refresh ${round}.`;
+    update.disabled = false;
+  } catch (error) {
+    status.textContent = `Runtime error: ${error.message}`;
+  }
+}
+async function run(ignorePeers) {
+  if (view) view.finalize();
+  document.querySelector('#chart').replaceChildren(); table.replaceChildren();
+  const next = structuredClone(spec);
+  sortField = document.querySelector('#sort').value;
+  if (sortField) next.transform[0].sort = [{field: sortField, order: 'descending'}];
+  else delete next.transform[0].sort;
+  if (!ignorePeers) delete next.transform[0].ignorePeers;
+  const compiled = vegaLite.compile(next).spec;
+  dataName = compiled.data.find(d => d.transform?.some(t => t.type === 'window'))?.name;
+  if (!dataName) throw new Error('Window transform missing');
+  errors = []; input = rows; round = 0;
+  const logger = {level: () => logger, error: e => errors.push(e.message), warn() {}, info() {}, debug() {}};
+  view = new vega.View(vega.parse(compiled), {renderer: 'svg', logger});
+  view.initialize('#chart').width(800).height(300);
+  await refresh();
+}
+document.querySelector('#original').onclick = () => run(false);
+document.querySelector('#configured').onclick = () => run(true);
+update.onclick = async () => { input = [...input].reverse(); round++; await refresh(); };
+await run(true);
+</script>
+</html>

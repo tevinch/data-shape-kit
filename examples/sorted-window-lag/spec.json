@@ -1,0 +1,18 @@
+{
+  "data": {"name": "dataset"},
+  "mark": {"type": "bar"},
+  "width": "container",
+  "transform": [{
+    "window": [
+      {"field": "date", "param": 12, "op": "lag", "as": "date_PY"},
+      {"field": "mKPI", "param": 12, "op": "lag", "as": "mKPI_PY"}
+    ],
+    "frame": [12, null],
+    "sort": [{"field": "date", "order": "descending"}],
+    "ignorePeers": true
+  }],
+  "encoding": {
+    "x": {"field": "date", "type": "temporal"},
+    "y": {"field": "mKPI", "type": "quantitative"}
+  }
+}
