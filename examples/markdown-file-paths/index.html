@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>Markdown file paths</title>
+<style>
+body{max-width:860px;margin:40px auto;padding:0 20px;font:16px/1.5 system-ui;color:#223448;background:#f7fafc}
+h1{font-size:30px}button{font:inherit;padding:9px 15px;border:1px solid #a7b9c8;border-radius:5px;background:white;margin:4px 8px 12px 0;cursor:pointer}
+#editor,.output{background:white;border:1px solid #c6d3dd;border-radius:8px;padding:18px;margin:10px 0}
+.tiptap{min-height:150px;outline:none}pre{white-space:pre-wrap;overflow-wrap:anywhere}img{max-width:100%}#status{font-weight:600}details{margin-top:18px}
+</style>
+<h1>Keep links and images after saving</h1>
+<p>Edit the document, save its Markdown, then reopen it. Paths contain spaces. Everything stays in this browser; the sample server receives no document content.</p>
+<p id="mode"></p>
+<div id="editor"></div>
+<button id="save">Save Markdown</button><button id="reopen">Reopen saved Markdown</button><button id="reset">Reset example</button>
+<p id="status" role="status"></p>
+<h2>Saved Markdown</h2><pre id="saved" class="output"></pre>
+<h2>Current file paths</h2><pre id="paths" class="output"></pre>
+<details><summary>Current document JSON</summary><pre id="json" class="output"></pre></details>
+<script type="module" src="/app.js"></script></html>

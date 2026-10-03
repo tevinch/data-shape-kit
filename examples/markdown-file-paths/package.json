@@ -1,0 +1,26 @@
+{
+  "name": "markdown-file-paths",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test test/roundtrip.test.mjs",
+    "reproduce": "node test/reproduce.mjs",
+    "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "@tiptap/core": "3.31.4",
+    "@tiptap/extension-image": "3.31.4",
+    "@tiptap/extension-link": "3.31.4",
+    "@tiptap/markdown": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4"
+  },
+  "devDependencies": {
+    "jsdom": "30.0.1",
+    "esbuild": "0.28.1"
+  }
+}
