@@ -1,0 +1,16 @@
+{
+  "name": "thymeleaf-build-example",
+  "private": true,
+  "version": "1.0.0",
+  "devDependencies": {
+    "@parcel/optimizer-htmlnano": "2.16.4",
+    "@parcel/packager-html-legacy": "npm:@parcel/packager-html@2.14.4",
+    "@parcel/transformer-html-legacy": "npm:@parcel/transformer-html@2.14.4",
+    "parcel": "2.16.4",
+    "@parcel/transformer-posthtml": "2.16.4"
+  },
+  "scripts": {
+    "build": "parcel build \"src/**/*.html\" --config ./legacy.parcelrc --no-autoinstall --dist-dir dist",
+    "verify": "python3 verify.py"
+  }
+}

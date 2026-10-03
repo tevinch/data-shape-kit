@@ -1,0 +1,17 @@
+{
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.{htm,html}": [
+      "@parcel/transformer-posthtml",
+      "@parcel/transformer-html-legacy"
+    ]
+  },
+  "packagers": {
+    "*.html": "@parcel/packager-html-legacy"
+  },
+  "optimizers": {
+    "*.html": [
+      "@parcel/optimizer-htmlnano"
+    ]
+  }
+}

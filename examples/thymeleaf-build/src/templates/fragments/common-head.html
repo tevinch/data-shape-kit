@@ -1,0 +1,7 @@
+<!doctype html><html xmlns:th="http://www.thymeleaf.org"><head>
+<th:block th:fragment="commonHead(pageTitle, description, extra)">
+<meta name="dynamic-description" th:content="${description}">
+<title th:text="${pageTitle}">Default title</title>
+<th:block th:replace="${extra}"></th:block>
+</th:block>
+</head><body></body></html>

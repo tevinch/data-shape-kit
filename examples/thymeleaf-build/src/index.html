@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Vanilla App</title>
+    <link rel="stylesheet" href="style.css">
+    <th:block th:insert="~{templates/fragments/common-head :: commonHead(${title}, ${description}, ~{:: #extra-head})}"/>
+    <th:block id="extra-head"><meta name="extra" th:content="${description}"></th:block>
+  </head>
+  <body>
+    <!-- ordinary build comment -->
+    <h1 th:text="${title}">Parcel Vanilla App</h1>
+    <!--/*/ <p id="prototype" th:text="${description}">prototype fallback</p> /*/-->
+    <!--/* <p id="removed">Should not reach the page</p> */-->
+    <p id="conditional" th:if="${showDetails}" th:text="${description}">details</p>
+    <p id="status">Loading</p>
+    <script type="module" src="./app.js"></script>
+    <p>Edit <code>src/index.html</code> to get started!</p>
+  </body>
+</html>

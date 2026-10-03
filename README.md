@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Build dynamic Thymeleaf head fragments and assets without moving template blocks into the body | [Thymeleaf template builds](examples/thymeleaf-build) | Official plugin aliases, conservative HTML compression and actual Java rendering checks |
 | Reduce repeated prefix copying when parsing block quotes, nested lists and Setext headings | [Markdown prefix edits](examples/markdown-prefix-edits) | Source correction, unofficial edit-map build and complete parser checks |
 | Type a Headless UI Combobox that combines strings and option objects | [Combobox union callbacks](examples/combobox-union-types) | 2.2.10 declaration patch and strict compiler reproduction |
 | Reduce repeated work while filtering a large Headless UI Combobox | [Combobox option updates](examples/combobox-option-updates) | Source correction, pinned build and complete selection checks |
