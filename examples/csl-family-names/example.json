@@ -1,0 +1,8 @@
+[
+  {"id":"gogh","type":"book","author":[{"given":"Vincent","non-dropping-particle":"van","family":"Gogh"}]},
+  {"id":"humboldt","type":"book","author":[{"given":"Alexander","dropping-particle":"von","family":"Humboldt"}]},
+  {"id":"hakim","type":"book","author":[{"given":"Tawfiq","non-dropping-particle":"al-","family":"Hakim"}]},
+  {"id":"gaulle","type":"book","author":[{"given":"Charles","family":"de Gaulle"}]},
+  {"id":"fontaine","type":"book","author":[{"given":"Jean","dropping-particle":"de","family":"La Fontaine"}]},
+  {"id":"bitek","type":"book","author":[{"given":"Okot","family":"p'Bitek"}]}
+]
