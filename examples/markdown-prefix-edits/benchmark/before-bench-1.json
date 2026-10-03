@@ -1,0 +1,71 @@
+{
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "mode": "bench",
+  "cases": [
+    {
+      "name": "quotes-8192",
+      "bytes": 8195,
+      "milliseconds": 224.95479199999997,
+      "iterations": 1,
+      "htmlHash": "0104fbc63aeabedb39623fa87066a28ec99bfa35715bc3849be07bd01d67d4a2"
+    },
+    {
+      "name": "quotes-32768",
+      "bytes": 32770,
+      "milliseconds": 8940.974667,
+      "iterations": 1,
+      "htmlHash": "6a73b40499b3210dd5969ac2262ce40a6777bc92e6b1ed6a2fb99e3e512c864e"
+    },
+    {
+      "name": "lists-8192",
+      "bytes": 8200,
+      "milliseconds": 375.91058300000077,
+      "iterations": 1,
+      "htmlHash": "473fc3d5c0eed3df6f3217bc68dd3d3c7f98c634bc3098aa0be8f9937f97a01e"
+    },
+    {
+      "name": "lists-32768",
+      "bytes": 32770,
+      "milliseconds": 4211.3125420000015,
+      "iterations": 1,
+      "htmlHash": "65a580e89b8334aafb1c271651a15c9785ec1ba825d17f3fadc5766eb2ec1f7a"
+    },
+    {
+      "name": "setext-8192",
+      "bytes": 8192,
+      "milliseconds": 990.8910829999986,
+      "iterations": 1,
+      "htmlHash": "59c1dea839e3ba857f605b00997a6345a0029137eba2783d81bff94a2780ce58"
+    },
+    {
+      "name": "setext-32768",
+      "bytes": 32768,
+      "milliseconds": 18825.437125000004,
+      "iterations": 1,
+      "htmlHash": "f4f093e068cadd30844b0e0e5b7c00a4c0ca713f7b4f5e9954434d27456640c5"
+    },
+    {
+      "name": "readme",
+      "bytes": 57689,
+      "milliseconds": 217.01233299999876,
+      "iterations": 1,
+      "htmlHash": "81b0046bcb8b63b445706c3d16cfe2549ed70567c3a9d1ca0f563eb08d1f2824"
+    },
+    {
+      "name": "small",
+      "bytes": 39,
+      "milliseconds": 0.48580475000000295,
+      "iterations": 1000,
+      "htmlHash": "322e67b77e5f24b341d0cb0235a2fd1b30d3a6e1464edd7c1718c5164c58336d"
+    },
+    {
+      "name": "sections",
+      "bytes": 242090,
+      "milliseconds": 1009.8240000000005,
+      "iterations": 1,
+      "htmlHash": "fc3fd7d6c2b4bf33e594a87b0410a62e5b58bb5336385d20071fb39a714cf0ea"
+    }
+  ]
+}

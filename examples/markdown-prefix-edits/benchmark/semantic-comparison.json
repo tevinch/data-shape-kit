@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "completeDocuments": 9,
+  "commonmarkExamples": 652,
+  "checks": [
+    "HTML exact digest",
+    "event type and full start/end positions",
+    "stream output equals full buffered HTML",
+    "nonzero writes/chunks and end event"
+  ],
+  "mode": "scripted Node.js checks, no human manual or original reporter validation"
+}

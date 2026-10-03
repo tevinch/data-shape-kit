@@ -1,0 +1,15 @@
+{
+  "name": "markdown-prefix-check",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "micromark": "4.0.3",
+    "micromark-util-edit-map": "file:micromark-util-edit-map-1.0.0-prefix.tgz"
+  },
+  "devDependencies": {
+    "commonmark.json": "0.31.0"
+  },
+  "scripts": {
+    "verify": "node verify.mjs . verification.json verify fixtures/reference.md"
+  }
+}
