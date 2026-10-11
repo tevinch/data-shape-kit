@@ -2,6 +2,8 @@
 
 If a PDF displays double quotes correctly but Docling exports `ÒSample AgreementÓ`, switching the standard PDF pipeline to its existing PDFium backend can restore the text. This configuration worked for the updated embedded-TrueType/MacRoman sample in [Docling #4493](https://github.com/docling-project/docling/issues/4493).
 
+**This does not restore the original reporter's full workflow.** On 5 October, [the reporter clarified](https://github.com/docling-project/docling/issues/4493#issuecomment-5998382391) that their application relies on the threaded backend for word-level tokens/cells, bounding boxes and fillable PDF processing. They cannot use this backend switch. The guide is useful only when your application can use PDFium for the whole conversion; correct text in the sample does not establish equivalent extraction features.
+
 ## Use the released alternate backend
 
 Keep your existing `PdfPipelineOptions` object, including its OCR, table and image settings. Set `backend` on `PdfFormatOption` before constructing the converter:
