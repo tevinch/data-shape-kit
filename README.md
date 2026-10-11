@@ -12,7 +12,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Keep links and images with spaces in their file paths after Markdown saving | [Markdown file paths](examples/markdown-file-paths) | Tiptap 3.31.4 extensions, runnable example and round-trip checks |
 | Refresh extracted TanStack Table components when external data changes | [Table data refresh](examples/table-data-refresh) | React Context integration; Compiler-enabled example and browser checks |
 | Save Quill content after five seconds without edits, with sequential requests and retry | [Quill idle save](examples/quill-idle-save) | Copyable Quill 2 module, HTTP integration and tests |
-| Preserve structured surnames across CSL JSON exports and Pandoc citations | [CSL family names](examples/csl-family-names) | Python standard library; complete Pandoc 3.12 checks |
+| Preserve structured surnames across CSL JSON exports and Pandoc citations | [CSL family names](examples/csl-family-names) | Official fix in Pandoc 3.12.1; Python workaround for 3.12 |
 | Restore a blank Vega-Lite chart when a sorted lag window reaches a partition boundary | [Sorted window lag](examples/sorted-window-lag) | Copyable lag-only configuration, source correction and complete chart checks |
 | Build dynamic Thymeleaf head fragments and assets without moving template blocks into the body | [Thymeleaf template builds](examples/thymeleaf-build) | Official plugin aliases, conservative HTML compression and actual Java rendering checks |
 | Reduce repeated prefix copying when parsing block quotes, nested lists and Setext headings | [Markdown prefix edits](examples/markdown-prefix-edits) | Source correction, unofficial edit-map build and complete parser checks |

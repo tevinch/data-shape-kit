@@ -1,8 +1,23 @@
 # CSL family names
 
-Keep already structured surnames together when a CSL JSON bibliography goes through Pandoc. For example, `de Gaulle` should stay `de Gaulle, Charles` in the reference list, and `p’Bitek` should stay `p’Bitek, Okot`. This free Python command prepares a separate bibliography after each export. Python 3.10 or newer is enough; no packages are required.
+Keep already structured surnames together when a CSL JSON bibliography goes through Pandoc. For example, `de Gaulle` should stay `de Gaulle, Charles` in the reference list, and `p’Bitek` should stay `p’Bitek, Okot`.
 
-## Download and try it
+## Use the official fix
+
+[Pandoc 3.12.1](https://github.com/jgm/pandoc/releases/tag/3.12.1), released on 8 October 2026, fixes this for structured CSL JSON and YAML. Upgrade and pass the original export directly to Pandoc; this Python helper is no longer needed for that version:
+
+```sh
+pandoc --version
+pandoc --citeproc --bibliography library.json article.md -o article.html
+```
+
+If you previously used this helper, point the command or defaults file back to `library.json` and remove the preparation step from your build. Preserve explicit particle fields in the source. Names supplied as unstructured strings remain a separate case.
+
+The official macOS arm64 3.12.1 release was checked on 11 October: external JSON and inline YAML both retained the original six-name workflow, citation order and explicit particles across two exports with changed content. All four conversions completed without the helper, and the source files stayed unchanged. These were scripted checks; they do not establish Zotero desktop or original-reporter validation. [The upstream issue](https://github.com/jgm/pandoc/issues/11911) is closed.
+
+The remaining instructions retain the workaround for installations pinned to Pandoc 3.12. The free Python command prepares a separate bibliography after each export; Python 3.10 or newer is enough, with no additional packages.
+
+## Pandoc 3.12: download and try the workaround
 
 [Download the source and checks](https://github.com/tevinch/data-shape-kit/raw/refs/heads/main/downloads/csl-family-names-v0.1.0.zip), extract the ZIP, and open a terminal in its `csl-family-names` folder. With Pandoc installed:
 
@@ -15,7 +30,7 @@ Open `example.html`. Its references keep `de Gaulle` and `p’Bitek` intact. The
 
 On Windows, use `py -3` in place of `python3` if that is how Python is installed.
 
-## Use it after a Zotero export
+## Pandoc 3.12: use it after a Zotero export
 
 Use this when the exported `family` fields already contain the intended complete surnames. In Zotero, a surname that must stay together can be entered with literal straight double quotes, such as `"de Gaulle"`. Its CSL JSON exporter removes those protective quotes. The resulting field can therefore be split again by Pandoc. The [export implementation](https://github.com/zotero/utilities/blob/master/utilities_item.js) explains that behavior.
 
@@ -52,7 +67,9 @@ The command handles external CSL JSON. It does not rewrite BibTeX, inline YAML r
 
 [The original discussion](https://github.com/jgm/pandoc/issues/11911) covers both an inline reference example and the repeated-export problem. This optional preparation step uses the existing quoted-name mechanism. It does not add a global `parse-names` setting to Pandoc.
 
-## Run the checks
+## Run the Pandoc 3.12 workaround checks
+
+`check_pandoc.py` deliberately expects the old failure before applying the workaround. Run it with Pandoc 3.12; its baseline assertion will fail on a version that already contains the official fix.
 
 ```sh
 python3 -m unittest -v
