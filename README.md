@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Refresh a shared Sequelize model wrapper only after its write commits | [Committed model refresh](examples/committed-model-refresh) | Documented hook pattern, SQLCipher/WAL reproduction and complete queue checks |
 | Keep links and images with spaces in their file paths after Markdown saving | [Markdown file paths](examples/markdown-file-paths) | Tiptap 3.31.4 extensions, runnable example and round-trip checks |
 | Refresh extracted TanStack Table components when external data changes | [Table data refresh](examples/table-data-refresh) | React Context integration; Compiler-enabled example and browser checks |
 | Save Quill content after five seconds without edits, with sequential requests and retry | [Quill idle save](examples/quill-idle-save) | Copyable Quill 2 module, HTTP integration and tests |

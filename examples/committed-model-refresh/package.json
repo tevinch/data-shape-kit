@@ -1,0 +1,12 @@
+{
+  "name": "committed-model-refresh",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node check.cjs"
+  },
+  "dependencies": {
+    "sequelize": "6.37.8",
+    "@journeyapps/sqlcipher": "5.3.1"
+  }
+}
