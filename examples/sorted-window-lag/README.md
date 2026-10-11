@@ -45,7 +45,7 @@ Open [the local example](http://127.0.0.1:8797/), switch among the sort options,
 
 ## Source correction
 
-The source fix is proposed in [Vega PR #4357](https://github.com/vega/vega/pull/4357). It has not been merged or released.
+The source fix in [Vega PR #4357](https://github.com/vega/vega/pull/4357) was merged on 5 October 2026 as [f83954e](https://github.com/vega/vega/commit/f83954e7624ba1926a7faf3d2c488bb44a37b529), and the original issue is closed. As of 11 October, the latest stable packages remain Vega 6.4.0 and vega-transforms 5.2.2, which predate the correction. The configuration above remains useful for the affected runtime bundled in Deneb; check its bundled Vega version when upgrading.
 
 [`window-frame.patch`](window-frame.patch) contains the source correction and regression tests for Vega at commit `045d12611007cd65ae5ce68e4179d4ee2f150ef8`. In `vega-transforms/src/Window.js`, it prevents comparisons at `data.length` and `-1` when an empty frame passes a partition boundary. Valid peer expansion remains enabled, and the original specification needs no configuration change when using the corrected runtime.
 
