@@ -4,6 +4,8 @@ micromark 4.0.3 can repeatedly copy an entire event prefix while parsing separat
 
 The correction is under review and has not shipped in an official release. This example provides a small **unofficial** build of `micromark-util-edit-map`, its source reference and a complete parser check. It keeps the upstream package name and version, `1.0.0`.
 
+An independent developer, [emre-mutlu, reports using the change as a `pnpm patch`](https://github.com/micromark/micromark/pull/249#issuecomment-6103145640). On their macOS 26/M4 Pro/Node 24.14.1 setup, a generated 5 MB document parsed to mdast in about 2.2 seconds instead of 4.8 seconds, with no change for 100 KB documents. They report identical mdast and positions on 4,652 inputs. These are their measurements, separate from the checks below; the PR is still awaiting maintainer review. Their installation note also matters: a local patch must update both `index.js` and `dev/index.js` so it works with bundlers that select the `development` condition. The archive here includes both builds.
+
 ## Try the complete example
 
 From this directory, with Node.js 24:
