@@ -4,6 +4,12 @@ A reusable TanStack Table component can keep displaying old rows when its data i
 
 It uses TanStack Table **9.2.4**, React **19.3.0**, React Store **0.11.2** and React Compiler **1.0.0**. The source is an application integration example; it does not patch Table.
 
+## Upstream progress
+
+As of October 12, 2026, [Table PR #6631](https://github.com/TanStack/table/pull/6631) is open and targets stale `AppTable` context in React and Preact. [An independent contributor reports](https://github.com/TanStack/table/issues/6601#issuecomment-6115943863) that its local build passes their regression test and updates both tables in the original two-second refresh reproduction with React Compiler enabled, without the workaround. Those are their results; this example has not been retested against that PR.
+
+The PR has not been merged or released. The current npm stable version, **9.2.8**, was published before the PR. Keep this example's checked versions in mind, and retry your original workflow when a release includes the fix before retaining the extra Context and compiler boundary. The PR explicitly does not cover components receiving `table` as a plain prop outside `AppTable`; that subscription question remains separate.
+
 ## Run it
 
 With Node.js 22 or newer, download or clone this repository, enter this directory, and run:
