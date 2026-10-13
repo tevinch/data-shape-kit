@@ -4,6 +4,12 @@ The updated embedded-TrueType/MacRoman sample in [Docling #4493](https://github.
 
 **The original reporter's full workflow is still unverified.** On 5 October, [the reporter clarified](https://github.com/docling-project/docling/issues/4493#issuecomment-5998382391) that their application relies on the threaded backend for word-level tokens/cells, bounding boxes and fillable PDF processing. They cannot use the PDFium switch. The public sample has no form fields, so it cannot establish that their fillable-PDF workflow works.
 
+## Stable release checked on 13 October 2026
+
+The official PyPI [docling-parse 7.22.3 release](https://github.com/docling-project/docling-parse/releases/tag/v7.22.3) still produces three `Ò` and three `Ó` characters on the same public sample. All four sequential/threaded parsing checks, with sanitization on and off, completed with the same 148 character cells, 19 word cells and 3 line cells as the earlier released baseline. Their text remained incorrect; every cell rectangle matched the baseline and the previously checked preview.
+
+The actual `ThreadedDoclingParseDocumentBackend` also retained the incorrect text with its default options, using docling-slim 2.138.0 and docling-core 2.101.1 on Python 3.12/macOS arm64. This was a scripted parser/backend check, without a new full-pipeline conversion, form-fill operation or reporter validation. PR #370 remains open and unmerged; upgrading to 7.22.3 alone does not provide its decoding repair.
+
 ## Native-parser preview checked on 12 October 2026
 
 [docling-parse #370](https://github.com/docling-project/docling-parse/pull/370), at commit `f721ba4f75a5678b13178df90e4f6f9524772a37`, fixed the quoted text in the [updated sample](https://github.com/user-attachments/files/32982093/synthetic_4138_macroman_quotes_v2.pdf) during scripted checks:
