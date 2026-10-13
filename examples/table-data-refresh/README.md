@@ -1,14 +1,16 @@
 # Refresh extracted Table components when external data changes
 
-A reusable TanStack Table component can keep displaying old rows when its data is replaced, even though `getRowModel()` has newer data. This example connects external data changes to a component registered with `createTableHook`, while retaining sorting, filtering and pagination.
+A reusable TanStack Table component can keep displaying old rows when its data is replaced, even though `getRowModel()` has newer data. This example keeps an extracted table current while retaining sorting, filtering and pagination.
 
-It uses TanStack Table **9.2.4**, React **19.3.0**, React Store **0.11.2** and React Compiler **1.0.0**. The source is an application integration example; it does not patch Table.
+It uses TanStack Table **9.3.1**, React **19.3.0**, React Store **0.11.2** and React Compiler **1.0.0**. It follows the released `AppTable` behavior and does not patch Table.
 
-## Upstream progress
+## Use the released fix
 
-As of October 12, 2026, [Table PR #6631](https://github.com/TanStack/table/pull/6631) is open and targets stale `AppTable` context in React and Preact. [An independent contributor reports](https://github.com/TanStack/table/issues/6601#issuecomment-6115943863) that its local build passes their regression test and updates both tables in the original two-second refresh reproduction with React Compiler enabled, without the workaround. Those are their results; this example has not been retested against that PR.
+[Table 9.3.1](https://github.com/TanStack/table/releases/tag/%40tanstack/react-table%409.3.1) includes [PR #6631](https://github.com/TanStack/table/pull/6631), which refreshes `AppTable` context when its owner receives new data, including when React Compiler or memoization caches the element. For this example, the extra data Context and `use no memo` hook from the earlier 9.2.4 version are no longer needed.
 
-The PR has not been merged or released. The current npm stable version, **9.2.8**, was published before the PR. Keep this example's checked versions in mind, and retry your original workflow when a release includes the fix before retaining the extra Context and compiler boundary. The PR explicitly does not cover components receiving `table` as a plain prop outside `AppTable`; that subscription question remains separate.
+This was checked on October 13, 2026 using the npm release. With the same simplified example, **9.2.8** keeps the initial rows after the first external update; **9.3.1** passes the complete sequence below. These are software-operated Chrome checks, not confirmation that the original reporter has adopted the release.
+
+The fix covers `useTableContext()` consumers inside `AppTable`. A component receiving `table` as a plain prop outside that context still needs data or rendered rows passed through its props when external data changes. See the [official React Compiler guide](https://tanstack.com/table/latest/docs/framework/react/guide/react-compiler).
 
 ## Run it
 
@@ -22,47 +24,60 @@ npm start
 
 Open [the local example](http://127.0.0.1:8785). Click **Update data** or **Start updates**. The source and visible rows should show the same revision. Updates also rotate the source rows, so stale ordering is visible.
 
-`npm test` checks TypeScript, builds with React Compiler, and verifies that the components were compiled while the row-model hook retains its explicit dependencies. It does not run browser interaction tests.
+`npm test` checks TypeScript, builds with React Compiler, and verifies that all five components were actually compiled. To run the browser acceptance sequence, install Google Chrome and run this after `npm test`:
+
+```sh
+npm run test:browser
+```
+
+The browser check starts its own local server and a separate headless Chrome session. It writes results and a screenshot into `dist/` and exits unsuccessfully when an expected result differs. It does not use your signed-in browser profile.
 
 ## Use the pattern
 
 [main.tsx](main.tsx) contains the complete example. There are two separate change sources:
 
-- External data travels through `DataContext`. Put its provider above the extracted components and pass **the exact same data reference** that you pass to `useAppTable`. This avoids forwarding unused data props through intermediate components.
-- Feature state travels through `useSelector(table.store, state => state)`. This example selects all state for correctness; narrow it only when every dependency of the rendered row model is accounted for.
-
-The body reads both sources and passes them to a small hook:
+- External data reaches the owner of `useAppTable`. Its `AppTable` provider refreshes the context consumed by the extracted body.
+- Sorting, filtering and pagination update table state. Keep those state-dependent row-model reads inside the `table.Subscribe` render function.
 
 ```tsx
-function useCurrentRows(table, data, state) {
-  'use no memo';
-  return React.useMemo(
-    () => table.getRowModel().rows,
-    [table, data, state],
+function Body() {
+  const table = useTableContext<Item>();
+  return (
+    <table.Subscribe selector={state => state}>
+      {() => (
+        <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getAllCells().map(cell => (
+                <td key={cell.id}><table.FlexRender cell={cell} /></td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      )}
+    </table.Subscribe>
   );
 }
 ```
 
-Keep the directive in this hook. In the checked compiler output, the same `useMemo` inside a compiled component lost its extra data/state dependencies and cached the row-model read against the table object. The hook retains these invalidation dependencies; `Body`, `Grid`, the intermediate `Spacer`, the controls and the owner component are still compiled. This is a temporary compatibility boundary: recheck the original behavior when upgrading Table or the compiler.
+This example selects all table state. You can narrow the selection when it still includes every feature that changes the displayed row model. A state subscription alone does not detect new external data; the `AppTable` context supplies that update here.
 
-`table.optionsStore` is not a working substitute in the checked React adapter: its runtime value is `undefined` in 9.2.4. The generic API mentions options subscriptions, but the React adapter keeps options as plain resolved data.
-
-Replace arrays and changed row objects immutably. Keep each table's data provider scoped to that table. The example uses fixed columns and a single React state source; it does not exercise a live Query client, WebSocket transport, dynamic column definitions, SSR or concurrent transitions. Apply your existing fetching logic before passing its data into the table and provider.
+Replace arrays and changed row objects immutably. Keep each table under its own `AppTable`. The example uses fixed columns and one React state source; it does not exercise a live Query client, WebSocket transport, dynamic columns, SSR, concurrent transitions or Preact. Apply existing fetching logic before passing its data to the table.
 
 ## Browser verification
 
-The [original report](https://github.com/TanStack/table/issues/6601) was reproduced in its linked sandbox. Software-operated Chrome checks also compared source rows with rendered cells in this example, with React Compiler enabled and memoized components. The acceptance sequence is:
+The checked workflow comes from [the external-data report](https://github.com/TanStack/table/issues/6601). The browser check exercises the compiled, memoized example with React Strict Mode enabled:
 
-1. Update data twice; verify both cell values and row order.
+1. Replace data twice; verify current cell values and row order.
 2. Go to page 2 with automatic page reset off, then update twice; keep page 2 and display its current rows.
-3. Sort both ways and filter for `ta`; continue updating while those controls remain active.
-4. Empty the data and populate it again; keep the selected sorting and filter.
-5. Clear the filter using the keyboard, enable automatic page reset, go to page 2, and update; return to page 1.
-6. Start two-second updates and observe several new revisions without interacting with sorting or pagination.
+3. Sort ascending, update, return to page 1, filter for `ta`, update again, then sort descending.
+4. Empty the data and populate it again; keep the sorting and filter.
+5. Clear filtering and sorting, enable automatic page reset, go to page 2, and update; return to page 1.
+6. Start actual two-second updates, observe three successive revisions without sorting or paging, then stop.
 
-These are browser checks of this example, not confirmation that the original author has adopted it. The source and build checks are free under the repository's [MIT license](../../LICENSE).
+All **20 checkpoints** passed on 9.3.1 in Google Chrome 155.0.8059.40. The 9.2.8 control fails at the first data replacement while its source data has advanced. The compiler log independently confirms that `Body`, `Controls`, `Grid`, `Spacer` and `App` were compiled. Human manual testing and original-user adoption are not claimed.
 
-References: [Table's React Compiler guide](https://tanstack.com/table/latest/docs/framework/react/guide/react-compiler), [React adapter implementation](https://github.com/TanStack/table/blob/main/packages/react-table/src/reactivity.ts), and [React's function-level compiler opt-out](https://react.dev/reference/react-compiler/directives/use-no-memo).
+The example and its checks are free under the repository's [MIT license](../../LICENSE).
 
 ## Optional coffee
 

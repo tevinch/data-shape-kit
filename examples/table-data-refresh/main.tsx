@@ -8,7 +8,6 @@ import {
 import { useSelector } from '@tanstack/react-store';
 
 type Item = { id: string; title: string; revision: number };
-const DataContext = React.createContext<readonly Item[] | null>(null);
 const features = tableFeatures({
   rowSortingFeature, rowPaginationFeature, columnFilteringFeature, globalFilteringFeature,
   sortedRowModel: createSortedRowModel(), filteredRowModel: createFilteredRowModel(),
@@ -23,18 +22,11 @@ const columns = [{ accessorKey: 'title', header: 'Title', sortFn: 'alphanumeric'
   { accessorKey: 'revision', header: 'Revision' }];
 function Body() {
   const table = useTableContext<Item>();
-  const data = React.useContext(DataContext);
-  const state = useSelector(table.store, (value) => value);
-  // Row models depend on data AND feature state, beyond table object identity.
-  const rows = useCurrentRows(table, data, state);
-  return <tbody>{rows.map(row => <tr key={row.id}>{row.getAllCells().map(cell =>
-    <td key={cell.id}><table.FlexRender cell={cell} /></td>)}</tr>)}</tbody>;
-}
-function useCurrentRows(table: ReturnType<typeof useTableContext<Item>>, data: readonly Item[] | null, state: unknown) {
-  'use no memo';
-  // Temporary compatibility boundary for Table 9.2.4; recheck after upgrading.
-  // This imperative read needs the explicit data/state invalidation dependencies.
-  return React.useMemo(() => table.getRowModel().rows, [table, data, state]);
+  return <table.Subscribe selector={state => state}>
+    {() => <tbody>{table.getRowModel().rows.map(row =>
+      <tr key={row.id}>{row.getAllCells().map(cell =>
+        <td key={cell.id}><table.FlexRender cell={cell} /></td>)}</tr>)}</tbody>}
+  </table.Subscribe>;
 }
 function Controls() {
   const table = useTableContext<Item>();
@@ -80,9 +72,7 @@ function App() {
     <label><input type="checkbox" checked={autoResetPageIndex} onChange={e => setAutoReset(e.target.checked)}/>Reset page on data change</label>
     <p>Source revision: <output id="source-revision">{data[0]?.revision ?? 'empty'}</output></p>
     <pre id="source-data">{JSON.stringify(data)}</pre>
-    <DataContext value={data}>
       <table.AppTable><Spacer><table.Grid/></Spacer></table.AppTable>
-    </DataContext>
   </main>;
 }
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

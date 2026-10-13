@@ -11,7 +11,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Refresh a shared Sequelize model wrapper only after its write commits | [Committed model refresh](examples/committed-model-refresh) | Documented hook pattern, SQLCipher/WAL reproduction and complete queue checks |
 | Keep precise list element types during reverse iteration with mypy 2.4 | [Typed reverse iteration](examples/typed-reverse) | Small Python helper, original workflow and type/runtime checks |
 | Keep links and images with spaces in their file paths after Markdown saving | [Markdown file paths](examples/markdown-file-paths) | Tiptap 3.31.4 extensions, runnable example and round-trip checks |
-| Refresh extracted TanStack Table components when external data changes | [Table data refresh](examples/table-data-refresh) | React Context integration; Compiler-enabled example and browser checks |
+| Refresh extracted TanStack Table components when external data changes | [Table data refresh](examples/table-data-refresh) | Table 9.3.1 AppTable integration; Compiler-enabled example and browser checks |
 | Save Quill content after five seconds without edits, with sequential requests and retry | [Quill idle save](examples/quill-idle-save) | Copyable Quill 2 module, HTTP integration and tests |
 | Preserve structured surnames across CSL JSON exports and Pandoc citations | [CSL family names](examples/csl-family-names) | Official fix in Pandoc 3.12.1; Python workaround for 3.12 |
 | Restore a blank Vega-Lite chart when a sorted lag window reaches a partition boundary | [Sorted window lag](examples/sorted-window-lag) | Copyable lag-only configuration, source correction and complete chart checks |
