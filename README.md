@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Preserve indented fenced code through Markdown import, editing and repeated saves | [Markdown code blocks](examples/markdown-code-blocks) | Tiptap 3.31.4 extension, runnable editor and content-preservation checks |
 | Refresh a shared Sequelize model wrapper only after its write commits | [Committed model refresh](examples/committed-model-refresh) | Documented hook pattern, SQLCipher/WAL reproduction and complete queue checks |
 | Keep precise list element types during reverse iteration with mypy 2.4 | [Typed reverse iteration](examples/typed-reverse) | Small Python helper, original workflow and type/runtime checks |
 | Keep links and images with spaces in their file paths after Markdown saving | [Markdown file paths](examples/markdown-file-paths) | Tiptap 3.31.4 extensions, runnable example and round-trip checks |

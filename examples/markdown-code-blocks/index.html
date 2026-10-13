@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Markdown code blocks</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 880px; margin: 40px auto; padding: 0 20px; color: #172b3a; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  textarea { box-sizing: border-box; width: 100%; min-height: 220px; font: 14px/1.5 monospace; padding: 12px; }
+  button { padding: 8px 14px; margin: 12px 8px 12px 0; cursor: pointer; }
+  #editor { border: 1px solid #94a3b8; border-radius: 6px; }
+  .tiptap { padding: 16px; min-height: 160px; }
+  pre { white-space: pre-wrap; background: #edf2f7; padding: 14px; }
+  label { display: block; margin-top: 18px; font-weight: 600; }
+</style>
+<h1>Markdown code blocks</h1>
+<p>Import a code block, edit its contents, then save and reopen it. This example uses Tiptap 3.31.4.</p>
+<label for="source">Markdown</label>
+<textarea id="source" spellcheck="false"></textarea>
+<button id="import">Import Markdown</button>
+<button id="save">Save Markdown</button>
+<button id="reopen">Reopen saved Markdown</button>
+<label><input id="readonly" type="checkbox"> Read only</label>
+<p id="status" role="status"></p>
+<div id="editor"></div>
+<p>Tab inserts two spaces in code. Triple Enter stays in the block.</p>
+<script type="module" src="/app.js"></script>
+</html>
