@@ -1,0 +1,10 @@
+{
+  "name": "csv-all-fields-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Papa Parse recipe for exporting optional fields from heterogeneous records",
+  "scripts": {"test": "node --test test.mjs", "example": "node example.mjs"},
+  "dependencies": {"papaparse": "5.7.0"},
+  "engines": {"node": ">=22"}
+}
