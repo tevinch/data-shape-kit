@@ -1,0 +1,21 @@
+{
+  "name": "alpine-modelable-state-example",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Source correction and repeated selection checks for Alpine x-modelable and Morph",
+  "scripts": {
+    "build": "node build.cjs",
+    "test": "node check-browser.cjs stable && node check-browser.cjs fixed"
+  },
+  "dependencies": {
+    "alpinejs": "3.17.4",
+    "@alpinejs/morph": "3.17.4"
+  },
+  "devDependencies": {
+    "esbuild": "0.16.17",
+    "playwright": "1.62.1"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

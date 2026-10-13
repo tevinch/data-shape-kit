@@ -1,0 +1,86 @@
+[
+  {
+    "name": "x-modelable retains an inner update made immediately after morph",
+    "template": [
+      "\n        <div x-data=\"{ outer: 0 }\">\n            <div id=\"counter\" x-data=\"{ inner: 0 }\" x-modelable=\"inner\" x-model=\"outer\"></div>\n            <button id=\"increment\" @click=\"Alpine.$data(document.getElementById('counter')).inner++\">Increment</button>\n            <button id=\"morph\" @click=\"let el = document.getElementById('counter'); Alpine.morph(el, el.outerHTML); Alpine.$data(el).inner++\">Morph and increment</button>\n            <output x-text=\"outer\"></output>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable retains selections made by an attribute observer after repeated page morphs",
+    "template": [
+      "\n        <div id=\"app\" data-page=\"1\" x-data=\"{ selected: [99], selectNewPages: true }\">\n            <label><input id=\"automatic\" type=\"checkbox\" x-model=\"selectNewPages\">Select new pages</label>\n            <button id=\"toggle\" @click=\"window.toggleList()\">Toggle list</button>\n            <button id=\"clear\" @click=\"selected = []\">Clear selection</button>\n            <output id=\"selected\" x-text=\"JSON.stringify(selected)\"></output>\n            <div id=\"list\" data-page=\"1\" x-data=\"pageSelection\" x-modelable=\"value\" x-model=\"selected\">\n                <input id=\"notes\" type=\"text\" x-model=\"notes\">\n                <button id=\"select-page\" @click=\"value = [...new Set([...value, ...rows])]\">Select page</button>\n                <button id=\"next\" @click=\"window.nextPage()\">Next page</button>\n                <template x-for=\"row in rows\" :key=\"row\">\n                    <label><input type=\"checkbox\" :data-row=\"row\" :value=\"row\" x-model.number=\"value\"><span x-text=\"row\"></span></label>\n                </template>\n                <output id=\"observations\" x-text=\"observations\"></output>\n                <output id=\"inner\" x-text=\"JSON.stringify(value)\"></output>\n            </div>\n        </div>\n    ",
+      "\n        let markup = document.getElementById('app').outerHTML\n        let newPage = () => {\n            let holder = document.createElement('div')\n            holder.innerHTML = markup\n            return holder.firstElementChild\n        }\n        window.nextPage = () => {\n            let app = document.getElementById('app')\n            let target = newPage()\n            target.dataset.page = Number(app.dataset.page) + 1\n            target.querySelector('#list').dataset.page = target.dataset.page\n            Alpine.morph(app, target)\n        }\n        window.toggleList = () => {\n            let list = document.getElementById('list')\n            if (list) list.remove()\n            else document.getElementById('app').append(newPage().querySelector('#list'))\n        }\n        Alpine.data('pageSelection', () => ({\n            value: [], rows: [1, 2], observations: 0, observer: null, notes: 'Existing notes',\n            init() {\n                this.observer = new MutationObserver(() => {\n                    this.observations++\n                    let page = Number(this.$el.dataset.page)\n                    this.rows = [page * 2 - 1, page * 2]\n                    if (this.selectNewPages) this.value = [...new Set([...this.value, ...this.rows])]\n                })\n                this.observer.observe(this.$el, { attributes: true, attributeFilter: ['data-page'] })\n            },\n            destroy() { this.observer.disconnect() },\n        }))\n    "
+    ]
+  },
+  {
+    "name": "x-modelable does not accumulate live bindings on morph comparison nodes",
+    "template": [
+      "\n        <div x-data=\"{ outer: { items: [] } }\">\n            <div id=\"component\" x-data=\"{\n                stored: { items: [] },\n                get inner() { window.modelReads++; return this.stored },\n                set inner(value) { this.stored = value },\n            }\" x-modelable=\"inner\" x-model=\"outer\"></div>\n            <output x-text=\"JSON.stringify(outer)\"></output>\n        </div>\n    ",
+      "window.modelReads = 0"
+    ]
+  },
+  {
+    "name": "can expose data for x-model binding",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model=\"outer\">\n                <h1 x-text=\"outer\"></h1>\n                <h2 x-text=\"inner\"></h2>\n\n                <button @click=\"inner = 'bob'\" id=\"1\">change inner</button>\n                <button @click=\"outer = 'lob'\" id=\"2\">change outer</button>\n            </div>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable works when inside x-bind and x-model is outside",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo', thing: {\n            ['x-modelable']: 'inner',\n        } }\">\n            <div x-data=\"{ inner: 'bar' }\" x-bind=\"thing\" x-model=\"outer\">\n                <h1 x-text=\"outer\"></h1>\n                <h2 x-text=\"inner\"></h2>\n\n                <button @click=\"inner = 'bob'\" id=\"1\">change inner</button>\n                <button @click=\"outer = 'lob'\" id=\"2\">change outer</button>\n            </div>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable removes the event listener used by corresponding x-model",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model=\"outer\">\n                <h1 x-text=\"outer\"></h1>\n                <h2 x-text=\"inner\"></h2>\n                <button id=\"1\" @click=\"$dispatch('input', 'baz')\"></button>\n            </div>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable works with .debounce modifier",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model.debounce=\"outer\">\n                <h1 x-text=\"outer\"></h1>\n                <h2 x-text=\"inner\"></h2>\n\n                <button @click=\"inner = 'bob'\" id=\"1\">change inner</button>\n                <button @click=\"inner = 'lob'\" id=\"2\">change inner</button>\n            </div>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable works with .throttle modifier",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model.throttle=\"outer\">\n                <h1 x-text=\"outer\"></h1>\n                <h2 x-text=\"inner\"></h2>\n\n                <button @click=\"inner = 'bob'\" id=\"1\">change inner</button>\n                <button @click=\"inner = 'lob'\" id=\"2\">change inner</button>\n            </div>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "works when inside x-teleport",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <template x-teleport=\"body\">\n                <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model=\"outer\">\n                    <h1 x-text=\"outer\"></h1>\n                    <h2 x-text=\"inner\"></h2>\n\n                    <button @click=\"inner = 'bob'\" id=\"1\">change inner</button>\n                    <button @click=\"outer = 'lob'\" id=\"2\">change outer</button>\n                </div>\n            </template>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "works when inside x-teleport when targeting parent",
+    "template": [
+      "\n        <div x-data=\"{ value: 'foo' }\">\n            <h2 x-text=\"value\"></h2>\n\n            <template x-teleport=\"body\">\n                <div x-data=\"{ value: 'bar' }\" x-modelable=\"value\" x-model.parent=\"value\">\n                    <h1 x-text=\"value\"></h1>\n\n                    <button @click=\"value = 'bob'\" id=\"1\">change to bob</button>\n                    <button @click=\"value = 'lob'\" id=\"2\">change to lob</button>\n                </div>\n            </template>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "works when inside x-teleport with x-data directly on it",
+    "template": [
+      "\n        <div>\n            <template x-teleport=\"body\" x-data=\"{ value: 'foo' }\">\n                <div x-data=\"{ value: 'bar' }\" x-modelable=\"value\" x-model.parent=\"value\">\n                    <h1 x-text=\"value\"></h1>\n\n                    <button @click=\"value = 'bob'\" id=\"1\">change to bob</button>\n                    <button @click=\"value = 'lob'\" id=\"2\">change to lob</button>\n                </div>\n            </template>\n        </div>\n    ",
+      ""
+    ]
+  },
+  {
+    "name": "x-modelable does not resync for a change made after its element is removed",
+    "template": [
+      "\n        <div x-data=\"{ outer: 'foo' }\">\n            <div x-data=\"{ inner: 'bar' }\" x-modelable=\"inner\" x-model=\"outer\">\n                <button x-on:click=\"$root.remove(); inner = 'baz'\"></button>\n            </div>\n\n            <h1 x-text=\"outer\"></h1>\n        </div>\n    ",
+      ""
+    ]
+  }
+]

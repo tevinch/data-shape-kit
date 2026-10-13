@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Selections after page updates</title>
+<style>body{font:16px system-ui;max-width:850px;margin:3rem auto;padding:0 1rem;line-height:1.6}button,input{font:inherit;margin:.3rem}output{display:block;overflow-wrap:anywhere}label{display:inline-block;margin-right:1rem}#selected:before{content:'Outer selection: '}#inner:before{content:'Inner selection: '}#observations:before{content:'Attribute observations: '}</style>
+<script defer src="node_modules/@alpinejs/morph/dist/cdn.js"></script><script defer src="dist/alpine.js"></script>
+<script>document.addEventListener('alpine:init', () => {
+        let markup = document.getElementById('app').outerHTML
+        let newPage = () => {
+            let holder = document.createElement('div')
+            holder.innerHTML = markup
+            return holder.firstElementChild
+        }
+        window.nextPage = () => {
+            let app = document.getElementById('app')
+            let target = newPage()
+            target.dataset.page = Number(app.dataset.page) + 1
+            target.querySelector('#list').dataset.page = target.dataset.page
+            Alpine.morph(app, target)
+        }
+        window.toggleList = () => {
+            let list = document.getElementById('list')
+            if (list) list.remove()
+            else document.getElementById('app').append(newPage().querySelector('#list'))
+        }
+        Alpine.data('pageSelection', () => ({
+            value: [], rows: [1, 2], observations: 0, observer: null, notes: 'Existing notes',
+            init() {
+                this.observer = new MutationObserver(() => {
+                    this.observations++
+                    let page = Number(this.$el.dataset.page)
+                    this.rows = [page * 2 - 1, page * 2]
+                    if (this.selectNewPages) this.value = [...new Set([...this.value, ...this.rows])]
+                })
+                this.observer.observe(this.$el, { attributes: true, attributeFilter: ['data-page'] })
+            },
+            destroy() { this.observer.disconnect() },
+        }))
+     });</script></head>
+<body><h1>Selections after page updates</h1><p>Select this page, edit the notes and move through several pages. Turn off automatic selection and check another item. Existing selections and notes should stay intact.</p>
+
+        <div id="app" data-page="1" x-data="{ selected: [99], selectNewPages: true }">
+            <label><input id="automatic" type="checkbox" x-model="selectNewPages">Select new pages</label>
+            <button id="toggle" @click="window.toggleList()">Toggle list</button>
+            <button id="clear" @click="selected = []">Clear selection</button>
+            <output id="selected" x-text="JSON.stringify(selected)"></output>
+                <div id="list" data-page="1" x-data="pageSelection" x-modelable="value" x-model="selected">
+                    <input id="notes" type="text" x-model="notes">
+                    <button id="select-page" @click="value = [...new Set([...value, ...rows])]">Select page</button>
+                    <button id="next" @click="window.nextPage()">Next page</button>
+                    <template x-for="row in rows" :key="row">
+                        <label><input type="checkbox" :data-row="row" :value="row" x-model.number="value"><span x-text="row"></span></label>
+                    </template>
+                    <output id="observations" x-text="observations"></output>
+                    <output id="inner" x-text="JSON.stringify(value)"></output>
+                </div>
+        </div>
+
+<p><a href="README.md">Source correction, checks and limitations</a></p></body></html>
