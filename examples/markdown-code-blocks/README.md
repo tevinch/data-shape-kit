@@ -4,6 +4,12 @@ Tiptap **3.31.4** drops fenced code blocks whose opening fence starts with one t
 
 For example, `before\n\n ```\n code\n ```\n\nafter` keeps both paragraphs and a code block containing `code`. The stock extension leaves only the paragraphs.
 
+## Release check on 13 October 2026
+
+The newly released [Tiptap 3.32.0](https://github.com/ueberdosis/tiptap/releases/tag/v3.32.0) still drops the indented block. With all Tiptap packages set to 3.32.0 and Marked kept at 17.0.6, the same Node/jsdom suite passed 3 of 31 cases with the stock extension and all 31 with this example's extension. Those checks include editing and three consecutive save/reload/reopen cycles. The runnable example below remains pinned to 3.31.4; the 3.32.0 checks were scripted Node checks, without a new browser or reporter validation.
+
+The targeted upstream [PR #8480](https://github.com/ueberdosis/tiptap/pull/8480) is open and unmerged as of this check. It accepts indented fences and adjusts tilde-fence content. Its discussion links a [deploy preview](https://deploy-preview-8480--tiptap-embed.netlify.app), which I have not validated. Follow that repair and prefer an official release when your complete workflow passes without this extension.
+
 ## Use in an editor
 
 Copy [code-block.mjs](code-block.mjs) into your application. This example pins Tiptap packages to **3.31.4** and Marked to **17.0.6**. Replace the standard code-block extension once:
