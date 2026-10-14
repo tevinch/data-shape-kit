@@ -6,6 +6,8 @@ The [source correction](source.patch) wraps the `modelable` directive in Alpine'
 
 This is a proposed correction, not an official release. It has been verified with standalone Alpine and Morph. The original reporter's Livewire application has not been tested.
 
+On October 14, a matching upstream correction was submitted in [PR #4929](https://github.com/alpinejs/alpine/pull/4929). Its source changes use the same clone guard. The PR is awaiting review; the current official npm release remains 3.17.4.
+
 ## Run the example
 
 Use Node.js 24 or later and an installed Chrome browser. From this directory:
@@ -54,6 +56,8 @@ Checks on 2026-10-14, Node.js 24.19.0 and Chrome 155.0.8059.40:
 `npm test` expects the three known regressions to fail in the stable build and all checks to pass in the corrected build. It writes `browser-stable.json` and `browser-fixed.json` with the results. Unexpected browser errors or different failures fail the command.
 
 The official Cypress suite has **not** been run here: its browser package download was too slow to complete. The included Cypress file is a proposed regression test; the executed browser checks use Playwright and the same fixtures. These are software-operated Chrome checks, not human manual validation, Firefox/WebKit coverage, or confirmation of adoption by the reporter.
+
+The upstream PR's [CI run](https://github.com/alpinejs/alpine/actions/runs/38548196926/job/115799398912) successfully executed its build, Cypress and Vitest commands. Separately, source reconstructed from its unchanged base and exact commit `d2a24b65cc47addc652a553e56e131dffaedeaee` passed the same 12 Playwright checks in Chrome 155.0.8059.41. All 67 Alpine and Morph source/build-entry files were checked against the published Git blob hashes before compilation. The original npm build still reproduced the three known failures. This adds standalone pagination, settings and existing-content coverage; it does not establish that the original Livewire application has been fixed.
 
 Alpine source and the existing fixtures are MIT licensed; see [the upstream license](LICENSE.alpinejs.md). The example and correction are free under this repository's MIT license.
 
