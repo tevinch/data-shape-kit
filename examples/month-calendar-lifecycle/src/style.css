@@ -1,0 +1,11 @@
+body { margin: 0; font-family: Arial, sans-serif; color: #17202a; }
+main { display: flex; gap: 24px; padding: 20px; }
+aside { width: 270px; flex-shrink: 0; }
+h1 { font-size: 24px; }
+h2 { font-size: 18px; }
+label { display: block; margin: 12px 0; }
+button { cursor: pointer; }
+#event-list { padding-left: 18px; }
+#event-list li { margin: 12px 0; }
+#event-list b { display: block; }
+#calendar-panel { flex-shrink: 0; }

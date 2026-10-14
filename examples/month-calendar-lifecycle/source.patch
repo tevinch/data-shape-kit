@@ -1,0 +1,44 @@
+--- a/packages/preact/src/daygrid/components/DayGridRow.tsx
++++ b/packages/preact/src/daygrid/components/DayGridRow.tsx
+@@ -129,6 +129,7 @@
+ 
+   // internal
+   private _isUnmounting: boolean
++  private rootEl: HTMLElement | null = null
+   private disconnectHeight?: () => void
+   private levelCapacity = DEFAULT_LEVEL_CAPACITY
+ 
+@@ -641,9 +642,15 @@
+   handleRootEl = (rootEl: HTMLElement | null) => {
+     this.disconnectHeight?.()
+     this.disconnectHeight = undefined
++    this.rootEl = rootEl
+     setRef(this.props.rootElRef, rootEl)
+-
+-    if (rootEl) {
++    this.attachHeightWatcher()
++  }
++
++  private attachHeightWatcher() {
++    const { rootEl } = this
++
++    if (rootEl && !this.disconnectHeight) {
+       this.disconnectHeight = watchHeight(rootEl, (contentHeight) => {
+         setRef(this.props.heightRef, contentHeight)
+       })
+@@ -655,6 +662,7 @@
+ 
+   componentDidMount() {
+     this._isUnmounting = false
++    this.attachHeightWatcher()
+   }
+ 
+   componentDidUpdate(prevProps: DayGridRowProps): void {
+@@ -666,6 +674,7 @@
+   componentWillUnmount(): void {
+     this._isUnmounting = true
+     this.disconnectHeight?.()
++    this.disconnectHeight = undefined
+     setRef(this.props.heightRef, null)
+   }
+ 

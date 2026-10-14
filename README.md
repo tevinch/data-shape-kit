@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Drag and resize month-view events while keeping React 18 StrictMode | [Month calendar lifecycle](examples/month-calendar-lifecycle) | FullCalendar 7.1.2 source correction, local package and browser checks |
 | Keep optional fields that appear in later JSON records when exporting CSV | [CSV with all fields](examples/csv-all-fields) | Papa Parse 5.7.0 public-API recipe and CSV roundtrip checks |
 | Keep selected rows and continued input after repeated Alpine page updates | [Alpine modelable state](examples/alpine-modelable-state) | Alpine 3.17.4 source correction, local build and repeated-selection checks |
 | Preserve indented fenced code through Markdown import, editing and repeated saves | [Markdown code blocks](examples/markdown-code-blocks) | Tiptap 3.31.4 extension, runnable editor and content-preservation checks |
