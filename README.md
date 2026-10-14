@@ -87,6 +87,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 | Replace declared CSV missing markers in selected columns while preserving identifiers and notes | [Missing Tokens](examples/missing-tokens) | Copyable Python module; standard library only |
 | Separate malformed JSONL lines while retaining original bytes and rejection locations | [JSONL partition](examples/jsonl-partition) | Python standard library; optional Polars eager/lazy integration |
 | Retain complete finite-command output and exit status while previewing its first 120 lines | [Command output capture](examples/command-output) | POSIX shell with `mktemp` and `head`; Node.js 20+ only for tests |
+| Keep preconfigured Python console logs readable above a live progress display | [Live console logging](examples/live-console-logging) | Python 3.12+; reversible stream routing with a runnable Rich example |
 | Clean, profile, compare or check local files | [Python command-line guide](docs/python-cli.md) | Python 3.11+ |
 
 ## Try spreadsheet paste without installing a tool
