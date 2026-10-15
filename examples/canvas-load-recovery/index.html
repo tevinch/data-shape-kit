@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Canvas load recovery</title>
+  <style>
+    body { max-width: 760px; margin: 3rem auto; padding: 0 1rem; font: 16px/1.6 system-ui; color: #17232d; }
+    canvas { border: 1px solid #bcc9d4; display: block; margin: 1rem 0; }
+    button { padding: .5rem .75rem; margin: .2rem; }
+    #status { min-height: 3rem; white-space: pre-wrap; }
+  </style>
+  <h1>Canvas load recovery</h1>
+  <p>Try a failed load or cancel a pending image. Then load a valid document and continue adding and removing objects on the same canvas.</p>
+  <label><input id="automatic" type="checkbox" checked> Render automatically after add/remove</label>
+  <canvas id="canvas" width="480" height="240"></canvas>
+  <div>
+    <button id="valid">Load valid document</button>
+    <button id="missing">Load missing image</button>
+    <button id="unknown">Load unknown class</button>
+    <button id="pending">Load pending image</button>
+    <button id="cancel" disabled>Cancel load</button>
+  </div>
+  <div>
+    <button id="add">Add blue square</button>
+    <button id="remove">Remove blue square</button>
+    <button id="render">Render explicitly</button>
+  </div>
+  <p id="status" role="status">Ready. The red square is the existing document.</p>
+  <p>When automatic rendering is off, use “Render explicitly” after editing. Loading a valid document always requests a render.</p>
+  <p>This example rejects failed top-level objects. Nested and background images can still be omitted. It does not provide rollback for arbitrary documents or custom code. See the README for recovery boundaries.</p>
+  <script type="module" src="./demo.js"></script>
+</html>

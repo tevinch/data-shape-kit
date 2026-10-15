@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Recover from failed or cancelled Fabric document loads, retry and keep editing | [Canvas load recovery](examples/canvas-load-recovery) | Fabric 7.4.0 application recipe, standalone demo and browser checks |
 | Preserve existing styles when Lightning CSS recovers from invalid nested rules | [CSS error recovery](examples/css-recovery-example) | Source patch, original CSS reproduction and dev/production browser checks |
 | Drag and resize month-view events while keeping React 18 StrictMode | [Month calendar lifecycle](examples/month-calendar-lifecycle) | FullCalendar 7.1.2 source correction, local package and browser checks |
 | Keep optional fields that appear in later JSON records when exporting CSV | [CSV with all fields](examples/csv-all-fields) | Papa Parse 5.7.0 public-API recipe and CSV roundtrip checks |
