@@ -97,7 +97,15 @@ The maintainer [accepted the behavior and noted the breaking change](https://git
 
 The maintainer subsequently merged [PR #420](https://github.com/DOI-USGS/dataretrieval-python/pull/420), extending the shared reader from #419 to additional code columns across the package.
 
-Merging is separate from releasing. When checked again on September 22, 2026, the [latest GitHub release listed was v1.3.0](https://github.com/DOI-USGS/dataretrieval-python/releases/tag/v1.3.0), published on August 15, before this merge. Check the release notes for the version you install; this guide does not claim that an ordinary package upgrade already includes the change. The helper above remains independently copyable. If an older import or cache has already lost zeros, read the original CSV again with the intended text-column policy.
+The correction is included in [dataretrieval 1.4.0](https://github.com/DOI-USGS/dataretrieval-python/releases/tag/v1.4.0), released on October 2, 2026 and [available on PyPI](https://pypi.org/project/dataretrieval/1.4.0/). Its release notes list both the Samples fix and the broader code-column change. To install this release:
+
+```bash
+python -m pip install --upgrade "dataretrieval==1.4.0"
+```
+
+Review the release notes before upgrading: 1.4.0 also changes other column types, error classes and the default Water Data API version. The helper above remains independently copyable. If an older import or cache has already lost zeros, read the original CSV again with the intended text-column policy; upgrading cannot repair already altered data.
+
+An October 15, 2026 offline check of the published 1.4.0 wheel exercised `waterdata.get_samples` and `waterdata.get_samples_summary` twice each with synthetic CSV responses. It checked preserved codes, numeric measurements and counts, missing values, date shaping, row order and returned metadata. The wheel was imported outside the source checkout.
 
 ## Buy me a coffee, if this helped
 
