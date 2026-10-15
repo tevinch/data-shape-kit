@@ -1,5 +1,7 @@
 # Keep inline content on the neighbouring visual line
 
+**Upstream status — checked 15 October 2026:** [Issue #9234](https://github.com/facebook/lexical/issues/9234) closed on 4 October after [PR #9321](https://github.com/facebook/lexical/pull/9321) merged. The stable release checked, [0.52.0](https://github.com/facebook/lexical/releases/tag/v0.52.0), was published on 28 September, before that merge. Check your release's notes for this fix before adding an extension. The source example and recorded browser checks below remain pinned to 0.51.0.
+
 In Lexical 0.51.0, deleting to a visual line boundary can also remove an inline decorator on the next or previous line. [Lexical #9234](https://github.com/facebook/lexical/issues/9234) shows this with an equation in both plain and rich text. This small command extension keeps that neighbouring-line node while deleting the requested text.
 
 For the forward example, `alpha beta gamma delta ` ends on line one and the equation starts line two. With the caret after `al`, deleting to the end of the line should leave `al`, the equation and the following text. The unmodified editor also deletes the equation. The backward example has the equation on line one and `epsilon` on line two: deleting from after `eps` should leave the equation and `ilon`.
@@ -49,7 +51,7 @@ The checks use real browser layout, including plain/rich modes, span/button deco
 
 Browser checks are software-operated. No reporter adoption, human manual validation, Firefox/Safari compatibility or general bidirectional-text coverage is claimed. Test your own decorator styling before adopting it, and recheck after upgrading Lexical. Remove the extension when an upstream fix covers your workflow.
 
-[PR #9247](https://github.com/facebook/lexical/pull/9247) fixes a different native-selection endpoint inside decorator DOM and explicitly leaves this soft-wrap issue unresolved. This example does not replace that repair.
+[PR #9247](https://github.com/facebook/lexical/pull/9247) covers a different native-selection endpoint inside decorator DOM. Its scope is separate from the later soft-wrap repair linked above.
 
 License: MIT; see [LICENSE](LICENSE). Dependencies retain their own licenses.
 
