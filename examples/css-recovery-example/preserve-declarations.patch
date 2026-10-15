@@ -1,0 +1,106 @@
+diff --git a/node/test/transform.test.mjs b/node/test/transform.test.mjs
+index 044702424346b978a1de836391557e71edd7b9ab..8c3c8bf88a1cf4b222f24fbc66598877ecbfd278 100644
+--- a/node/test/transform.test.mjs
++++ b/node/test/transform.test.mjs
+@@ -98,4 +98,23 @@ test('minification works as expected on older yet modern android versions', () =
+   assert.equal(res.code.toString(), '.foo{color:#0000}');
+ })
+ 
++test('error recovery preserves declarations before invalid nested rules', () => {
++  let options = {
++    filename: 'a.css',
++    code: Buffer.from('.a{color:red;width:1px;@keyframes k{from{opacity:0}}height:2px}'),
++    errorRecovery: true,
++    minify: true
++  };
++  let result = transform(options);
++
++  assert.equal(result.code.toString(), '.a{color:red;width:1px;height:2px}');
++  assert.equal(result.warnings, [{
++    message: 'Unknown at rule: @keyframes',
++    type: 'AtRuleInvalid',
++    value: 'keyframes',
++    loc: {filename: 'a.css', line: 1, column: 36}
++  }]);
++  assert.throws(() => transform({...options, errorRecovery: false}));
++});
++
+ test.run();
+diff --git a/src/lib.rs b/src/lib.rs
+index 2005a6daa30dd114109d92d03e976cb9a86d96b7..b3e6a6e06c6ab0f23bcbb0a9af889f0a898ec9b4 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -31362,6 +31362,60 @@ mod tests {
+     )
+   }
+ 
++  #[test]
++  fn test_error_recovery_preserves_declarations() {
++    let cases = [
++      (
++        ".a{color:red;width:1px;@keyframes k{from{opacity:0}}height:2px}",
++        ".a{color:red;width:1px;height:2px}",
++        1,
++      ),
++      (
++        ".a{color:red!important;@font-face{font-family:x}width:1px!important;height:2px}",
++        ".a{height:2px;color:red!important;width:1px!important}",
++        1,
++      ),
++      (".a{@keyframes k{}color:red;width:1px}", ".a{color:red;width:1px}", 1),
++      (".a{color:red;width:1px;@keyframes k{}}", ".a{color:red;width:1px}", 1),
++      (
++        ".a{color:red;@font-face{}width:1px!important;@keyframes k{}height:2px}",
++        ".a{color:red;height:2px;width:1px!important}",
++        2,
++      ),
++      (
++        ".a{color:red;@keyframes k{}width:1px}.b{height:2px}",
++        ".a{color:red;width:1px}.b{height:2px}",
++        1,
++      ),
++      (".a{color:red;*zoom:1;width:1px}", ".a{color:red;width:1px}", 1),
++      (
++        ".a{color:red;@media print{color:red;@font-face{}width:1px}height:2px}",
++        ".a{color:red;@media print{color:red;width:1px}height:2px}",
++        1,
++      ),
++    ];
++
++    for (source, expected, warning_count) in cases {
++      let warnings = Arc::new(RwLock::new(Vec::new()));
++      minify_test_with_options(
++        source,
++        expected,
++        ParserOptions {
++          error_recovery: true,
++          warnings: Some(warnings.clone()),
++          ..ParserOptions::default()
++        },
++      );
++      assert_eq!(warnings.read().unwrap().len(), warning_count, "{source}");
++      assert!(StyleSheet::parse(source, ParserOptions::default()).is_err(), "{source}");
++    }
++
++    minify_test(
++      ".a{color:red;@media print{width:1px}height:2px}",
++      ".a{color:red;@media print{width:1px}height:2px}",
++    );
++  }
++
+   #[test]
+   fn test_invalid() {
+     error_test(
+diff --git a/src/parser.rs b/src/parser.rs
+index 51bbf9d91f1ff2cac36a83abf29b374cd4185b20..f6456c66307121e9fbf4ffe434bd113913a48fc0 100644
+--- a/src/parser.rs
++++ b/src/parser.rs
+@@ -494,8 +494,6 @@ impl<'a, 'b, 'i, T: crate::traits::AtRuleParser<'i>> NestedRuleParser<'a, 'i, T>
+         Ok(()) => {}
+         Err((e, _)) => {
+           if parse_declarations {
+-            iter.parser.declarations.clear();
+-            iter.parser.important_declarations.clear();
+             errors.push(e);
+           } else {
+             if iter.parser.options.error_recovery {

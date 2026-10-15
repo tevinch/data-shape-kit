@@ -1,0 +1,10 @@
+{
+  "name": "css-recovery-example",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A minimal check for CSS declaration preservation during parser recovery",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "lightningcss": "1.33.0"
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "checked_on": "2026-10-16",
+  "mode": "scripted tests",
+  "source_base": "ab14f90df45b1a94c6c10a3d9ca16b39d09f67e0",
+  "patch": {
+    "file": "preserve-declarations.patch",
+    "exact_base_apply_check_passed": true,
+    "files_changed": 3,
+    "insertions": 73,
+    "deletions": 2
+  },
+  "released_reproduction": {
+    "lightningcss": "1.33.0",
+    "input": ".a{color:red;width:1px;@keyframes k{from{opacity:0}}height:2px}",
+    "options": {
+      "errorRecovery": true,
+      "minify": true
+    },
+    "output": ".a{height:2px}",
+    "warnings": [
+      {
+        "message": "Unknown at rule: @keyframes",
+        "type": "AtRuleInvalid",
+        "value": "keyframes",
+        "loc": {
+          "filename": "a.css",
+          "line": 1,
+          "column": 36
+        }
+      }
+    ],
+    "strict_mode_rejects_input": true,
+    "preservation_assertion_fails": true,
+    "node_versions": [
+      "24.19.0",
+      "18.20.4"
+    ]
+  },
+  "rust_source_tests": {
+    "platform": "macOS arm64",
+    "compiler": "1.98.1",
+    "repository_toolchain_pin": "1.96.0",
+    "default_unit_tests_passed": 125,
+    "default_integration_tests_passed": 5,
+    "default_documentation_tests_passed": 7,
+    "new_regression_failed_before_parser_change": true,
+    "new_regression_passed_after_parser_change": true,
+    "existing_warning": "unused import: std::collections::HashMap",
+    "default_command": "cargo test --locked -- --test-threads=1",
+    "all_features_command": "cargo test --locked --all-features -- --test-threads=1",
+    "test_environment": {
+      "RUSTUP_TOOLCHAIN": "stable",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "all_features_unit_tests_passed": 126,
+    "all_features_integration_tests_passed": 33,
+    "all_features_documentation_tests_passed": 8
+  },
+  "source_native_sample": {
+    "platform": "macOS arm64",
+    "sha256": "cc228629688522b638ee770b5b280cf024ebd9af4fa11ecca10660f0feae8a34",
+    "results": [
+      {
+        "minify": true,
+        "output": ".a{color:red;width:1px;height:2px}",
+        "warnings": [
+          {
+            "message": "Unknown at rule: @keyframes",
+            "type": "AtRuleInvalid",
+            "value": "keyframes",
+            "loc": {
+              "filename": "a.css",
+              "line": 1,
+              "column": 36
+            }
+          }
+        ]
+      },
+      {
+        "minify": false,
+        "output": ".a {\n  color: red;\n  width: 1px;\n  height: 2px;\n}\n",
+        "warnings": [
+          {
+            "message": "Unknown at rule: @keyframes",
+            "type": "AtRuleInvalid",
+            "value": "keyframes",
+            "loc": {
+              "filename": "a.css",
+              "line": 1,
+              "column": 36
+            }
+          }
+        ]
+      }
+    ],
+    "strict_mode_rejects_input": true,
+    "distributed_binary": false
+  },
+  "node_source_suite": {
+    "runs": [
+      {
+        "node": "24.19.0",
+        "command": "npm test",
+        "passed": 82,
+        "skipped": 0
+      },
+      {
+        "node": "18.20.4",
+        "command": "uvu node/test",
+        "passed": 82,
+        "skipped": 0
+      }
+    ]
+  },
+  "format_check": {
+    "command": "cargo fmt --all -- --check",
+    "environment": {
+      "RUSTUP_TOOLCHAIN": "stable"
+    },
+    "exit": 0
+  },
+  "typescript_check": {
+    "command": "tsc -p node/tsconfig.json --types node",
+    "exit": 0
+  },
+  "clean_consumer": {
+    "install_command": "npm ci --ignore-scripts --no-audit --no-fund",
+    "install_node": "24.19.0",
+    "npm": "10.7.0",
+    "install_exit": 0,
+    "scripts_disabled": true,
+    "comparisons": [
+      {
+        "node": "24.19.0",
+        "check": "baseline-default",
+        "exit": 0,
+        "expected_exit": 0,
+        "output": ".a{height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      },
+      {
+        "node": "24.19.0",
+        "check": "baseline-assertion",
+        "exit": 1,
+        "expected_exit": 1,
+        "output": ".a{height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      },
+      {
+        "node": "24.19.0",
+        "check": "source-assertion",
+        "exit": 0,
+        "expected_exit": 0,
+        "output": ".a{color:red;width:1px;height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      },
+      {
+        "node": "18.20.4",
+        "check": "baseline-default",
+        "exit": 0,
+        "expected_exit": 0,
+        "output": ".a{height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      },
+      {
+        "node": "18.20.4",
+        "check": "baseline-assertion",
+        "exit": 1,
+        "expected_exit": 1,
+        "output": ".a{height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      },
+      {
+        "node": "18.20.4",
+        "check": "source-assertion",
+        "exit": 0,
+        "expected_exit": 0,
+        "output": ".a{color:red;width:1px;height:2px}",
+        "exact_warnings_match": true,
+        "strict_mode_rejects_input": true
+      }
+    ]
+  },
+  "host_acceptance": {
+    "fixture": "synthetic Tailwind/Vite application",
+    "node": "24.19.0",
+    "platform": "macOS arm64",
+    "vite": "8.3.4",
+    "tailwindcss": "4.3.3",
+    "tailwind_vite_plugin": "4.3.3",
+    "released_tailwind_lightningcss": "1.32.0",
+    "separate_vite_lightningcss": "1.33.0",
+    "source_addon_sha256": "cc228629688522b638ee770b5b280cf024ebd9af4fa11ecca10660f0feae8a34",
+    "source_comparison": "Built source addon selected at the existing Tailwind compiler boundary; separate Vite compiler unchanged.",
+    "full_source_run": {
+      "passed": 13,
+      "total": 13,
+      "breakdown": {
+        "direct_matrix": 1,
+        "development_phases": 3,
+        "production_operations": 8,
+        "optimizer_omission_negative_control": 1
+      },
+      "production_styles_preserved": 8,
+      "direct_matrix_calls": 6,
+      "negative_control_correctly_rejected_missing_optimizer": true
+    },
+    "released_production_comparison": {
+      "operations": 8,
+      "operations_losing_preceding_styles": 8
+    },
+    "production_coverage": {
+      "css_minify": [
+        true,
+        false
+      ],
+      "watch_input_phases": [
+        "original",
+        "changed",
+        "restored"
+      ],
+      "clean_repeat_for_each_minify_mode": true,
+      "recovery_warnings_retained": true
+    },
+    "development_only_followup": {
+      "reason": "Development-readiness synchronization adjustment",
+      "released": {
+        "passed": 3,
+        "total": 3
+      },
+      "source": {
+        "passed": 3,
+        "total": 3
+      },
+      "input_phases": [
+        "original",
+        "changed",
+        "restored"
+      ],
+      "unchanged_production_cases_rerun": false,
+      "production_and_direct_evidence": "Completed full runs before the development-only adjustment"
+    },
+    "browser": {
+      "name": "Chrome",
+      "version": "155.0.8059.41",
+      "operation": "software-operated",
+      "checks": [
+        "emitted CSS",
+        "computed styles"
+      ],
+      "human_manual_validation": false
+    },
+    "original_reporter_application_validated": false,
+    "published_npm_packages_changed": false
+  },
+  "source_pr": {
+    "url": "https://github.com/parcel-bundler/lightningcss/pull/1374",
+    "state": "open",
+    "review_status": "pending review",
+    "head": "7b8287f21e2f30587e552c40c39f898eacab3366"
+  }
+}
