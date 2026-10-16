@@ -8,6 +8,7 @@ Start with [three free components for spreadsheet paste, remote field checks and
 
 | What you need | Start here | Setup |
 | --- | --- | --- |
+| Keep a responsive multirow slider usable when React content loads while hidden | [Hidden Grid updates](examples/hidden-grid-updates) | Swiper 14.3.0 source correction and DOM/React checks |
 | Read a specific font description when FontTools changes its default name-record preference | [Explicit font name records](examples/font-name-records) | FontTools 4.67.0 public API and a pinned-font comparison |
 | Recover from failed or cancelled Fabric document loads, retry and keep editing | [Canvas load recovery](examples/canvas-load-recovery) | Fabric 7.4.0 application recipe, standalone demo and browser checks |
 | Preserve existing styles when Lightning CSS recovers from invalid nested rules | [CSS error recovery](examples/css-recovery-example) | Source patch, original CSS reproduction and dev/production browser checks |
