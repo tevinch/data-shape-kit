@@ -1,5 +1,7 @@
 # Month calendar lifecycle
 
+FullCalendar [v7.1.3](https://github.com/fullcalendar/fullcalendar/releases/tag/v7.1.3) fixes DayGrid event dragging under React 18 StrictMode. Prefer the official `@fullcalendar/react` 7.1.3 package for this fix. This directory retains the 7.1.2 example and unofficial build as a historical reproduction. The checks described below were performed on that pinned 7.1.2 example.
+
 FullCalendar 7.1.2 month-event dragging can fail after React 18 development StrictMode replays component mounts. This example includes a small shared-source correction and a locally built React package. Dragging, resizing, selecting dates, adding events and deleting events continue with StrictMode enabled.
 
 The correction retains the row element across lifecycle replay and reconnects its height watcher on mount. Initial ref measurement stays in place, height reconnection does not repeat external root refs, and real detachment/unmount still clears the subscription. It changes one shared Preact source file; FullCalendar's own build generates the React source. See [source.patch](source.patch) and the [original report](https://github.com/fullcalendar/fullcalendar/issues/8119).
