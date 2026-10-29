@@ -6,7 +6,7 @@ The [source correction](source.patch) wraps the `modelable` directive in Alpine'
 
 This is a proposed correction, not an official release. It has been verified with standalone Alpine and Morph. The original reporter's Livewire application has not been tested.
 
-On October 14, a matching upstream correction was submitted in [PR #4929](https://github.com/alpinejs/alpine/pull/4929). Its source changes use the same clone guard. The PR is awaiting review; the current official npm release remains 3.17.4.
+On October 14, a matching upstream correction was submitted in [PR #4929](https://github.com/alpinejs/alpine/pull/4929). It was closed without merging on October 29. The current official npm release is 3.17.5, whose `x-modelable` source does not include this clone guard. This example and its recorded checks remain pinned to 3.17.4; it has not been rerun against 3.17.5.
 
 ## Run the example
 
