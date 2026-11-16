@@ -1,14 +1,27 @@
 # Double-quote decoding in Docling PDFs
 
-The updated embedded-TrueType/MacRoman sample in [Docling #4493](https://github.com/docling-project/docling/issues/4493) displays double quotes correctly but exports `ÒSample AgreementÓ`. A native-parser preview now decodes that sample correctly while retaining the threaded backend. The PDFium configuration below is a released alternative for applications that can switch backends.
+The embedded-TrueType/MacRoman quote-decoding problem in [Docling #4493](https://github.com/docling-project/docling/issues/4493) is fixed in the official **docling-parse 7.26.0** release. Upgrade the parser before considering the alternate backend or historical preview below.
 
-**The original reporter's full workflow is still unverified.** On 5 October, [the reporter clarified](https://github.com/docling-project/docling/issues/4493#issuecomment-5998382391) that their application relies on the threaded backend for word-level tokens/cells, bounding boxes and fillable PDF processing. They cannot use the PDFium switch. The public sample has no form fields, so it cannot establish that their fillable-PDF workflow works.
+## Released repair confirmed on November 16, 2026
+
+The official [7.26.0 release](https://github.com/docling-project/docling-parse/releases/tag/v7.26.0), published November 13, includes the merged [repair #370](https://github.com/docling-project/docling-parse/pull/370) and the additional MacRoman repair #453. A [November 14 comparison](https://github.com/docling-project/docling/issues/4493#issuecomment-6876087266) reported correct sample text through the default threaded backend with Docling 2.150.1 on Windows/Python 3.12, after changing only docling-parse to 7.26.0. The original reporter then [confirmed and closed the issue](https://github.com/docling-project/docling/issues/4493#issuecomment-6904302371) on November 16.
+
+```sh
+python -m pip install --upgrade 'docling-parse==7.26.0'
+python -m pip check
+```
+
+The comparison reports that Docling 2.150.1 permits this version through its existing `>=7.22.2,<8.0.0` requirement. Check the requirements of your own Docling installation before upgrading, and keep your existing threaded backend and pipeline settings. This update reports the official release and public confirmation; no new local full-pipeline conversion or form-fill check was performed.
+
+The public sample has no form fields. The reporter previously [explained their threaded-backend and fillable-PDF requirements](https://github.com/docling-project/docling/issues/4493#issuecomment-5998382391); their short confirmation does not provide separate form-processing test details.
+
+The October checks below are historical comparisons, not the current release recommendation.
 
 ## Stable release checked on 13 October 2026
 
 The official PyPI [docling-parse 7.22.3 release](https://github.com/docling-project/docling-parse/releases/tag/v7.22.3) still produces three `Ò` and three `Ó` characters on the same public sample. All four sequential/threaded parsing checks, with sanitization on and off, completed with the same 148 character cells, 19 word cells and 3 line cells as the earlier released baseline. Their text remained incorrect; every cell rectangle matched the baseline and the previously checked preview.
 
-The actual `ThreadedDoclingParseDocumentBackend` also retained the incorrect text with its default options, using docling-slim 2.138.0 and docling-core 2.101.1 on Python 3.12/macOS arm64. This was a scripted parser/backend check, without a new full-pipeline conversion, form-fill operation or reporter validation. PR #370 remains open and unmerged; upgrading to 7.22.3 alone does not provide its decoding repair.
+The actual `ThreadedDoclingParseDocumentBackend` also retained the incorrect text with its default options, using docling-slim 2.138.0 and docling-core 2.101.1 on Python 3.12/macOS arm64. This was a scripted parser/backend check, without a new full-pipeline conversion, form-fill operation or reporter validation. At the time of that October check, PR #370 was open and unmerged; upgrading to 7.22.3 alone did not provide its decoding repair.
 
 ## Native-parser preview checked on 12 October 2026
 
@@ -20,13 +33,13 @@ The actual `ThreadedDoclingParseDocumentBackend` also retained the incorrect tex
 | Materialized character, word and line cells | 148 characters, 19 words, 3 lines | Same counts; complete text correct at all three levels |
 | Cell coordinates | Baseline | Every character, word and line rectangle unchanged from released 7.22.1 |
 
-The preview also passed a check through Docling's actual `InputDocument` and `ThreadedDoclingParseDocumentBackend`: all three text lines, 19 word cells, text queries by rectangle and a 612 × 792 page image were available with default backend options. That check used `docling-slim` 2.138.0 and docling-core 2.101.1 on Python 3.12/macOS arm64. It did not run the full conversion pipeline or a form-fill operation. There is no confirmation from the reporter's application.
+The preview also passed a check through Docling's actual `InputDocument` and `ThreadedDoclingParseDocumentBackend`: all three text lines, 19 word cells, text queries by rectangle and a 612 × 792 page image were available with default backend options. That check used `docling-slim` 2.138.0 and docling-core 2.101.1 on Python 3.12/macOS arm64. It did not run the full conversion pipeline or a form-fill operation. There was no confirmation from the reporter’s application at the time of that check.
 
-The tested wheel came from the official [CI run](https://github.com/docling-project/docling-parse/actions/runs/36745616541), artifact [`python-package-distributions-py3.12-macosx_arm64`](https://github.com/docling-project/docling-parse/actions/runs/36745616541/artifacts/11295697082). Its archive SHA-256 was `7e712d5967c2631026de40242b3de2b414c6d8ee51b9678e74f1f57f3d1dc517`. The contained wheel still reports version **7.22.1**, but it is the PR build; installing the PyPI release with that version does not provide this repair. Choose an artifact matching your own Python and platform if evaluating the preview in a separate environment.
+The tested wheel came from the official [CI run](https://github.com/docling-project/docling-parse/actions/runs/36745616541), artifact [`python-package-distributions-py3.12-macosx_arm64`](https://github.com/docling-project/docling-parse/actions/runs/36745616541/artifacts/11295697082). Its archive SHA-256 was `7e712d5967c2631026de40242b3de2b414c6d8ee51b9678e74f1f57f3d1dc517`. The contained wheel still reports version **7.22.1**, but it is the PR build; installing the PyPI release with that version does not provide this repair.
 
-The PR remains unmerged and the overall CI run includes failed checks and wheel jobs. A successful sample check is not release approval. Recheck the PR and current releases before changing an existing installation.
+At the time of this preview check, the PR was unmerged and the overall CI run included failed checks and wheel jobs. The official 7.26.0 release now supersedes this preview; do not install the historical artifact for this repair.
 
-## Use the released alternate backend
+## Historical alternate backend for applications that can switch
 
 Keep your existing `PdfPipelineOptions` object, including its OCR, table and image settings. Set `backend` on `PdfFormatOption` before constructing the converter:
 
